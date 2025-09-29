@@ -1,10 +1,28 @@
 {
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "uni-app"
+	"pages": [
+	{
+		"path" : "pages/home/home",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
 		}
-	}],
+	},
+	{
+		"path" : "pages/sold/sold",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/my/my",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	}
+	
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -13,5 +31,28 @@
 		"app-plus": {
 			"background": "#efeff4"
 		}
+	},
+	"tabBar": {
+		"selectedColor": "#C00000",
+		"list": [
+			{
+				"pagePath": "pages/home/home",
+				"text": "首页",
+				"iconPath": "static/tab_icons/home.png",
+				"selectedIconPath": "static/tab_icons/home-active.png"
+			},
+			{
+				"pagePath": "pages/sold/sold",
+				"text": "卖闲置",
+				"iconPath": "static/tab_icons/cart.png",
+				"selectedIconPath": "static/tab_icons/cart-active.png"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"text": "我的",
+				"iconPath": "static/tab_icons/my.png",
+				"selectedIconPath": "static/tab_icons/my-active.png"
+			}
+		]
 	}
 }
