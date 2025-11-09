@@ -4,7 +4,10 @@
 		"path" : "pages/home/home",
 		"style" : 
 		{
-			"navigationBarTitleText" : ""
+			"navigationBarTitleText" : "",
+			"onReachBottomDistance": 150,
+			"enablePullDownRefresh": true,
+			"backgroundColor": "#F8F8F8"
 		}
 	},
 	{
@@ -15,7 +18,277 @@
 		}
 	},
 	{
+		"path" : "pages/message/message",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh": true,
+			"backgroundTextStyle": "dark"
+		}
+	},
+	{
 		"path" : "pages/my/my",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh": true,
+			"backgroundTextStyle": "dark"
+		}
+	},
+	{
+		"path" : "subpkg/goods_detail/goods_detail",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/search/search",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"onReachBottomDistance": 150,
+			"enablePullDownRefresh": true,
+			"backgroundColor": "#F8F8F8"
+		}
+	},
+	{
+		"path" : "subpkg/treehole/treehole",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"onReachBottomDistance": 150,
+			"enablePullDownRefresh": true,
+			"backgroundColor": "#F8F8F8"
+		}
+	},
+	{
+		"path" : "subpkg/history/history",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/publish/publish",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/profile/profile",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/follow/follow",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/follower/follower",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/collect/collect",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/comment/comment",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/chat/chat",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/treehole/treehole",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"onReachBottomDistance": 150,
+			"enablePullDownRefresh": true,
+			"backgroundColor": "#F8F8F8"
+		}
+	},
+	{
+		"path" : "subpkg/address/address",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/post-detail/post-detail",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/publish-post/publish-post",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/my-posts/my-posts",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/my-deleted-posts/my-deleted-posts",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/my-post-comments/my-post-comments",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/cate/cate",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"onReachBottomDistance": 150,
+			"enablePullDownRefresh": true,
+			"backgroundColor": "#F8F8F8"
+		}
+	},
+	{
+		"path" : "subpkg/webview/webview",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/post-search/post-search",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/goods-selector/goods-selector",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/verification/verification",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/text-to-image/text-to-image",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/topic-detail/topic-detail",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},	
+	{
+		"path" : "pages/publish/publish",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/topic/topic",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/edit/edit",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/board/board",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/like/like",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh": true,
+			    "backgroundTextStyle": "dark"
+		}
+	},
+	{
+		"path" : "subpkg/my-search/my-search",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/cate-message/cate-message",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/follow-message/follow-message",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/like-message/like-message",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/comment-message/comment-message",
 		"style" : 
 		{
 			"navigationBarTitleText" : ""
@@ -32,26 +305,66 @@
 			"background": "#efeff4"
 		}
 	},
+	// "tabBar": {
+	// 	"custom": true,
+	// 	"color": "#333333",
+	// 	"selectedColor": "#C00000",
+	// 	"list": [
+	// 		{
+	// 			"pagePath": "pages/home/home",
+	// 			"text": "首页"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/cate/cate",
+	// 			"text": "二手"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/publish/publish",
+	// 			"text": "发布"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/treehole/treehole",
+	// 			"text": "树洞"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/my/my",
+	// 			"text": "我的"
+	// 		}
+	// 	]
+	// }
+
 	"tabBar": {
 		"selectedColor": "#C00000",
 		"list": [
 			{
 				"pagePath": "pages/home/home",
 				"text": "首页",
-				"iconPath": "static/tab_icons/home.png",
-				"selectedIconPath": "static/tab_icons/home-active.png"
+				"iconPath": "/static/tab_icons/shouye1.png",
+				"selectedIconPath": "/static/tab_icons/shouye-active.png"
 			},
 			{
-				"pagePath": "pages/sold/sold",
-				"text": "卖闲置",
-				"iconPath": "static/tab_icons/cart.png",
-				"selectedIconPath": "static/tab_icons/cart-active.png"
+				"pagePath": "pages/treehole/treehole",
+				"text": "树洞",
+				"iconPath": "/static/tab_icons/shudong1.png",
+				"selectedIconPath": "static/tab_icons/shudong-active.png"
+			},
+			{
+				"pagePath": "pages/publish/publish",
+				"text": "发布",
+				"iconPath": "/static/tab_icons/fabu.png",
+				"selectedIconPath": "/static/tab_icons/fabu-active.png"
+			},
+			{
+				"pagePath": "pages/cate/cate",
+				"text": "集市",
+				"iconPath": "/static/tab_icons/jishi1.png",
+				"selectedIconPath": "static/tab_icons/jishi-active.png"
 			},
 			{
 				"pagePath": "pages/my/my",
 				"text": "我的",
-				"iconPath": "static/tab_icons/my.png",
-				"selectedIconPath": "static/tab_icons/my-active.png"
+				"iconPath": "/static/tab_icons/wode1.png",
+				"selectedIconPath": "static/tab_icons/wode-active.png"
 			}
 		]
 	}
