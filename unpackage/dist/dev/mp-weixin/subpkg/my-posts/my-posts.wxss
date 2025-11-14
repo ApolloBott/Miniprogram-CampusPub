@@ -1,0 +1,107 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+.my-posts-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+.posts-list {
+  height: 100vh;
+  padding: 24rpx;
+}
+.post-item {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+.post-item .post-content {
+  margin-bottom: 16rpx;
+}
+.post-item .post-content .content-text {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+.post-item .post-images {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+.post-item .post-images .post-image {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  background-color: #f0f0f0;
+}
+.post-item .post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.post-item .post-footer .left-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.post-item .post-footer .left-info .post-tag {
+  font-size: 24rpx;
+  color: #C00000;
+  background-color: #f0f2ff;
+  padding: 6rpx 16rpx;
+  border-radius: 6rpx;
+}
+.post-item .post-footer .left-info .post-time {
+  font-size: 24rpx;
+  color: #999999;
+}
+.post-item .post-footer .post-stats {
+  display: flex;
+  gap: 32rpx;
+}
+.post-item .post-footer .post-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+.post-item .post-footer .post-stats .stat-item .stat-icon-img {
+  width: 32rpx;
+  height: 32rpx;
+}
+.post-item .post-footer .post-stats .stat-item .stat-count {
+  font-size: 24rpx;
+  color: #999999;
+}
+.post-item .post-footer .post-stats .stat-item .icon {
+  font-size: 28rpx;
+}
+.load-more,
+.no-more {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 26rpx;
+  color: #999999;
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+}
+.empty .empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+.empty .empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}

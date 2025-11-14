@@ -1,0 +1,138 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+.comment-message-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+/* 顶部导航栏 */
+.header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 32rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #e5e5e5;
+}
+.header .back-btn {
+  margin-right: 20rpx;
+  font-size: 36rpx;
+  color: #333333;
+}
+.header .title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+}
+/* 评论列表 */
+.comment-list {
+  height: calc(100vh - 80rpx);
+  padding: 20rpx 0;
+}
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+}
+.empty-state .empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+.empty-state .empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+/* 评论项 */
+.comment-item {
+  display: flex;
+  padding: 24rpx 32rpx;
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+  /* 头像 */
+  /* 右侧内容 */
+}
+.comment-item:active {
+  background-color: #f8f8f8;
+}
+.comment-item .avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.comment-item .comment-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* 昵称 */
+  /* 时间行 */
+  /* 评论内容 */
+  /* 原帖子预览 */
+}
+.comment-item .comment-content .nickname {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+.comment-item .comment-content .time-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.comment-item .comment-content .time-row .time {
+  font-size: 24rpx;
+  color: #999999;
+  margin-right: 16rpx;
+}
+.comment-item .comment-content .time-row .comment-type {
+  font-size: 24rpx;
+  color: #666666;
+}
+.comment-item .comment-content .content-box {
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+.comment-item .comment-content .content-box .content-text {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+}
+.comment-item .comment-content .post-preview {
+  display: flex;
+  align-items: center;
+  padding: 16rpx;
+  background-color: #fafafa;
+  border-radius: 8rpx;
+  border-left: 4rpx solid #4facfe;
+}
+.comment-item .comment-content .post-preview .preview-label {
+  font-size: 24rpx;
+  color: #999999;
+  margin-right: 8rpx;
+  flex-shrink: 0;
+}
+.comment-item .comment-content .post-preview .preview-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #666666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 16rpx;
+}
+.comment-item .comment-content .post-preview .preview-image {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 6rpx;
+  flex-shrink: 0;
+}

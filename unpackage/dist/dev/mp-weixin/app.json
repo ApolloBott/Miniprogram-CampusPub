@@ -1,0 +1,86 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/sold/sold",
+    "pages/message/message",
+    "pages/my/my",
+    "subpkg/goods_detail/goods_detail",
+    "subpkg/search/search",
+    "subpkg/treehole/treehole",
+    "subpkg/history/history",
+    "subpkg/publish/publish",
+    "subpkg/profile/profile",
+    "subpkg/follow/follow",
+    "subpkg/follower/follower",
+    "subpkg/collect/collect",
+    "subpkg/comment/comment",
+    "subpkg/chat/chat",
+    "pages/treehole/treehole",
+    "subpkg/address/address",
+    "subpkg/post-detail/post-detail",
+    "subpkg/publish-post/publish-post",
+    "subpkg/my-posts/my-posts",
+    "subpkg/my-deleted-posts/my-deleted-posts",
+    "subpkg/my-post-comments/my-post-comments",
+    "pages/cate/cate",
+    "subpkg/webview/webview",
+    "subpkg/post-search/post-search",
+    "subpkg/goods-selector/goods-selector",
+    "subpkg/verification/verification",
+    "subpkg/text-to-image/text-to-image",
+    "subpkg/topic-detail/topic-detail",
+    "pages/publish/publish",
+    "subpkg/topic/topic",
+    "subpkg/edit/edit",
+    "subpkg/board/board",
+    "subpkg/like/like",
+    "subpkg/my-search/my-search",
+    "subpkg/cate-message/cate-message",
+    "subpkg/follow-message/follow-message",
+    "subpkg/like-message/like-message",
+    "subpkg/comment-message/comment-message"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "selectedColor": "#C00000",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "/static/tab_icons/shouye1.png",
+        "selectedIconPath": "/static/tab_icons/shouye-active.png"
+      },
+      {
+        "pagePath": "pages/treehole/treehole",
+        "text": "树洞",
+        "iconPath": "/static/tab_icons/shudong1.png",
+        "selectedIconPath": "static/tab_icons/shudong-active.png"
+      },
+      {
+        "pagePath": "pages/publish/publish",
+        "text": "发布",
+        "iconPath": "/static/tab_icons/fabu.png",
+        "selectedIconPath": "/static/tab_icons/fabu-active.png"
+      },
+      {
+        "pagePath": "pages/cate/cate",
+        "text": "集市",
+        "iconPath": "/static/tab_icons/jishi1.png",
+        "selectedIconPath": "static/tab_icons/jishi-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "/static/tab_icons/wode1.png",
+        "selectedIconPath": "static/tab_icons/wode-active.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

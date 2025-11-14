@@ -1,0 +1,110 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+.my-comments-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+.comments-list {
+  height: 100vh;
+  padding: 24rpx;
+}
+.comment-item {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+.comment-item .comment-header {
+  margin-bottom: 16rpx;
+}
+.comment-item .comment-header .comment-time {
+  font-size: 24rpx;
+  color: #999999;
+}
+.comment-item .comment-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24rpx;
+}
+.comment-item .comment-left {
+  flex: 1;
+  min-width: 0;
+}
+.comment-item .comment-content {
+  margin-bottom: 16rpx;
+}
+.comment-item .comment-content .my-comment {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+  word-break: break-all;
+}
+.comment-item .post-preview {
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 12rpx;
+}
+.comment-item .post-preview .post-header-info {
+  margin-bottom: 8rpx;
+}
+.comment-item .post-preview .post-header-info .post-author {
+  font-size: 24rpx;
+  color: #666666;
+  font-weight: 500;
+}
+.comment-item .post-preview .post-tag {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #C00000;
+  background-color: #f0f2ff;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  margin-bottom: 8rpx;
+}
+.comment-item .post-preview .post-content {
+  display: block;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+}
+.comment-item .comment-right {
+  flex-shrink: 0;
+}
+.comment-item .comment-right .post-thumbnail {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+.load-more,
+.no-more {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 26rpx;
+  color: #999999;
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+}
+.empty .empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+.empty .empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}

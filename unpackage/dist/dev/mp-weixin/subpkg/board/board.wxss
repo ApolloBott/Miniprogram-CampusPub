@@ -1,0 +1,379 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+page {
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFE4B5 100%);
+  min-height: 100vh;
+}
+.container {
+  padding: 40rpx 30rpx;
+  min-height: 100vh;
+}
+.header {
+  text-align: center;
+  margin-bottom: 40rpx;
+  -webkit-animation: fadeInDown 0.8s ease-out;
+          animation: fadeInDown 0.8s ease-out;
+}
+.header .title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #8B4513;
+  margin-bottom: 16rpx;
+  letter-spacing: 2rpx;
+}
+.header .subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: #A0826D;
+  opacity: 0.8;
+}
+.date-wrapper {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 40rpx;
+  -webkit-animation: fadeInDown 0.8s ease-out 0.2s backwards;
+          animation: fadeInDown 0.8s ease-out 0.2s backwards;
+}
+.date-wrapper picker {
+  flex: 1;
+}
+.date-wrapper .date-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border-radius: 50rpx;
+  padding: 20rpx 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(139, 69, 19, 0.06);
+  transition: all 0.3s ease;
+}
+.date-wrapper .date-box:active {
+  box-shadow: 0 6rpx 30rpx rgba(139, 69, 19, 0.12);
+  -webkit-transform: translateY(-2rpx);
+          transform: translateY(-2rpx);
+}
+.date-wrapper .date-box .calendar-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+}
+.date-wrapper .date-box .date-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+}
+.date-wrapper .date-box .arrow-icon {
+  font-size: 20rpx;
+  color: #999999;
+  margin-left: 16rpx;
+}
+.date-wrapper .clear-date {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFE8E8;
+  border-radius: 50rpx;
+  padding: 20rpx 30rpx;
+  transition: all 0.3s ease;
+}
+.date-wrapper .clear-date .clear-text {
+  font-size: 28rpx;
+  color: #FF6B6B;
+  font-weight: 600;
+}
+.date-wrapper .clear-date:active {
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+  opacity: 0.8;
+}
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  -webkit-animation: fadeIn 0.5s ease-out;
+          animation: fadeIn 0.5s ease-out;
+}
+.loading-state .loading-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+  -webkit-animation: rotating 1.5s linear infinite;
+          animation: rotating 1.5s linear infinite;
+}
+.loading-state .loading-text {
+  font-size: 28rpx;
+  color: #A0826D;
+}
+.works-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40rpx;
+}
+.work-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(139, 69, 19, 0.08);
+  -webkit-animation: fadeInUp 0.6s ease-out backwards;
+          animation: fadeInUp 0.6s ease-out backwards;
+  transition: all 0.3s ease;
+}
+.work-card:active {
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.author-info .author-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+.time {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+.time .time-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #666666;
+}
+.image-wrapper {
+  width: 100%;
+  position: relative;
+  background: #F8F8F8;
+}
+.image-wrapper .work-image {
+  width: 100%;
+  height: 500rpx;
+  display: block;
+}
+.card-footer {
+  padding: 30rpx;
+}
+.card-footer .footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20rpx;
+}
+.card-footer .footer-content .description-area {
+  flex: 1;
+}
+.card-footer .footer-content .description-area .description {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.6;
+}
+.card-footer .footer-content .actions {
+  flex-shrink: 0;
+}
+.card-footer .footer-content .actions .like-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+  background: #FFF8F0;
+  transition: all 0.3s ease;
+}
+.card-footer .footer-content .actions .like-btn .like-icon {
+  font-size: 32rpx;
+  transition: -webkit-transform 0.3s ease;
+  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+}
+.card-footer .footer-content .actions .like-btn .like-count {
+  font-size: 28rpx;
+  color: #999999;
+  font-weight: 600;
+  min-width: 30rpx;
+}
+.card-footer .footer-content .actions .like-btn.liked {
+  background: #FFE8E8;
+}
+.card-footer .footer-content .actions .like-btn.liked .like-icon {
+  -webkit-animation: heartBeat 0.5s ease;
+          animation: heartBeat 0.5s ease;
+}
+.card-footer .footer-content .actions .like-btn.liked .like-count {
+  color: #FF6B6B;
+}
+.card-footer .footer-content .actions .like-btn:active {
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  -webkit-animation: fadeIn 1s ease-out;
+          animation: fadeIn 1s ease-out;
+}
+.empty-state .empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+.empty-state .empty-text {
+  font-size: 28rpx;
+  color: #A0826D;
+}
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: 40rpx 0;
+}
+.load-more .load-more-text {
+  font-size: 28rpx;
+  color: #A0826D;
+  padding: 20rpx 40rpx;
+  border-radius: 40rpx;
+  background: #FFF8F0;
+  transition: all 0.3s ease;
+}
+.load-more .load-more-text:active {
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+  opacity: 0.8;
+}
+@-webkit-keyframes fadeInDown {
+from {
+    opacity: 0;
+    -webkit-transform: translateY(-30rpx);
+            transform: translateY(-30rpx);
+}
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+@keyframes fadeInDown {
+from {
+    opacity: 0;
+    -webkit-transform: translateY(-30rpx);
+            transform: translateY(-30rpx);
+}
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+@-webkit-keyframes fadeInUp {
+from {
+    opacity: 0;
+    -webkit-transform: translateY(30rpx);
+            transform: translateY(30rpx);
+}
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+@keyframes fadeInUp {
+from {
+    opacity: 0;
+    -webkit-transform: translateY(30rpx);
+            transform: translateY(30rpx);
+}
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+@-webkit-keyframes fadeIn {
+from {
+    opacity: 0;
+}
+to {
+    opacity: 1;
+}
+}
+@keyframes fadeIn {
+from {
+    opacity: 0;
+}
+to {
+    opacity: 1;
+}
+}
+@-webkit-keyframes rotating {
+from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+@keyframes rotating {
+from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+@-webkit-keyframes heartBeat {
+0%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+}
+25% {
+    -webkit-transform: scale(1.3);
+            transform: scale(1.3);
+}
+50% {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+}
+75% {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+}
+}
+@keyframes heartBeat {
+0%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+}
+25% {
+    -webkit-transform: scale(1.3);
+            transform: scale(1.3);
+}
+50% {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+}
+75% {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+}
+}
+.work-card:hover {
+  box-shadow: 0 12rpx 48rpx rgba(139, 69, 19, 0.12);
+  -webkit-transform: translateY(-4rpx);
+          transform: translateY(-4rpx);
+}

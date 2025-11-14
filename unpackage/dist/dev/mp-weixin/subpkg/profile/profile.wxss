@@ -1,0 +1,305 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+.publisher-container {
+  min-height: 100vh;
+  background-color: #f7f7f7;
+}
+/* 1. 用户头部区域 - 重新设计 */
+.user-header {
+  display: flex;
+  padding: 40rpx 30rpx;
+  background-color: #fff;
+}
+.user-header .avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 70rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.user-header .user-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.user-header .user-right .user-basic {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+.user-header .user-right .user-basic .nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+.user-header .user-right .user-basic .gender {
+  font-size: 24rpx;
+  color: #999;
+  padding: 4rpx 12rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+}
+.user-header .user-right .intro-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 16rpx;
+}
+.user-header .user-right .stats-follow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.user-header .user-right .stats-follow-row .stats {
+  display: flex;
+  align-items: center;
+}
+.user-header .user-right .stats-follow-row .stats .stat-item {
+  font-size: 26rpx;
+  color: #666;
+}
+.user-header .user-right .stats-follow-row .stats .stat-divider {
+  margin: 0 16rpx;
+  color: #ddd;
+}
+.user-header .user-right .stats-follow-row .follow-btn {
+  padding: 10rpx 32rpx;
+  background-color: #c00000;
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 40rpx;
+  border: none;
+}
+.user-header .user-right .stats-follow-row .follow-btn.following {
+  background-color: #f0f0f0;
+  color: #666;
+}
+/* 2. 动态选项卡（带切换图标） */
+.dynamic-tab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 24rpx 30rpx;
+  margin-top: 2rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.dynamic-tab .tab-title {
+  display: flex;
+  align-items: center;
+}
+.dynamic-tab .tab-title .tab-text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+}
+.dynamic-tab .tab-title .tab-badge {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 12rpx;
+}
+.dynamic-tab .toggle-icon {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 20rpx;
+}
+.dynamic-tab .toggle-icon:active {
+  background-color: #e8e8e8;
+}
+.dynamic-tab .toggle-icon .toggle-text {
+  font-size: 26rpx;
+  color: #666;
+}
+.dynamic-tab .toggle-icon .toggle-arrow {
+  font-size: 28rpx;
+  color: #999;
+}
+/* 帖子列表 */
+.post-list {
+  height: calc(100vh - 350rpx);
+  background-color: #f7f7f7;
+}
+.post-item {
+  background-color: #fff;
+  margin: 0 0 20rpx 0;
+  padding: 30rpx;
+  /* 🔥 新增：内容和时间同行容器 */
+  /* 🔥 修改：帖子内容区域 */
+  /* 🔥 新增：时间包裹器 */
+}
+.post-item:active {
+  background-color: #f9f9f9;
+}
+.post-item .post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.post-item .post-header .post-time {
+  font-size: 24rpx;
+  color: #999;
+}
+.post-item .post-header .post-category {
+  font-size: 22rpx;
+  color: #c00000;
+  background-color: #fff0f0;
+  padding: 6rpx 12rpx;
+  border-radius: 4rpx;
+}
+.post-item .post-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.post-item .post-content {
+  flex: 1;
+  min-width: 0;
+  /* 防止内容撑开容器 */
+}
+.post-item .post-content .content-text {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+.post-item .post-time-wrapper {
+  flex-shrink: 0;
+  /* 防止时间被压缩 */
+  align-self: flex-start;
+}
+.post-item .post-time-wrapper .post-time {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+  /* 时间不换行 */
+}
+.post-item .post-images {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+  position: relative;
+}
+.post-item .post-images .post-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  background-color: #f0f0f0;
+}
+.post-item .post-images .more-images {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24rpx;
+}
+.post-item .post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.post-item .post-footer .footer-left .view-count {
+  font-size: 22rpx;
+  color: #999;
+}
+.post-item .post-footer .footer-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.post-item .post-footer .footer-right .like-count,
+.post-item .post-footer .footer-right .comment-count {
+  font-size: 22rpx;
+  color: #666;
+}
+.post-item .post-footer .footer-right .action-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.post-item .post-footer .footer-right .action-icon-img {
+  width: 16px;
+  height: 16px;
+}
+.post-item .post-footer .footer-right .action-count {
+  font-size: 12px;
+  color: #666;
+}
+.load-more,
+.no-more-posts {
+  padding: 40rpx 0;
+  text-align: center;
+}
+.load-more .load-text,
+.load-more .no-more-text,
+.no-more-posts .load-text,
+.no-more-posts .no-more-text {
+  font-size: 26rpx;
+  color: #999;
+}
+/* 商品列表瀑布流 */
+.waterfall {
+  display: flex;
+  padding: 20rpx 10rpx;
+  gap: 20rpx;
+}
+.waterfall .col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+/* 空状态 */
+.empty-state {
+  padding: 200rpx 0;
+  text-align: center;
+}
+.empty-state .empty-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 20rpx;
+}
+.empty-state .empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+.waterfall {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx;
+  box-sizing: border-box;
+}
+.col {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+}
+/* 头像预览 */
+.avatar-preview {
+  width: 600rpx;
+  height: 600rpx;
+  background-color: #000;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+.avatar-preview .preview-image {
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,107 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+.history-page {
+  width: 100%;
+  height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx 32rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #e5e5e5;
+}
+.header .header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+}
+.header .clear-btn {
+  font-size: 28rpx;
+  color: #ff4444;
+  padding: 8rpx 16rpx;
+}
+.tabs-container {
+  display: flex;
+  background: #fff;
+  padding: 0 32rpx;
+  border-bottom: 1rpx solid #e5e5e5;
+}
+.tabs-container .tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+  transition: all 0.3s;
+}
+.tabs-container .tab-item.active {
+  color: #333;
+  font-weight: 600;
+}
+.tabs-container .tab-item.active .tab-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background: #ff4444;
+  border-radius: 2rpx;
+}
+.goods-list {
+  flex: 1;
+  padding: 20rpx;
+}
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.goods-item {
+  width: 48%;
+  background: #fff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+.goods-item .goods-image {
+  width: 100%;
+  height: 340rpx;
+  display: block;
+  background: #f0f0f0;
+}
+.goods-item .goods-price {
+  padding: 16rpx 20rpx;
+  display: flex;
+  align-items: baseline;
+}
+.goods-item .goods-price .price-symbol {
+  font-size: 24rpx;
+  color: #ff4444;
+  font-weight: 600;
+}
+.goods-item .goods-price .price-number {
+  font-size: 36rpx;
+  color: #ff4444;
+  font-weight: 700;
+  margin-left: 4rpx;
+}
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 600rpx;
+}
+.empty-state .empty-text {
+  font-size: 28rpx;
+  color: #999;
+}

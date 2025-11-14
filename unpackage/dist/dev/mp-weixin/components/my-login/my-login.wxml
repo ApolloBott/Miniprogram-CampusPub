@@ -1,0 +1,1 @@
+<view class="login-container"><uni-icons vue-id="2db90e82-1" type="contact-filled" size="100" color="#AFAFAF" bind:__l="__l"></uni-icons><button class="btn-login" type="primary" data-event-opts="{{[['tap',[['handleLogin',['$event']]]]]}}" bindtap="__e">一键登录</button><view class="tips-text">登录后即可探索更多内容</view></view>

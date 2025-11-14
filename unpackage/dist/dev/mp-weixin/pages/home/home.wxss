@@ -1,0 +1,333 @@
+@charset "UTF-8";
+/* 水平间距 */
+/* 水平间距 */
+.index-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+.banner-section .banner-swiper {
+  width: 100%;
+  height: 400rpx;
+}
+.banner-section .banner-swiper .banner-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.notice-bar-wrapper {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  display: block;
+}
+.notice-bar-wrapper::after {
+  border: none;
+}
+.notice-bar {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+  padding: 20rpx 24rpx;
+  border-bottom: 1rpx solid #ffe4e4;
+  position: relative;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+.notice-bar:active {
+  background: linear-gradient(135deg, #ffebeb 0%, #fff5f5 100%);
+  -webkit-transform: scale(0.99);
+          transform: scale(0.99);
+}
+.notice-bar .notice-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+  -webkit-animation: shake 2s infinite;
+          animation: shake 2s infinite;
+  flex-shrink: 0;
+}
+.notice-bar .notice-content {
+  flex: 1;
+  overflow: hidden;
+}
+.notice-bar .notice-content .notice-text {
+  font-size: 28rpx;
+  color: #C00000;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.notice-bar .notice-arrow {
+  font-size: 40rpx;
+  color: #C00000;
+  font-weight: bold;
+  padding: 0 8rpx;
+  flex-shrink: 0;
+}
+@-webkit-keyframes shake {
+0%, 100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+10%, 30% {
+    -webkit-transform: rotate(-10deg);
+            transform: rotate(-10deg);
+}
+20%, 40% {
+    -webkit-transform: rotate(10deg);
+            transform: rotate(10deg);
+}
+50% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+}
+@keyframes shake {
+0%, 100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+10%, 30% {
+    -webkit-transform: rotate(-10deg);
+            transform: rotate(-10deg);
+}
+20%, 40% {
+    -webkit-transform: rotate(10deg);
+            transform: rotate(10deg);
+}
+50% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+}
+.primary-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 0 24rpx;
+  height: 88rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 100;
+}
+.primary-nav.is-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+.primary-nav .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 48rpx;
+}
+.primary-nav .nav-left .nav-tab {
+  position: relative;
+  padding: 16rpx 0;
+}
+.primary-nav .nav-left .nav-tab .nav-text {
+  font-size: 32rpx;
+  color: #666;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.primary-nav .nav-left .nav-tab .nav-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, #C00000 0%, #C00000 100%);
+  border-radius: 3rpx;
+  -webkit-animation: slideIn 0.3s ease;
+          animation: slideIn 0.3s ease;
+}
+.primary-nav .nav-left .nav-tab.active .nav-text {
+  color: #333;
+  font-weight: 550;
+}
+.primary-nav .nav-right .search-icon {
+  font-size: 40rpx;
+  padding: 8rpx;
+}
+.category-nav {
+  background-color: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.category-nav .category-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.category-nav .category-scroll .category-list {
+  display: inline-flex;
+  padding: 0 24rpx;
+  gap: 32rpx;
+}
+.category-nav .category-scroll .category-list .category-item {
+  position: relative;
+  padding: 20rpx 8rpx;
+}
+.category-nav .category-scroll .category-list .category-item .category-text {
+  font-size: 28rpx;
+  color: #666;
+  transition: all 0.3s;
+}
+.category-nav .category-scroll .category-list .category-item.active .category-text {
+  color: #000;
+  font-weight: 550;
+}
+.content-section {
+  padding: 16rpx;
+}
+.content-section .loading-container {
+  padding: 80rpx 0;
+  text-align: center;
+}
+.content-section .loading-container .loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+.content-section .waterfall-container {
+  display: flex;
+  gap: 12rpx;
+  align-items: flex-start;
+}
+.content-section .waterfall-container .waterfall-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item {
+  width: 100%;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card {
+  background: #fff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card:active {
+  -webkit-transform: translateY(-4rpx);
+          transform: translateY(-4rpx);
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-image-wrapper {
+  width: 100%;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-image-wrapper .card-image {
+  width: 100%;
+  display: block;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-content {
+  padding: 12rpx 14rpx 6rpx;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-content .content-text {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8rpx 14rpx 10rpx;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex: 1;
+  min-width: 0;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .user-info .card-avatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .user-info .card-nickname {
+  font-size: 24rpx;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .like-action {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 12rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .like-action:active {
+  background: #f5f5f5;
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .like-action .like-icon {
+  font-size: 28rpx;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .like-action .like-icon-img {
+  width: 32rpx;
+  height: 32rpx;
+}
+.content-section .waterfall-container .waterfall-column .waterfall-item .waterfall-card .card-header .like-action .action-count {
+  font-size: 24rpx;
+  color: #666;
+  font-weight: 500;
+}
+.content-section .empty-state {
+  padding: 120rpx 0;
+  text-align: center;
+}
+.content-section .empty-state .empty-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 20rpx;
+}
+.content-section .empty-state .empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+.bottom-spacing {
+  height: 100rpx;
+}
+@-webkit-keyframes slideIn {
+from {
+    width: 0;
+    opacity: 0;
+}
+to {
+    width: 40rpx;
+    opacity: 1;
+}
+}
+@keyframes slideIn {
+from {
+    width: 0;
+    opacity: 0;
+}
+to {
+    width: 40rpx;
+    opacity: 1;
+}
+}

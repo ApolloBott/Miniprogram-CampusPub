@@ -1,0 +1,53 @@
+{
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/home/home",
+          "pathName": "pages/home/home",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
+          "name": "subpkg/chat/chat",
+          "pathName": "subpkg/chat/chat",
+          "query": "goods_info=%257B%2522goods_id%2522%253A14%252C%2522category%2522%253A%2522%25E5%25AD%25A6%25E4%25B9%25A0%2522%252C%2522goods_name%2522%253A%2522%25E8%2590%259D%25E5%258D%259C%2522%252C%2522goods_price%2522%253A%25220.01%2522%252C%2522goods_number%2522%253A100%252C%2522goods_weight%2522%253A500%252C%2522goods_introduce%2522%253A%2522%25E8%2590%259D%25E5%258D%259C%2522%252C%2522goods_big_logo%2522%253A%2522https%253A%252F%252Fwait00.oss-cn-shanghai.aliyuncs.com%252Fgoods%252FoECtf1yX17Pl3HvD9OutCBfXZheE%252F1761788732477_bdxa9c.jpg%2522%252C%2522goods_small_logo%2522%253A%2522https%253A%252F%252Fwait00.oss-cn-shanghai.aliyuncs.com%252Fgoods%252FoECtf1yX17Pl3HvD9OutCBfXZheE%252F1761788732477_bdxa9c.jpg%2522%252C%2522add_time%2522%253A1761788733%252C%2522upd_time%2522%253A1762213566%252C%2522hot_mumber%2522%253A0%252C%2522is_promote%2522%253Afalse%252C%2522cat_one_id%2522%253A1%252C%2522cat_two_id%2522%253A2%252C%2522cat_three_id%2522%253A3%252C%2522publisher_id%2522%253A%2522oECtf1yX17Pl3HvD9OutCBfXZheE%2522%252C%2522publisher_nickname%2522%253A%2522%25E8%2590%259D%25E5%258D%259C%25E7%259D%25A1%25E4%25B8%258D%25E9%2586%2592%25E5%2595%258A%25E5%2595%258A%25E5%2595%258A%25E5%2595%258A%25E5%2595%258A%25E5%2595%258A%2522%252C%2522publisher_avatarUrl%2522%253A%2522https%253A%252F%252Fwait00.oss-cn-shanghai.aliyuncs.com%252Fgoods%252FoECtf1yX17Pl3HvD9OutCBfXZheE%252F1761012525985_rb42of.jpg%2522%252C%2522location%2522%253A%2522%25E9%2597%25B5%25E8%25A1%258C%2522%252C%2522view_count%2522%253A13%252C%2522goods_status%2522%253A1%252C%2522pics%2522%253A%255B%257B%2522pics_id%2522%253A1%252C%2522pics_big%2522%253A%2522https%253A%252F%252Fwait00.oss-cn-shanghai.aliyuncs.com%252Fgoods%252FoECtf1yX17Pl3HvD9OutCBfXZheE%252F1761788732477_bdxa9c.jpg%2522%252C%2522pics_mid%2522%253A%2522https%253A%252F%252Fwait00.oss-cn-shanghai.aliyuncs.com%252Fgoods%252FoECtf1yX17Pl3HvD9OutCBfXZheE%252F1761788732477_bdxa9c.jpg%2522%252C%2522pics_sma%2522%253A%2522https%253A%252F%252Fwait00.oss-cn-shanghai.aliyuncs.com%252Fgoods%252FoECtf1yX17Pl3HvD9OutCBfXZheE%252F1761788732477_bdxa9c.jpg%2522%257D%255D%252C%2522attrs%2522%253A%255B%257B%2522attr_id%2522%253A8519%252C%2522attr_sel%2522%253A%2522only%2522%252C%2522add_price%2522%253A0%252C%2522attr_name%2522%253A%2522%25E4%25B8%25BB%25E4%25BD%2593-%25E5%259E%258B%25E5%258F%25B7%2522%252C%2522attr_vals%2522%253A%2522Q6%2522%252C%2522attr_value%2522%253A%2522400%2522%252C%2522attr_write%2522%253A%2522manual%2522%257D%255D%252C%2522comment%2522%253A%255B%255D%257D",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/home/home",
+          "pathName": "pages/home/home",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/my/my",
+          "pathName": "subpkg/verification/verification",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/my/my",
+          "pathName": "pages/my/my",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/my/my",
+          "pathName": "pages/my/my",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        }
+      ]
+    }
+  },
+  "setting": {
+    "urlCheck": true
+  }
+}
