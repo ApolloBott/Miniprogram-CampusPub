@@ -1,6 +1,9 @@
 @charset "UTF-8";
 /* 水平间距 */
 /* 水平间距 */
+/* 所有样式与上一版（随机昵称版）完全相同
+  ... (此处省略所有样式，请使用上一版中提供的完整样式)
+*/
 .edit-profile-page.data-v-ee6d6c8c {
   min-height: 100vh;
   background-color: #f5f5f5;
@@ -161,7 +164,43 @@
 .form-item .form-textarea.data-v-ee6d6c8c::placeholder {
   color: #999;
 }
-/* 提示信息 */
+/* 昵称生成器样式 (无修改) */
+.form-item.nickname-item .nickname-generator.data-v-ee6d6c8c {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+.form-item.nickname-item .nickname-generator .nickname-display.data-v-ee6d6c8c {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+  flex: 1;
+  margin-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.form-item.nickname-item .nickname-generator .random-button.data-v-ee6d6c8c {
+  display: flex;
+  align-items: center;
+  background-color: #eaf2ff;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+.form-item.nickname-item .nickname-generator .random-button.data-v-ee6d6c8c  .uni-icons {
+  margin-right: 0 !important;
+}
+.form-item.nickname-item .nickname-generator .random-button .random-text.data-v-ee6d6c8c {
+  font-size: 13px;
+  color: #007aff;
+  margin-left: 4px;
+  font-weight: 500;
+}
+/* 提示信息 (无修改) */
 .form-tips.data-v-ee6d6c8c {
   margin-top: 20px;
   padding: 0 20px;
@@ -174,4 +213,46 @@
 }
 .form-tips .tips-text.data-v-ee6d6c8c:not(:last-child) {
   margin-bottom: 5px;
+}
+/* 头像弹窗样式 (无修改) */
+.popup-content.data-v-ee6d6c8c {
+  padding: 20px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.popup-content .popup-header.data-v-ee6d6c8c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.popup-content .popup-header .popup-title.data-v-ee6d6c8c {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+.popup-content .popup-header .popup-close.data-v-ee6d6c8c {
+  padding: 5px;
+}
+.avatar-grid-container.data-v-ee6d6c8c {
+  max-height: 40vh;
+}
+.avatar-grid-container .avatar-grid.data-v-ee6d6c8c {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 15px;
+}
+.avatar-grid-container .avatar-grid .grid-avatar.data-v-ee6d6c8c {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #f0f0f0;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.avatar-grid-container .avatar-grid .grid-avatar.selected.data-v-ee6d6c8c {
+  border-color: #007aff;
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
 }

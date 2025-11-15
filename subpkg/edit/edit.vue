@@ -1,6 +1,5 @@
 <template>
   <view class="edit-profile-page">
-    <!-- 导航栏 -->
     <view class="navbar">
       <view class="navbar-left" @click="goBack">
         <uni-icons type="left" size="24" color="#333"></uni-icons>
@@ -11,33 +10,32 @@
       </view>
     </view>
     
-    <!-- 编辑表单 -->
     <scroll-view class="form-container" scroll-y>
-      <!-- 头像 -->
       <view class="form-section">
         <view class="form-item avatar-item">
           <text class="form-label">头像</text>
-          <view class="avatar-upload" @click="changeAvatar">
+          <view class="avatar-upload" @click="openAvatarSelector">
             <image 
               :src="editForm.avatarUrl || '/static/default-avatar.png'" 
               class="upload-avatar"
               mode="aspectFill"
             ></image>
-            <uni-icons type="camera" size="24" color="#fff" class="camera-icon"></uni-icons>
+            <uni-icons type="loop" size="20" color="#fff" class="camera-icon"></uni-icons>
           </view>
         </view>
       </view>
       
-      <!-- 基本信息 -->
       <view class="form-section">
-        <view class="form-item">
+        
+        <view class="form-item nickname-item">
           <text class="form-label">昵称</text>
-          <input 
-            v-model="editForm.nickname" 
-            class="form-input"
-            placeholder="请输入昵称"
-            maxlength="20"
-          />
+          <view class="nickname-generator">
+            <text class="nickname-display">{{ editForm.nickname }}</text>
+            <view class="random-button" @click="generateRandomNickname(true)">
+              <uni-icons type="refreshempty" size="20" color="#007aff"></uni-icons>
+              <text class="random-text">换一个</text>
+            </view>
+          </view>
         </view>
         
         <view class="form-item">
@@ -67,7 +65,6 @@
           </view>
         </view>
         
-        <!-- 🔥 修改：学院改为只读显示 -->
         <view class="form-item">
           <text class="form-label">学院</text>
           <view class="form-readonly">
@@ -77,7 +74,6 @@
         </view>
       </view>
       
-      <!-- 个人简介 -->
       <view class="form-section">
         <view class="form-item">
           <text class="form-label">个人简介</text>
@@ -91,13 +87,37 @@
         </view>
       </view>
       
-      <!-- 提示信息 -->
       <view class="form-tips">
         <text class="tips-text">• 头像和昵称是您在社区的展示名片</text>
         <text class="tips-text">• 学院信息由系统认证，不可修改</text>
         <text class="tips-text">• 真实的个人信息有助于建立信任</text>
       </view>
     </scroll-view>
+    
+    <uni-popup ref="avatarPopup" type="bottom" background-color="#fff">
+      <view class="popup-content">
+        <view class="popup-header">
+          <text class="popup-title">选择一个头像</text>
+          <view class="popup-close" @click="closeAvatarPopup">
+            <uni-icons type="close" size="22" color="#999"></uni-icons>
+          </view>
+        </view>
+        <scroll-view class="avatar-grid-container" scroll-y>
+          <view class="avatar-grid">
+            <image
+              v-for="(url, index) in presetAvatars"
+              :key="index"
+              :src="url"
+              class="grid-avatar"
+              mode="aspectFill"
+              @click="selectAvatar(url)"
+              :class="{ 'selected': editForm.avatarUrl === url }"
+            ></image>
+          </view>
+        </scroll-view>
+      </view>
+    </uni-popup>
+    
   </view>
 </template>
 
@@ -107,17 +127,76 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'EditProfile',
   data() {
+    // 预设头像列表
+    const presetAvatarList = Array.from({ length: 40 }, (_, i) => {
+      return `https://wait00.oss-cn-shanghai.aliyuncs.com/profile/${i + 1}.png`
+    })
+    
+    // 🔥 MODIFIED: 更新为你的最新词库
+    const nameStyles = [
+      {
+        // 风格1: 可爱
+        adjectives: [
+          '软萌', '阳光', '软糯', '蓬松', '乖巧',
+          '暖暖', '泡泡', '糯糯', '迷茫', '忧郁'
+        ],
+        nouns: [
+          '西蓝花', '鲷鱼烧', '草莓派', '热可可',
+          '奇异果', '小麻薯', '小可颂', '小曲奇', '星冰乐',
+          '菠萝包', '小云吞', '糯米团', '小泡芙', '排骨年糕'
+        ]
+      },
+      {
+        // 风格2: 校园/地名
+        adjectives: [
+          '虹梅南路', '中山北路', '剑川路上', '金沙江路', '东川路的',
+          '莲花南路', '老子思维', '量子思维', '求实创造', '为人师表',
+          '丽娃河畔', '樱桃河畔'
+        ],
+        nouns: [
+          '秋实阁', '夏雨厅', '冬月厅', '冬日厅', '满天星',
+          '环球港', '苏州河', '黄浦江'
+        ]
+      },
+      {
+        // 风格3: 科技/学术
+        adjectives: [
+          '轮换', '异步', '正交', '全息', '冒泡', '异构', '正则', '赛博',
+          '类脑', '互易', '脉冲', '矩阵', '导电'
+        ],
+        nouns: [
+          '量子思维', '老子思维', '多项式', '逻辑门', 'CMOS', 'TTL', '二叉树',
+          '超导体', '光子束', '算力核', '模块机', '智能端', '逆矩阵',
+          '对称阵子', '八木天线', '牛顿环', '希尔伯特空间', 'pn结', '干涉仪', '示波器'
+        ]
+      },
+      {
+        // 风格4: 文艺/抽象
+        adjectives: [
+          '暮色', '星澜', '风栖', '云上', '微光', '秋色', '月白', '遥远', '淡墨', '枝间',
+          '山海', '雾起', '岁月', '青藤', '轻舟', '温柔', '晴空', '流光', '雨落', '清晨'
+        ],
+        nouns: [
+          '小心心', '小泡泡', '小问号', '小叹号', '小方块', '暖粒子', '小灵感', '小记忆', '小能量',
+          '小音符', '轻情绪', '小希望', '小梦境', '小计划', '小故事', '小念头', '小宇宙', '小期待'
+        ]
+      }
+    ]
+    
     return {
       editForm: {
         nickname: '',
         avatarUrl: '',
         user_sex: '',
-        major: '', // 🔥 只用于显示，不会被修改
+        major: '', 
         user_introduce: ''
       },
-      uploading: false,
       hasChanges: false,
-	  enableWatch: false  // 🔥 新增
+	    enableWatch: false,
+      presetAvatars: presetAvatarList,
+      nameStyles: nameStyles,
+      // 🔥 NEW: 添加风格索引计数器
+      currentStyleIndex: 0
     }
   },
   
@@ -127,17 +206,15 @@ export default {
   
   onLoad() {
     this.initEditForm()
-	// 🔥 延迟启用监听
 	    this.$nextTick(() => {
 	      this.enableWatch = true
 	    })
   },
   
-  // 监听表单变化
+  // 监听表单变化 (无修改)
   watch: {
     editForm: {
       handler() {
-         // 🔥 修复：只有启用监听后才标记
                if (this.enableWatch) {
                  this.hasChanges = true
                }
@@ -146,7 +223,7 @@ export default {
     }
   },
   
-  // 返回前提示
+  // 返回前提示 (无修改)
   onBackPress() {
     if (this.hasChanges) {
       uni.showModal({
@@ -158,27 +235,74 @@ export default {
           }
         }
       })
-      return true // 阻止默认返回
+      return true
     }
   },
   
   methods: {
     ...mapMutations('m_user', ['updateUserBase']),
     
-    // 初始化表单
+    // 🔥 MODIFIED: 初始化表单
     initEditForm() {
       this.editForm = {
         nickname: this.userBase.nickname || '',
         avatarUrl: this.userBase.avatarUrl || '',
         user_sex: this.userBase.user_sex || '保密',
-        major: this.userBase.major || '', // 🔥 只读字段
+        major: this.userBase.major || '',
         user_introduce: this.userBase.user_introduce || ''
       }
+      
+      if (!this.editForm.nickname) {
+        // 🔥 MODIFIED: 初始化时生成昵称，但不推进计数器
+        this.generateRandomNickname(false) 
+      }
+      
       this.hasChanges = false
-	  this.enableWatch = false  // 🔥 保存后禁用监听，避免导航返回时误判
+	  this.enableWatch = false
     },
     
-    // 返回
+    // 🔥 MODIFIED: 生成随机昵称的逻辑
+    /**
+     * @param {boolean} incrementStyle - 是否推进风格计数器（用户点击时为true，初始化时为false）
+     */
+    generateRandomNickname(incrementStyle = false) {
+      
+      // 1. 决定使用哪个索引
+      let styleIndexToUse = this.currentStyleIndex;
+      
+      // 2. 如果是用户点击“换一个”，则推进索引
+      if (incrementStyle) {
+        // 推进索引，并使用 % 运算符确保循环
+        this.currentStyleIndex = (this.currentStyleIndex + 1) % this.nameStyles.length;
+        styleIndexToUse = this.currentStyleIndex;
+      }
+      
+      const selectedStyle = this.nameStyles[styleIndexToUse];
+      
+      let newName = '';
+      let attempts = 0; // 安全锁，防止死循环
+      
+      // 3. 循环直到生成一个不重复的昵称
+      do {
+        const adjIndex = Math.floor(Math.random() * selectedStyle.adjectives.length);
+        const adj = selectedStyle.adjectives[adjIndex];
+        
+        const nounIndex = Math.floor(Math.random() * selectedStyle.nouns.length);
+        const noun = selectedStyle.nouns[nounIndex];
+        
+        newName = (adj + noun).substring(0, 20);
+        attempts++;
+      } while (
+        newName === this.editForm.nickname && // 避免和当前昵称重复
+        (selectedStyle.adjectives.length > 1 || selectedStyle.nouns.length > 1) && // 确保词库有足够多的词
+        attempts < 10 // 最多尝试10次
+      );
+
+      // 4. 赋值
+      this.editForm.nickname = newName;
+    },
+    
+    // 返回 (无修改)
     goBack() {
       if (this.hasChanges) {
         uni.showModal({
@@ -195,7 +319,7 @@ export default {
       }
     },
     
-    // 保存资料
+    // 保存资料 (无修改)
     async saveProfile() {
       if (!this.editForm.nickname.trim()) {
         return uni.showToast({ 
@@ -207,7 +331,6 @@ export default {
       try {
         uni.showLoading({ title: '保存中...', mask: true })
         
-        // 🔥 修改：不发送 major 字段到后端
         const { data: res } = await uni.$http.post('/users/updateProfile', {
           openid: this.userBase.openid,
           nickname: this.editForm.nickname.trim(),
@@ -253,116 +376,28 @@ export default {
       }
     },
     
-    // 更换头像
-    changeAvatar() {
-      uni.chooseImage({
-        count: 1,
-        sizeType: ['compressed'],
-        sourceType: ['album', 'camera'],
-        success: async (res) => {
-          const tempFilePath = res.tempFilePaths[0]
-          const uploadedUrls = await this.uploadImages([tempFilePath])
-          
-          if (uploadedUrls && uploadedUrls.length > 0) {
-            this.editForm.avatarUrl = uploadedUrls[0]
-            uni.showToast({ 
-              title: '头像已更新', 
-              icon: 'success' 
-            })
-          }
-        },
-        fail: (err) => {
-          console.error('选择图片失败:', err)
-          uni.showToast({
-            title: '选择图片失败',
-            icon: 'none'
-          })
-        }
-      })
+    // 头像弹窗方法 (无修改)
+    openAvatarSelector() {
+      this.$refs.avatarPopup.open()
     },
     
-    // 上传图片
-    async uploadImages(filePaths) {
-      if (!filePaths || filePaths.length === 0) {
-        return []
-      }
-
-      this.uploading = true
-      uni.showLoading({
-        title: '上传中...',
-        mask: true
-      })
-
-      const imageUrls = []
-
-      try {
-        for (let i = 0; i < filePaths.length; i++) {
-          const filePath = filePaths[i]
-
-          // 获取上传凭证
-          const { data: tokenRes } = await uni.$http.get('/upload/token', {
-            openid: this.openid,
-            fileType: 'image'
-          })
-
-          if (tokenRes.meta.status !== 200) {
-            throw new Error('获取上传凭证失败')
-          }
-
-          // 读取文件内容
-          const fileContent = await new Promise((resolve, reject) => {
-            uni.getFileSystemManager().readFile({
-              filePath: filePath,
-              encoding: 'base64',
-              success: (res) => resolve(res.data),
-              fail: reject
-            })
-          })
-
-          // 上传到云存储
-          await new Promise((resolve, reject) => {
-            uni.request({
-              url: tokenRes.message.publicUrl,
-              method: 'PUT',
-              header: {
-                'Content-Type': 'application/octet-stream'
-              },
-              data: uni.base64ToArrayBuffer(fileContent),
-              success: (res) => {
-                if (res.statusCode === 200) {
-                  resolve(res)
-                } else {
-                  reject(new Error(`上传失败: ${res.statusCode}`))
-                }
-              },
-              fail: reject
-            })
-          })
-
-          imageUrls.push(tokenRes.message.publicUrl)
-        }
-
-        uni.hideLoading()
-        return imageUrls
-
-      } catch (error) {
-        console.error('[ERROR] 上传失败:', error)
-        uni.hideLoading()
-        uni.showToast({
-          title: error.message || '上传失败',
-          icon: 'none',
-          duration: 2000
-        })
-        return []
-      } finally {
-        this.uploading = false
-      }
-    }
+    closeAvatarPopup() {
+      this.$refs.avatarPopup.close()
+    },
+    
+    selectAvatar(url) {
+      this.editForm.avatarUrl = url
+      this.closeAvatarPopup()
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
+/* 所有样式与上一版（随机昵称版）完全相同
+  ... (此处省略所有样式，请使用上一版中提供的完整样式)
+*/
+
 .edit-profile-page {
   min-height: 100vh;
   background-color: #f5f5f5;
@@ -483,7 +518,6 @@ export default {
     }
   }
   
-  // 🔥 新增：只读字段样式
   .form-readonly {
     padding: 12px 15px;
     background-color: #fafafa;
@@ -543,7 +577,50 @@ export default {
   }
 }
 
-/* 提示信息 */
+/* 昵称生成器样式 (无修改) */
+.form-item.nickname-item {
+  .nickname-generator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    
+    .nickname-display {
+      font-size: 15px;
+      color: #333;
+      font-weight: 500;
+      flex: 1;
+      margin-right: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .random-button {
+      display: flex;
+      align-items: center;
+      background-color: #eaf2ff;
+      padding: 6px 10px;
+      border-radius: 20px;
+      
+      ::v-deep .uni-icons {
+        margin-right: 0 !important;
+      }
+      
+      .random-text {
+        font-size: 13px;
+        color: #007aff;
+        margin-left: 4px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* 提示信息 (无修改) */
 .form-tips {
   margin-top: 20px;
   padding: 0 20px;
@@ -556,6 +633,55 @@ export default {
     
     &:not(:last-child) {
       margin-bottom: 5px;
+    }
+  }
+}
+
+/* 头像弹窗样式 (无修改) */
+.popup-content {
+  padding: 20px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .popup-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .popup-close {
+      padding: 5px; 
+    }
+  }
+}
+
+.avatar-grid-container {
+  max-height: 40vh;
+  
+  .avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 15px;
+    
+    .grid-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      background-color: #f0f0f0;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      
+      &.selected {
+        border-color: #007aff;
+        transform: scale(1.1);
+      }
     }
   }
 }

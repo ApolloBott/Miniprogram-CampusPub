@@ -563,7 +563,7 @@ var promiseInterceptor = {
     });
   }
 };
-var SYNC_API_RE = /^\$|__f__|Window$|WindowStyle$|sendHostEvent|sendNativeEvent|restoreGlobal|requireGlobal|getCurrentSubNVue|getMenuButtonBoundingClientRect|^report|interceptors|Interceptor$|getSubNVueById|requireNativePlugin|rpx2px|upx2px|hideKeyboard|canIUse|^create|Sync$|Manager$|base64ToArrayBuffer|arrayBufferToBase64|getLocale|setLocale|invokePushCallback|getWindowInfo|getDeviceInfo|getAppBaseInfo|getSystemSetting|getAppAuthorizeSetting|initUTS|requireUTS|registerUTS/;
+var SYNC_API_RE = /^\$|__f__|Window$|WindowStyle$|sendHostEvent|sendNativeEvent|restoreGlobal|requireGlobal|getCurrentSubNVue|getMenuButtonBoundingClientRect|^report|interceptors|Interceptor$|getSubNVueById|requireNativePlugin|rpx2px|upx2px|hideKeyboard|canIUse|^create|Sync$|Manager$|base64ToArrayBuffer|arrayBufferToBase64|getLocale|setLocale|invokePushCallback|getWindowInfo|getDeviceInfo|getAppBaseInfo|getSystemSetting|getAppAuthorizeSetting|initUTS|requireUTS|registerUTS|getFacialRecognitionMetaInfo/;
 var CONTEXT_API_RE = /^create|Manager$/;
 
 // Context例外情况
@@ -1030,9 +1030,9 @@ function populateParameters(result) {
     appVersion: "1.0.0",
     appVersionCode: "100",
     appLanguage: getAppLanguage(hostLanguage),
-    uniCompileVersion: "4.76",
-    uniCompilerVersion: "4.76",
-    uniRuntimeVersion: "4.76",
+    uniCompileVersion: "4.84",
+    uniCompilerVersion: "4.84",
+    uniRuntimeVersion: "4.84",
     uniPlatform: undefined || "mp-weixin",
     deviceBrand: deviceBrand,
     deviceModel: model,
@@ -1138,9 +1138,9 @@ var getAppBaseInfo = {
       hostTheme: theme,
       isUniAppX: false,
       uniPlatform: undefined || "mp-weixin",
-      uniCompileVersion: "4.76",
-      uniCompilerVersion: "4.76",
-      uniRuntimeVersion: "4.76"
+      uniCompileVersion: "4.84",
+      uniCompilerVersion: "4.84",
+      uniRuntimeVersion: "4.84"
     }));
   }
 };
@@ -9426,9 +9426,9 @@ internalMixin(Vue);
 /***/ }),
 
 /***/ 26:
-/*!**************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/pages.json ***!
-  \**************************************************************************/
+/*!**********************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/pages.json ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -9437,9 +9437,9 @@ internalMixin(Vue);
 /***/ }),
 
 /***/ 260:
-/*!********************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/subpkg/text-to-image/backgroundConfig.js ***!
-  \********************************************************************************************************/
+/*!****************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/subpkg/text-to-image/backgroundConfig.js ***!
+  \****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11672,9 +11672,9 @@ function normalizeComponent (
 /***/ }),
 
 /***/ 361:
-/*!*******************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-icons/components/uni-icons/uniicons_file_vue.js ***!
-  \*******************************************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-icons/components/uni-icons/uniicons_file_vue.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12176,9 +12176,9 @@ exports.fontData = fontData;
 /***/ }),
 
 /***/ 37:
-/*!******************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/store/store.js ***!
-  \******************************************************************************/
+/*!**************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/store/store.js ***!
+  \**************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12205,9 +12205,9 @@ exports.default = _default;
 /***/ }),
 
 /***/ 38:
-/*!*****************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/store/user.js ***!
-  \*****************************************************************************/
+/*!*************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/store/user.js ***!
+  \*************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12340,9 +12340,9 @@ exports.default = _default;
 /***/ }),
 
 /***/ 383:
-/*!**********************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/index.js ***!
-  \**********************************************************************************************************************************/
+/*!******************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/index.js ***!
+  \******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12367,9 +12367,9 @@ exports.default = _default;
 /***/ }),
 
 /***/ 384:
-/*!*********************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/en.json ***!
-  \*********************************************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/en.json ***!
+  \*****************************************************************************************************************/
 /*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
 /***/ (function(module) {
 
@@ -12378,9 +12378,9 @@ module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"cancel\",\"uni-search-
 /***/ }),
 
 /***/ 385:
-/*!**************************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hans.json ***!
-  \**************************************************************************************************************************************/
+/*!**********************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hans.json ***!
+  \**********************************************************************************************************************/
 /*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
 /***/ (function(module) {
 
@@ -12389,9 +12389,9 @@ module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"取消\",\"uni-search-
 /***/ }),
 
 /***/ 386:
-/*!**************************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hant.json ***!
-  \**************************************************************************************************************************************/
+/*!**********************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hant.json ***!
+  \**********************************************************************************************************************/
 /*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
 /***/ (function(module) {
 
@@ -12400,9 +12400,9 @@ module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"取消\",\"uni-search-
 /***/ }),
 
 /***/ 39:
-/*!**********************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/node_modules/@escook/request-miniprogram/miniprogram_dist/index.js ***!
-  \**********************************************************************************************************************************/
+/*!******************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/node_modules/@escook/request-miniprogram/miniprogram_dist/index.js ***!
+  \******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12528,9 +12528,9 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /***/ }),
 
 /***/ 408:
-/*!***************************************************************************************************************************************!*\
-  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-transition/components/uni-transition/createAnimation.js ***!
-  \***************************************************************************************************************************************/
+/*!***********************************************************************************************************************!*\
+  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-transition/components/uni-transition/createAnimation.js ***!
+  \***********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
