@@ -1,13 +1,13 @@
+
+
+```vue
 <template>
   <view>
-    <!-- 用户未登录时，显示登录组件 -->
     <my-login v-if="!token"></my-login>
     
       <view class="my-userinfo-container" v-else>
-        <!-- 左侧抽屉菜单 (保持不变) -->
         <view class="drawer-mask" :class="{ 'show': showDrawer }" @click="closeDrawer"></view>
         <view class="drawer-container" :class="{ 'show': showDrawer }">
-          <!-- ...抽屉内容保持不变... -->
           <view class="drawer-header">
             <text class="drawer-title">菜单</text>
             <view class="drawer-close" @click="closeDrawer">
@@ -33,7 +33,6 @@
           </view>
           
           <view class="drawer-content">
-            <!-- 树洞菜单 -->
             <view v-if="drawerTab === 0" class="menu-section">
               <view class="menu-item" @click="handleMenuClick('myPosts')">
                 <text class="menu-text">发布的帖子</text>
@@ -60,7 +59,6 @@
               </view>
             </view>
             
-            <!-- 二手菜单 -->
             <view v-if="drawerTab === 1" class="menu-section">
               <view class="menu-item" @click="handleMenuClick('published')">
                 <text class="menu-text">我发布的</text>
@@ -99,6 +97,11 @@
           </view>
           
           <view class="drawer-footer">
+            <button class="footer-item" @click="handleMenuClick('editProfile')">
+              <text>编辑资料</text>
+              <uni-icons type="arrowright" size="16" color="#999" class="arrow-icon"></uni-icons>
+            </button>
+            
             <button class="footer-item feedback-btn" open-type="contact" @click="handleMenuClick('feedback')">
               <text>反馈</text>
               <uni-icons type="arrowright" size="16" color="#999" class="arrow-icon"></uni-icons>
@@ -116,7 +119,6 @@
           </view>
         </view>
         
-        <!-- 用户信息头部 -->
         <view class="user-header">
           <view class="user-info">
             <image 
@@ -130,7 +132,6 @@
               <view class="nickname-row">
                 <text class="nickname">{{ userBase.nickname }}</text>
                 
-                <!-- 认证状态 -->
                 <view class="verified-badge-inline" v-if="userBase.is_verified === 1">
                   <text class="verified-text">已认证</text>
                 </view>
@@ -145,12 +146,10 @@
                 </view>
               </view>
               
-              <!-- 性别 -->
               <view class="gender-row" v-if="userBase.user_sex">
                 <text class="gender-text">{{ userBase.user_sex }}</text>
               </view>
               
-              <!-- 学院信息 -->
               <view class="major-message-row">
                 <view class="major-info" v-if="userBase.major">
                   <text class="major-text">{{ userBase.major }}</text>
@@ -159,7 +158,6 @@
             </view>
           </view>
           
-          <!-- 右侧按钮组 -->
           <view class="header-actions">
             <view class="menu-btn" @click="openDrawer">
               <uni-icons type="bars" size="20" color="#666"></uni-icons>
@@ -167,7 +165,6 @@
           </view>
         </view>
 
-        <!-- 关注数据 -->
         <view class="stats-section">
           <view class="stats-left">
             <view class="stat-item" @click="gotoFollow">
@@ -183,9 +180,7 @@
             </view>
           </view>
           
-          <!-- 右侧按钮组 -->
           <view class="stats-right">
-            <!-- 消息按钮 -->
             <button class="message-btn-inline" @click="gotoMessage()">
               <image 
                 class="message-icon" 
@@ -193,22 +188,18 @@
                 mode="aspectFit"
               ></image>
               <text class="btn-text">消息</text>
-              <!-- 未读消息badge -->
               <view class="message-badge" v-if="unreadCount > 0">
                 <text class="badge-text">{{ unreadCount > 99 ? '99+' : unreadCount }}</text>
               </view>
             </button>
             
-            <!-- 编辑资料按钮 -->
             <button class="edit-profile-btn-inline" @click="gotoEditProfile">
               <text class="btn-text">编辑资料</text>
             </button>
           </view>
         </view>
         
-        <!-- 🔥 修改：主选项卡 - 添加 sticky 类 -->
         <view class="combined-tabs tabs-sticky">
-          <!-- 左侧：动态/评论/私密 -->
           <view class="main-tabs-left">
             <view 
               class="main-tab-item"
@@ -242,9 +233,7 @@
           </view>
 		  
 		  
-          <!-- 🔥 新增：中间区域 - 树洞/二手切换或搜索图标 -->
-            <view class="tabs-right">
-              <!-- 树洞/二手切换（私密选项卡时不显示） -->
+          <view class="tabs-right">
               <view 
                 class="sub-tab-toggle" 
                 v-if="activeMainTab !== 2"
@@ -254,68 +243,46 @@
                 <text class="switch-icon">⇄</text>
               </view>
               
-              <!-- 🔥 新增：搜索图标按钮 -->
               <view class="search-btn" @click="gotoSearch">
-                <uni-icons type="search" size="20" color="#666"></uni-icons>
+                <image src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/search.png" class="search-icon-img" mode="aspectFit"></image>
               </view>
             </view>
         </view>
         
-        <!-- 🔥 修改：内容区域 - 移除 scroll-view -->
         <view class="content-container">
-          <!-- 动态-树洞帖子 -->
           <view v-if="activeMainTab === 0 && activeSubTab === 0">
-            <view 
-              class="post-item" 
-              v-for="post in postList" 
-              :key="post.id"
-            >
-			
-			<!-- 🔥 修改：帖子内容和时间在同一行 -->
-			    <view class="post-content-row" @click="gotoPostDetail(post)">
-			      <view class="post-content">
-			        <text class="content-text">{{ post.content }}</text>
-			      </view>
-			      <view class="post-time-wrapper">
-			        <text class="post-time">{{ post.timeText }}</text>
-			      </view>
-			    </view>
-              
-              <view class="post-images" v-if="post.images && post.images.length > 0" @click="gotoPostDetail(post)">
-                <image 
-                  v-for="(img, idx) in post.images.slice(0, 3)" 
-                  :key="idx"
-                  class="post-image"
-                  :src="img"
-                  mode="widthFix"
-                ></image>
-                <view class="more-images" v-if="post.images.length > 3">
-                  <text>+{{ post.images.length - 3 }}</text>
+            <view class="timeline-container">
+              <view 
+                class="timeline-post-item" 
+                v-for="(post, index) in postList" 
+                :key="post.id"
+                @click="gotoPostDetail(post)"
+              >
+                <view class="timeline-date">
+                  <template v-if="index === 0 || post.fullDateStr !== postList[index - 1].fullDateStr">
+                    <text class="date-day">{{ post.timeDay }}</text>
+                    <text class="date-month">{{ post.timeMonth }}</text>
+                  </template>
                 </view>
-              </view>
-              
-              <view class="post-footer">
-				  
-                <text class="view-count">{{ post.view_count }} 浏览</text>
-                <view class="footer-right">
-                  <view class="action-item" @click.stop="toggleLike(post)">
-                    <image 
-                      class="action-icon-img" 
-                      :src="post.isLiked ? iconLikedUrl : iconLikeUrl" 
-                      mode="aspectFit"
-                    ></image>
-                    <text class="action-count">{{ post.like_count }}</text>
+                
+                <view class="timeline-content">
+                  <view class="post-content" v-if="post.content">
+                    <text class="content-text-timeline">{{ post.content }}</text>
                   </view>
                   
-                  <view class="action-item">
+                  <view class="post-images" v-if="post.images && post.images.length > 0">
                     <image 
-                      class="action-icon-img" 
-                      :src="iconCommentUrl" 
-                      mode="aspectFit"
+                      v-for="(img, idx) in post.images.slice(0, 3)" 
+                      :key="idx"
+                      class="post-image"
+                      :src="img"
+                      mode="aspectFill"
                     ></image>
-                    <text class="action-count">{{ post.comment_count }}</text>
+                    <view class="more-images" v-if="post.images.length > 3">
+                      <text>+{{ post.images.length - 3 }}</text>
+                    </view>
                   </view>
-                </view>
+                  </view>
               </view>
             </view>
             
@@ -325,7 +292,6 @@
             </view>
           </view>
           
-          <!-- 评论-树洞 -->
           <view v-if="activeMainTab === 1 && activeSubTab === 0">
             <view 
               class="post-item" 
@@ -333,8 +299,7 @@
               :key="post.id"
               
             >
-			<!-- 🔥 修改：帖子内容和时间在同一行 -->
-			    <view class="post-content-row" @click="gotoPostDetail(post)">
+			<view class="post-content-row" @click="gotoPostDetail(post)">
 			      <view class="post-content">
 			        <text class="content-text">{{ post.content }}</text>
 			      </view>
@@ -386,7 +351,6 @@
             </view>
           </view>
           
-          <!-- 动态-二手商品 -->
           <view v-if="activeMainTab === 0 && activeSubTab === 1">
             <view class="waterfall">
               <view class="col">
@@ -407,7 +371,6 @@
             </view>
           </view>
           
-          <!-- 评论-二手 -->
           <view v-if="activeMainTab === 1 && activeSubTab === 1">
             <view class="waterfall">
               <view class="col">
@@ -428,7 +391,6 @@
             </view>
           </view>
           
-          <!-- 私密-树洞帖子 -->
           <view v-if="activeMainTab === 2">
             <view 
               class="post-item" 
@@ -437,8 +399,7 @@
              
             >
 			
-			<!-- 🔥 修改：帖子内容和时间在同一行 -->
-			    <view class="post-content-row" @click="gotoPostDetail(post)">
+			<view class="post-content-row" @click="gotoPostDetail(post)">
 			      <view class="post-content">
 			        <text class="content-text">{{ post.content }}</text>
 			      </view>
@@ -490,7 +451,6 @@
             </view>
           </view>
           
-          <!-- 加载提示 -->
           <view class="load-more" v-if="loading">
             <text class="load-text">加载中...</text>
           </view>
@@ -975,6 +935,7 @@ export default {
 				'history': () => this.gotoHistory(),
 				'comment': () => this.gotoComment(),
 				'secondhandMessages': () => this.gotoMessages('secondhand'),
+				'editProfile': () => this.gotoEditProfile(), // 🔥 新增 (Request 2)
 				'logout': () => this.logout()
 			}
 			
@@ -1139,12 +1100,20 @@ export default {
 			})
 			
 			if (res.meta.status === 200) {
-				const newPosts = res.message.list.map(post => ({
-					...post,
-					images: this.processImages(post.images),
-					isLiked: post.isLiked || false,
-					timeText: this.formatTime(post.created_at),
-				}))
+				// 🔥 修改：适配朋友圈UI (Request 3 & 4)
+				const newPosts = res.message.list.map(post => {
+				    const date = new Date(post.created_at);
+				    const day = date.getDate() || '??';
+				    const month = (date.getMonth() + 1);
+				    return {
+				        ...post,
+				        images: this.processImages(post.images),
+				        isLiked: post.isLiked || false,
+				        timeDay: day,
+				        timeMonth: month + '月',
+				        fullDateStr: `${month}月${day}日` // 🔥 新增：用于日期比较
+				    };
+				})
 				
 				console.log(`加载了 ${newPosts.length} 条帖子`)
 				
@@ -2710,5 +2679,73 @@ export default {
 .my-userinfo-container {
   min-height: 100vh;
   background-color: #f5f5f5;
+}
+
+/* 🔥 新增：朋友圈时间线样式 (Request 3) */
+.timeline-container {
+  background-color: #fff;
+  padding: 0 15px;
+}
+
+.timeline-post-item {
+  display: flex;
+  gap: 15px;
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.timeline-date {
+  flex-shrink: 0;
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+  .date-day {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.2;
+  }
+  
+  .date-month {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.2;
+  }
+}
+
+.timeline-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  
+  // 新增一个 text 样式，保留换行
+  .content-text-timeline {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.6;
+    word-break: break-all;
+    white-space: pre-wrap; // 关键: 保留换行符
+  }
+  
+  // 沿用已有的 .post-images 样式
+  .post-images {
+    margin-bottom: 0; // 覆盖
+  }
+}
+
+/* 🔥 修改：搜索图标 (Request 1) */
+.search-btn {
+  .search-icon-img {
+    width: 20px;
+    height: 20px;
+  }
 }
 </style>

@@ -128,17 +128,6 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  if (!_vm._isMounted) {
-    _vm.e0 = function ($event) {
-      _vm.editForm.user_sex = "男"
-    }
-    _vm.e1 = function ($event) {
-      _vm.editForm.user_sex = "女"
-    }
-    _vm.e2 = function ($event) {
-      _vm.editForm.user_sex = "保密"
-    }
-  }
 }
 var recyclableRender = false
 var staticRenderFns = []
@@ -190,30 +179,27 @@ var _default = {
   data: function data() {
     // 预设头像列表
     var presetAvatarList = Array.from({
-      length: 40
+      length: 25
     }, function (_, i) {
       return "https://wait00.oss-cn-shanghai.aliyuncs.com/profile/".concat(i + 1, ".png");
     });
 
-    // 🔥 MODIFIED: 更新为你的最新词库
+    // 昵称词库
     var nameStyles = [{
-      // 风格1: 可爱
       adjectives: ['软萌', '阳光', '软糯', '蓬松', '乖巧', '暖暖', '泡泡', '糯糯', '迷茫', '忧郁'],
       nouns: ['西蓝花', '鲷鱼烧', '草莓派', '热可可', '奇异果', '小麻薯', '小可颂', '小曲奇', '星冰乐', '菠萝包', '小云吞', '糯米团', '小泡芙', '排骨年糕']
     }, {
-      // 风格2: 校园/地名
       adjectives: ['虹梅南路', '中山北路', '剑川路上', '金沙江路', '东川路的', '莲花南路', '老子思维', '量子思维', '求实创造', '为人师表', '丽娃河畔', '樱桃河畔'],
       nouns: ['秋实阁', '夏雨厅', '冬月厅', '冬日厅', '满天星', '环球港', '苏州河', '黄浦江']
     }, {
-      // 风格3: 科技/学术
       adjectives: ['轮换', '异步', '正交', '全息', '冒泡', '异构', '正则', '赛博', '类脑', '互易', '脉冲', '矩阵', '导电'],
       nouns: ['量子思维', '老子思维', '多项式', '逻辑门', 'CMOS', 'TTL', '二叉树', '超导体', '光子束', '算力核', '模块机', '智能端', '逆矩阵', '对称阵子', '八木天线', '牛顿环', '希尔伯特空间', 'pn结', '干涉仪', '示波器']
     }, {
-      // 风格4: 文艺/抽象
       adjectives: ['暮色', '星澜', '风栖', '云上', '微光', '秋色', '月白', '遥远', '淡墨', '枝间', '山海', '雾起', '岁月', '青藤', '轻舟', '温柔', '晴空', '流光', '雨落', '清晨'],
       nouns: ['小心心', '小泡泡', '小问号', '小叹号', '小方块', '暖粒子', '小灵感', '小记忆', '小能量', '小音符', '轻情绪', '小希望', '小梦境', '小计划', '小故事', '小念头', '小宇宙', '小期待']
     }];
     return {
+      // editForm 仍用于存储页面的“最终”状态
       editForm: {
         nickname: '',
         avatarUrl: '',
@@ -221,50 +207,25 @@ var _default = {
         major: '',
         user_introduce: ''
       },
-      hasChanges: false,
-      enableWatch: false,
       presetAvatars: presetAvatarList,
       nameStyles: nameStyles,
-      // 🔥 NEW: 添加风格索引计数器
-      currentStyleIndex: 0
+      currentStyleIndex: 0,
+      // 🔥 NEW: 用于弹窗的临时数据
+      tempNickname: '',
+      tempBio: ''
+
+      // 🔥 REMOVED: hasChanges, enableWatch
     };
   },
+
   computed: _objectSpread({}, (0, _vuex.mapState)('m_user', ['userBase', 'openid', 'userMajor'])),
   onLoad: function onLoad() {
-    var _this = this;
     this.initEditForm();
-    this.$nextTick(function () {
-      _this.enableWatch = true;
-    });
   },
-  // 监听表单变化 (无修改)
-  watch: {
-    editForm: {
-      handler: function handler() {
-        if (this.enableWatch) {
-          this.hasChanges = true;
-        }
-      },
-      deep: true
-    }
-  },
-  // 返回前提示 (无修改)
-  onBackPress: function onBackPress() {
-    if (this.hasChanges) {
-      uni.showModal({
-        title: '提示',
-        content: '您有未保存的修改，确定要离开吗？',
-        success: function success(res) {
-          if (res.confirm) {
-            uni.navigateBack();
-          }
-        }
-      });
-      return true;
-    }
-  },
+  // 🔥 REMOVED: watch, onBackPress
+
   methods: _objectSpread(_objectSpread({}, (0, _vuex.mapMutations)('m_user', ['updateUserBase'])), {}, {
-    // 🔥 MODIFIED: 初始化表单
+    // 🔥 MODIFIED: 初始化表单 (移除 change tracking)
     initEditForm: function initEditForm() {
       this.editForm = {
         nickname: this.userBase.nickname || '',
@@ -273,33 +234,158 @@ var _default = {
         major: this.userBase.major || '',
         user_introduce: this.userBase.user_introduce || ''
       };
+
+      // 如果昵称为空，则自动生成一个
       if (!this.editForm.nickname) {
-        // 🔥 MODIFIED: 初始化时生成昵称，但不推进计数器
-        this.generateRandomNickname(false);
+        this.generateRandomNickname(false, 'editForm'); // 直接修改 editForm
       }
-      this.hasChanges = false;
-      this.enableWatch = false;
+
+      // 初始化临时变量
+      this.tempNickname = this.editForm.nickname;
+      this.tempBio = this.editForm.user_introduce;
     },
-    // 🔥 MODIFIED: 生成随机昵称的逻辑
-    /**
-     * @param {boolean} incrementStyle - 是否推进风格计数器（用户点击时为true，初始化时为false）
-     */
+    // 🔥 MODIFIED: 简化返回
+    goBack: function goBack() {
+      uni.navigateBack();
+    },
+    // 🔥 MODIFIED: 重命名为 commitProfileChanges
+    // 这是一个通用的保存方法，用于保存所有字段
+    commitProfileChanges: function commitProfileChanges() {
+      var _this = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+        var _yield$uni$$http$post, res;
+        return _regenerator.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                uni.showLoading({
+                  title: '保存中...',
+                  mask: true
+                });
+                _context.next = 4;
+                return uni.$http.post('/users/updateProfile', {
+                  openid: _this.userBase.openid,
+                  nickname: _this.editForm.nickname.trim(),
+                  avatarUrl: _this.editForm.avatarUrl,
+                  user_sex: _this.editForm.user_sex,
+                  major: _this.editForm.major.trim(),
+                  user_introduce: _this.editForm.user_introduce.trim()
+                });
+              case 4:
+                _yield$uni$$http$post = _context.sent;
+                res = _yield$uni$$http$post.data;
+                if (!(res.meta.status === 200)) {
+                  _context.next = 11;
+                  break;
+                }
+                // 更新 Vuex
+                _this.updateUserBase(_objectSpread(_objectSpread({}, _this.userBase), _this.editForm));
+                uni.showToast({
+                  title: '保存成功',
+                  icon: 'success',
+                  duration: 1000
+                });
+                _context.next = 12;
+                break;
+              case 11:
+                throw new Error(res.meta.msg || '保存失败');
+              case 12:
+                _context.next = 18;
+                break;
+              case 14:
+                _context.prev = 14;
+                _context.t0 = _context["catch"](0);
+                console.error('保存资料失败:', _context.t0);
+                uni.showToast({
+                  title: _context.t0.message || '保存失败',
+                  icon: 'none'
+                });
+              case 18:
+                _context.prev = 18;
+                uni.hideLoading();
+                return _context.finish(18);
+              case 21:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[0, 14, 18, 21]]);
+      }))();
+    },
+    // --- 1. 头像逻辑 ---
+    openAvatarPopup: function openAvatarPopup() {
+      this.$refs.avatarPopup.open();
+    },
+    closeAvatarPopup: function closeAvatarPopup() {
+      this.$refs.avatarPopup.close();
+    },
+    // 🔥 MODIFIED: 选择后立刻保存
+    selectAvatar: function selectAvatar(url) {
+      var _this2 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+        return _regenerator.default.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _this2.editForm.avatarUrl = url;
+                _context2.next = 3;
+                return _this2.commitProfileChanges();
+              case 3:
+                // 立即提交保存
+                _this2.closeAvatarPopup();
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    // --- 2. 昵称逻辑 ---
+    openNicknamePopup: function openNicknamePopup() {
+      // 打开弹窗时，用 editForm 的值覆盖 tempNickname
+      this.tempNickname = this.editForm.nickname;
+      this.$refs.nicknamePopup.open();
+    },
+    closeNicknamePopup: function closeNicknamePopup() {
+      this.$refs.nicknamePopup.close();
+    },
+    saveNickname: function saveNickname() {
+      var _this3 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
+        return _regenerator.default.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _this3.editForm.nickname = _this3.tempNickname; // 确认修改
+                _context3.next = 3;
+                return _this3.commitProfileChanges();
+              case 3:
+                // 提交保存
+                _this3.closeNicknamePopup();
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
+    },
+    // 🔥 MODIFIED: generateRandomNickname
+    // target = 'temp' (在弹窗中) 或 'editForm' (在初始化时)
     generateRandomNickname: function generateRandomNickname() {
       var incrementStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      // 1. 决定使用哪个索引
+      var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'temp';
       var styleIndexToUse = this.currentStyleIndex;
-
-      // 2. 如果是用户点击“换一个”，则推进索引
       if (incrementStyle) {
-        // 推进索引，并使用 % 运算符确保循环
         this.currentStyleIndex = (this.currentStyleIndex + 1) % this.nameStyles.length;
         styleIndexToUse = this.currentStyleIndex;
       }
       var selectedStyle = this.nameStyles[styleIndexToUse];
       var newName = '';
-      var attempts = 0; // 安全锁，防止死循环
-
-      // 3. 循环直到生成一个不重复的昵称
+      var attempts = 0;
+      var currentName = target === 'temp' ? this.tempNickname : this.editForm.nickname;
       do {
         var adjIndex = Math.floor(Math.random() * selectedStyle.adjectives.length);
         var adj = selectedStyle.adjectives[adjIndex];
@@ -307,125 +393,73 @@ var _default = {
         var noun = selectedStyle.nouns[nounIndex];
         newName = (adj + noun).substring(0, 20);
         attempts++;
-      } while (newName === this.editForm.nickname && (
-      // 避免和当前昵称重复
-      selectedStyle.adjectives.length > 1 || selectedStyle.nouns.length > 1) &&
-      // 确保词库有足够多的词
-      attempts < 10 // 最多尝试10次
-      );
-
-      // 4. 赋值
-      this.editForm.nickname = newName;
-    },
-    // 返回 (无修改)
-    goBack: function goBack() {
-      if (this.hasChanges) {
-        uni.showModal({
-          title: '提示',
-          content: '您有未保存的修改，确定要离开吗？',
-          success: function success(res) {
-            if (res.confirm) {
-              uni.navigateBack();
-            }
-          }
-        });
+      } while (newName === currentName && (selectedStyle.adjectives.length > 1 || selectedStyle.nouns.length > 1) && attempts < 10);
+      if (target === 'temp') {
+        this.tempNickname = newName;
       } else {
-        uni.navigateBack();
+        this.editForm.nickname = newName;
       }
     },
-    // 保存资料 (无修改)
-    saveProfile: function saveProfile() {
-      var _this2 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var _yield$uni$$http$post, res;
-        return _regenerator.default.wrap(function _callee$(_context) {
+    // --- 3. 性别逻辑 ---
+    openGenderPopup: function openGenderPopup() {
+      var _this4 = this;
+      uni.showActionSheet({
+        itemList: ['男', '女', '保密'],
+        success: function () {
+          var _success = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(res) {
+            var gender;
+            return _regenerator.default.wrap(function _callee4$(_context4) {
+              while (1) {
+                switch (_context4.prev = _context4.next) {
+                  case 0:
+                    gender = ['男', '女', '保密'][res.tapIndex];
+                    _this4.editForm.user_sex = gender;
+                    _context4.next = 4;
+                    return _this4.commitProfileChanges();
+                  case 4:
+                  case "end":
+                    return _context4.stop();
+                }
+              }
+            }, _callee4);
+          }));
+          function success(_x) {
+            return _success.apply(this, arguments);
+          }
+          return success;
+        }(),
+        fail: function fail(err) {
+          console.log(err.errMsg);
+        }
+      });
+    },
+    // --- 4. 简介逻辑 ---
+    openBioPopup: function openBioPopup() {
+      this.tempBio = this.editForm.user_introduce;
+      this.$refs.bioPopup.open();
+    },
+    closeBioPopup: function closeBioPopup() {
+      this.$refs.bioPopup.close();
+    },
+    saveBio: function saveBio() {
+      var _this5 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
+        return _regenerator.default.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                if (_this2.editForm.nickname.trim()) {
-                  _context.next = 2;
-                  break;
-                }
-                return _context.abrupt("return", uni.showToast({
-                  title: '昵称不能为空',
-                  icon: 'none'
-                }));
-              case 2:
-                _context.prev = 2;
-                uni.showLoading({
-                  title: '保存中...',
-                  mask: true
-                });
-                _context.next = 6;
-                return uni.$http.post('/users/updateProfile', {
-                  openid: _this2.userBase.openid,
-                  nickname: _this2.editForm.nickname.trim(),
-                  avatarUrl: _this2.editForm.avatarUrl,
-                  user_sex: _this2.editForm.user_sex,
-                  major: _this2.editForm.major.trim(),
-                  user_introduce: _this2.editForm.user_introduce.trim()
-                });
-              case 6:
-                _yield$uni$$http$post = _context.sent;
-                res = _yield$uni$$http$post.data;
-                if (!(res.meta.status === 200)) {
-                  _context.next = 15;
-                  break;
-                }
-                // 更新 Vuex
-                _this2.updateUserBase(_objectSpread(_objectSpread({}, _this2.userBase), {}, {
-                  nickname: _this2.editForm.nickname.trim(),
-                  avatarUrl: _this2.editForm.avatarUrl,
-                  user_sex: _this2.editForm.user_sex,
-                  major: _this2.editForm.major,
-                  user_introduce: _this2.editForm.user_introduce.trim()
-                }));
-                _this2.hasChanges = false;
-                uni.showToast({
-                  title: '保存成功',
-                  icon: 'success',
-                  duration: 1500
-                });
-                setTimeout(function () {
-                  uni.navigateBack();
-                }, 1500);
-                _context.next = 16;
-                break;
-              case 15:
-                throw new Error(res.meta.msg || '保存失败');
-              case 16:
-                _context.next = 22;
-                break;
-              case 18:
-                _context.prev = 18;
-                _context.t0 = _context["catch"](2);
-                console.error('保存资料失败:', _context.t0);
-                uni.showToast({
-                  title: _context.t0.message || '保存失败',
-                  icon: 'none'
-                });
-              case 22:
-                _context.prev = 22;
-                uni.hideLoading();
-                return _context.finish(22);
-              case 25:
+                _this5.editForm.user_introduce = _this5.tempBio;
+                _context5.next = 3;
+                return _this5.commitProfileChanges();
+              case 3:
+                _this5.closeBioPopup();
+              case 4:
               case "end":
-                return _context.stop();
+                return _context5.stop();
             }
           }
-        }, _callee, null, [[2, 18, 22, 25]]);
+        }, _callee5);
       }))();
-    },
-    // 头像弹窗方法 (无修改)
-    openAvatarSelector: function openAvatarSelector() {
-      this.$refs.avatarPopup.open();
-    },
-    closeAvatarPopup: function closeAvatarPopup() {
-      this.$refs.avatarPopup.close();
-    },
-    selectAvatar: function selectAvatar(url) {
-      this.editForm.avatarUrl = url;
-      this.closeAvatarPopup();
     }
   })
 };

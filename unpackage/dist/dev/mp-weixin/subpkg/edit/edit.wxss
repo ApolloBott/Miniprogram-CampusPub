@@ -1,14 +1,11 @@
 @charset "UTF-8";
 /* 水平间距 */
 /* 水平间距 */
-/* 所有样式与上一版（随机昵称版）完全相同
-  ... (此处省略所有样式，请使用上一版中提供的完整样式)
-*/
-.edit-profile-page.data-v-ee6d6c8c {
+.profile-page.data-v-ee6d6c8c {
   min-height: 100vh;
   background-color: #f5f5f5;
 }
-/* 导航栏 */
+/* 导航栏 (无修改) */
 .navbar.data-v-ee6d6c8c {
   position: -webkit-sticky;
   position: sticky;
@@ -33,139 +30,106 @@
   display: flex;
   justify-content: flex-end;
 }
-.navbar .navbar-right .save-text.data-v-ee6d6c8c {
-  font-size: 16px;
-  color: #007aff;
-  font-weight: 500;
-}
 .navbar .navbar-title.data-v-ee6d6c8c {
   font-size: 18px;
   font-weight: 600;
   color: #333;
 }
-/* 表单容器 */
-.form-container.data-v-ee6d6c8c {
-  height: calc(100vh - 50px);
-  padding-bottom: 20px;
-}
-.form-section.data-v-ee6d6c8c {
-  background-color: #fff;
+/* 🔥 NEW: 微信风格列表样式 */
+.profile-list.data-v-ee6d6c8c {
   margin-top: 10px;
-  padding: 0 20px;
+  background-color: #fff;
 }
-.form-item.data-v-ee6d6c8c {
-  padding: 20px 0;
+.profile-list .list-item.data-v-ee6d6c8c {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
   border-bottom: 1px solid #f0f0f0;
 }
-.form-item.data-v-ee6d6c8c:last-child {
+.profile-list .list-item.data-v-ee6d6c8c:last-child {
   border-bottom: none;
 }
-.form-item.avatar-item.data-v-ee6d6c8c {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.form-item .form-label.data-v-ee6d6c8c {
-  display: block;
-  font-size: 15px;
+.profile-list .list-item .item-label.data-v-ee6d6c8c {
+  font-size: 16px;
   color: #333;
-  margin-bottom: 12px;
-  font-weight: 500;
+  width: 100px;
 }
-.form-item .avatar-upload.data-v-ee6d6c8c {
-  position: relative;
-  width: 80px;
-  height: 80px;
+.profile-list .list-item .item-value.data-v-ee6d6c8c {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 10px;
 }
-.form-item .avatar-upload .upload-avatar.data-v-ee6d6c8c {
-  width: 100%;
-  height: 100%;
-  border-radius: 40px;
+.profile-list .list-item .item-value .item-avatar.data-v-ee6d6c8c {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
   background-color: #f0f0f0;
 }
-.form-item .avatar-upload .camera-icon.data-v-ee6d6c8c {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 28px;
-  height: 28px;
-  background-color: #007aff;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #fff;
+.profile-list .list-item .item-value .item-text.data-v-ee6d6c8c {
+  font-size: 16px;
+  color: #888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.form-item .form-input.data-v-ee6d6c8c {
-  width: 100%;
-  padding: 12px 15px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  font-size: 15px;
-  border: none;
+.profile-list .list-item .item-value .bio-text.data-v-ee6d6c8c {
+  max-width: 180px;
+}
+.profile-list .list-item .item-value .readonly-text.data-v-ee6d6c8c {
   color: #333;
 }
-.form-item .form-input.data-v-ee6d6c8c::-webkit-input-placeholder {
-  color: #999;
+.profile-list .list-item.readonly .item-value.data-v-ee6d6c8c {
+  margin-right: 0;
 }
-.form-item .form-input.data-v-ee6d6c8c::placeholder {
-  color: #999;
+/* 🔥 NEW: 弹窗样式 */
+.edit-popup-container.data-v-ee6d6c8c {
+  width: 85vw;
+  background-color: #fff;
+  border-radius: 12px;
 }
-.form-item .form-readonly.data-v-ee6d6c8c {
-  padding: 12px 15px;
-  background-color: #fafafa;
-  border-radius: 8px;
-  border: 1px dashed #e0e0e0;
+.edit-popup-container .popup-header-with-save.data-v-ee6d6c8c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
 }
-.form-item .form-readonly .readonly-text.data-v-ee6d6c8c {
-  display: block;
-  font-size: 15px;
-  color: #666;
-  margin-bottom: 6px;
+.edit-popup-container .popup-header-with-save .popup-title.data-v-ee6d6c8c {
+  font-size: 17px;
+  font-weight: 600;
 }
-.form-item .form-readonly .readonly-tip.data-v-ee6d6c8c {
+.edit-popup-container .popup-header-with-save .popup-action-btn.data-v-ee6d6c8c {
+  font-size: 16px;
+  color: #555;
+}
+.edit-popup-container .popup-header-with-save .popup-action-btn.save.data-v-ee6d6c8c {
+  color: #007aff;
+  font-weight: 500;
+}
+.edit-popup-container .popup-body.data-v-ee6d6c8c {
+  padding: 20px;
+}
+.edit-popup-container .popup-tip.data-v-ee6d6c8c {
   display: block;
   font-size: 12px;
   color: #999;
-}
-.form-item .gender-selector.data-v-ee6d6c8c {
-  display: flex;
-  gap: 12px;
-}
-.form-item .gender-selector .gender-option.data-v-ee6d6c8c {
-  flex: 1;
-  padding: 12px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  margin-top: 10px;
   text-align: center;
-  font-size: 15px;
-  color: #666;
-  transition: all 0.2s;
 }
-.form-item .gender-selector .gender-option.active.data-v-ee6d6c8c {
-  background-color: #007aff;
-  color: #fff;
-  font-weight: 500;
-}
-.form-item .form-textarea.data-v-ee6d6c8c {
+.edit-popup-container .popup-textarea.data-v-ee6d6c8c {
   width: 100%;
   min-height: 120px;
-  padding: 12px 15px;
+  padding: 10px;
   background-color: #f5f5f5;
   border-radius: 8px;
   font-size: 15px;
-  border: none;
-  color: #333;
   line-height: 1.6;
+  box-sizing: border-box;
 }
-.form-item .form-textarea.data-v-ee6d6c8c::-webkit-input-placeholder {
-  color: #999;
-}
-.form-item .form-textarea.data-v-ee6d6c8c::placeholder {
-  color: #999;
-}
-/* 昵称生成器样式 (无修改) */
-.form-item.nickname-item .nickname-generator.data-v-ee6d6c8c {
+/* 🔥 沿用并修改: 昵称生成器样式 (用于弹窗) */
+.nickname-generator.data-v-ee6d6c8c {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -173,8 +137,9 @@
   padding: 12px 15px;
   background-color: #f5f5f5;
   border-radius: 8px;
+  box-sizing: border-box;
 }
-.form-item.nickname-item .nickname-generator .nickname-display.data-v-ee6d6c8c {
+.nickname-generator .nickname-display.data-v-ee6d6c8c {
   font-size: 15px;
   color: #333;
   font-weight: 500;
@@ -184,37 +149,23 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.form-item.nickname-item .nickname-generator .random-button.data-v-ee6d6c8c {
+.nickname-generator .random-button.data-v-ee6d6c8c {
   display: flex;
   align-items: center;
   background-color: #eaf2ff;
   padding: 6px 10px;
   border-radius: 20px;
 }
-.form-item.nickname-item .nickname-generator .random-button.data-v-ee6d6c8c  .uni-icons {
+.nickname-generator .random-button.data-v-ee6d6c8c  .uni-icons {
   margin-right: 0 !important;
 }
-.form-item.nickname-item .nickname-generator .random-button .random-text.data-v-ee6d6c8c {
+.nickname-generator .random-button .random-text.data-v-ee6d6c8c {
   font-size: 13px;
   color: #007aff;
   margin-left: 4px;
   font-weight: 500;
 }
-/* 提示信息 (无修改) */
-.form-tips.data-v-ee6d6c8c {
-  margin-top: 20px;
-  padding: 0 20px;
-}
-.form-tips .tips-text.data-v-ee6d6c8c {
-  display: block;
-  font-size: 13px;
-  color: #999;
-  line-height: 2;
-}
-.form-tips .tips-text.data-v-ee6d6c8c:not(:last-child) {
-  margin-bottom: 5px;
-}
-/* 头像弹窗样式 (无修改) */
+/* 🔥 沿用: 头像弹窗样式 (无修改) */
 .popup-content.data-v-ee6d6c8c {
   padding: 20px;
   border-top-left-radius: 12px;

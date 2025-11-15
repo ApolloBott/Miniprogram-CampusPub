@@ -143,7 +143,7 @@ var render = function () {
   var g3 = !!_vm.token ? (_vm.userBase.followers_ids || []).length : null
   var l1 =
     !!_vm.token && _vm.activeMainTab === 0 && _vm.activeSubTab === 0
-      ? _vm.__map(_vm.postList, function (post, __i0__) {
+      ? _vm.__map(_vm.postList, function (post, index) {
           var $orig = _vm.__get_orig(post)
           var g4 = post.images && post.images.length > 0
           var l0 = g4 ? post.images.slice(0, 3) : null
@@ -164,7 +164,7 @@ var render = function () {
       : null
   var l3 =
     !!_vm.token && _vm.activeMainTab === 1 && _vm.activeSubTab === 0
-      ? _vm.__map(_vm.commentPostList, function (post, __i1__) {
+      ? _vm.__map(_vm.commentPostList, function (post, __i0__) {
           var $orig = _vm.__get_orig(post)
           var g8 = post.images && post.images.length > 0
           var l2 = g8 ? post.images.slice(0, 3) : null
@@ -193,7 +193,7 @@ var render = function () {
       : null
   var l5 =
     !!_vm.token && _vm.activeMainTab === 2
-      ? _vm.__map(_vm.privatePostList, function (post, __i2__) {
+      ? _vm.__map(_vm.privatePostList, function (post, __i1__) {
           var $orig = _vm.__get_orig(post)
           var g14 = post.images && post.images.length > 0
           var l4 = g14 ? post.images.slice(0, 3) : null
@@ -885,6 +885,10 @@ var _default = {
         'secondhandMessages': function secondhandMessages() {
           return _this7.gotoMessages('secondhand');
         },
+        'editProfile': function editProfile() {
+          return _this7.gotoEditProfile();
+        },
+        // 🔥 新增 (Request 2)
         'logout': function logout() {
           return _this7.logout();
         }
@@ -1103,13 +1107,20 @@ var _default = {
                 _yield$uni$$http$get7 = _context8.sent;
                 res = _yield$uni$$http$get7.data;
                 if (res.meta.status === 200) {
+                  // 🔥 修改：适配朋友圈UI (Request 3 & 4)
                   newPosts = res.message.list.map(function (post) {
+                    var date = new Date(post.created_at);
+                    var day = date.getDate() || '??';
+                    var month = date.getMonth() + 1;
                     return _objectSpread(_objectSpread({}, post), {}, {
                       images: _this10.processImages(post.images),
                       isLiked: post.isLiked || false,
-                      timeText: _this10.formatTime(post.created_at)
+                      timeDay: day,
+                      timeMonth: month + '月',
+                      fullDateStr: "".concat(month, "\u6708").concat(day, "\u65E5") // 🔥 新增：用于日期比较
                     });
                   });
+
                   console.log("\u52A0\u8F7D\u4E86 ".concat(newPosts.length, " \u6761\u5E16\u5B50"));
 
                   // 追加新数据
