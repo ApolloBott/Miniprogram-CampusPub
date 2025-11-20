@@ -1,30 +1,35 @@
-<!-- pages/publish-select/publish-select.vue -->
 <template>
   <view class="publish-select-page">
-    <!-- 页面标题 -->
     <view class="page-header">
-      <text class="header-title">选择发布类型</text>
-      <text class="header-subtitle">请选择你要发布的内容类型</text>
+      <text class="header-title">我想发布...</text>
+      <text class="header-subtitle">选择您要发布的内容类型</text>
     </view>
     
-    <!-- 选择区域 -->
     <view class="select-container">
       
-      <!-- 🔥 修改：发布到树洞 - 直接跳转 -->
       <view class="select-card" @click="gotoTopicDiscussion">
-        <view class="card-icon">💬</view>
+        <image 
+          class="card-icon" 
+          src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/fatiezi.png" 
+          mode="aspectFit"
+        ></image>
+        
         <view class="card-content">
-          <text class="card-title">发布到树洞</text>
+          <text class="card-title">发帖子</text>
           <text class="card-desc">分享你的想法和生活点滴</text>
         </view>
         <view class="card-arrow">›</view>
       </view>
 	  
-	  <!-- 发布到二手 -->
 	  <view class="select-card" @click="gotoSoldPage">
-	    <view class="card-icon">🛍️</view>
+        <image 
+          class="card-icon" 
+          src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/maihaowu.png" 
+          mode="aspectFit"
+        ></image>
+        
 	    <view class="card-content">
-	      <text class="card-title">发布到集市</text>
+	      <text class="card-title">卖好物</text>
 	      <text class="card-desc">出售闲置物品，让它们找到新主人</text>
 	    </view>
 	    <view class="card-arrow">›</view>
@@ -39,7 +44,6 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   data() {
     return {
-      // 🔥 移除：不再需要showSheet
     }
   },
   computed: {
@@ -59,7 +63,7 @@ export default {
       })
     },
     
-    // 🔥 修改：直接跳转到话题讨论页面
+    // 跳转到话题讨论页面
     gotoTopicDiscussion() {
 		if (!this.openid) {
 		  uni.switchTab({
@@ -124,21 +128,15 @@ export default {
     box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
   }
   
+  // 图片样式
   .card-icon {
-    width: 96rpx;
-    height: 96rpx;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border-radius: 20rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48rpx;
+    width: 110rpx;    /* 保持之前调整后的较大尺寸 */
+    height: 110rpx;
     flex-shrink: 0;
+    border-radius: 20rpx;
   }
   
-  &:nth-child(2) .card-icon {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
+  // 移除了 .icon-bordered 相关样式
   
   .card-content {
     flex: 1;

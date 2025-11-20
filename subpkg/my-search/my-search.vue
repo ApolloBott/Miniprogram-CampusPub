@@ -119,7 +119,10 @@
             :key="post.id"
           >
             <view class="post-content" @click="gotoPostDetail(post)">
-              <text class="content-text">{{ post.content }}</text>
+              <rich-text 
+                class="content-text" 
+                :nodes="highlightKeyword(post.content)"
+              ></rich-text>
             </view>
             
             <view class="post-images" v-if="post.images && post.images.length > 0" @click="gotoPostDetail(post)">
@@ -308,6 +311,30 @@ export default {
   
   methods: {
     
+	
+	  // 🔥 新增：高亮关键词方法
+	  highlightKeyword(text) {
+	    if (!this.searchKeyword || !text) return text
+	    
+	    const keyword = this.searchKeyword.trim().toLowerCase()
+	    
+	    // 将关键词拆分成单个字符
+	    const chars = keyword.split('').filter(char => char.trim())
+	    
+	    if (chars.length === 0) return text
+	    
+	    // 构建正则表达式，匹配任意一个字符
+	    const pattern = chars.map(char => {
+	      // 转义正则表达式特殊字符
+	      return char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	    }).join('|')
+	    
+	    const regex = new RegExp(`(${pattern})`, 'gi')
+	    
+	    // 替换匹配到的字符为高亮样式
+	    return text.replace(regex, '<span style="color: #ff4757; background-color: #fff2f0; padding: 2rpx 6rpx; border-radius: 6rpx; font-weight: 600;">$1</span>')
+	  },
+	  
     // 加载我收藏的商品
     async loadMyGoodsCollect() {
       const ids = Array.isArray(this.userBase?.goods_collects) ? this.userBase.goods_collects : []
@@ -503,26 +530,49 @@ export default {
       })
     },
     
-    // 🔥 判断帖子是否匹配关键词
+    // 🔥 修改：判断帖子是否匹配关键词（改为逐字匹配）
     matchKeyword(post, keyword) {
+      // 将关键词拆分成单个字符
+      const chars = keyword.split('').filter(char => char.trim())
+      
       // 检查内容
-      if (post.content && post.content.toLowerCase().includes(keyword)) {
-        return true
+      if (post.content) {
+        const contentLower = post.content.toLowerCase()
+        // 只要有任意一个字符匹配就返回 true
+        for (let char of chars) {
+          if (contentLower.includes(char)) {
+            return true
+          }
+        }
       }
       
       // 检查标题（如果有）
-      if (post.title && post.title.toLowerCase().includes(keyword)) {
-        return true
+      if (post.title) {
+        const titleLower = post.title.toLowerCase()
+        for (let char of chars) {
+          if (titleLower.includes(char)) {
+            return true
+          }
+        }
       }
       
       return false
     },
     
-    // 🔥 判断商品是否匹配关键词
+    // 🔥 修改：判断商品是否匹配关键词（改为逐字匹配）
     matchGoodsKeyword(goods, keyword) {
+      // 将关键词拆分成单个字符
+      const chars = keyword.split('').filter(char => char.trim())
+      
       // 检查商品名称
-      if (goods.goods_name && goods.goods_name.toLowerCase().includes(keyword)) {
-        return true
+      if (goods.goods_name) {
+        const nameLower = goods.goods_name.toLowerCase()
+        // 只要有任意一个字符匹配就返回 true
+        for (let char of chars) {
+          if (nameLower.includes(char)) {
+            return true
+          }
+        }
       }
       
       return false

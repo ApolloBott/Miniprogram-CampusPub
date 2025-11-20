@@ -117,21 +117,40 @@ export default {
       enableTextToImage: false,
       selectedImages: [],
       imageUrls: [],
-      uploading: false
+      uploading: false,
+      
+      // 🔥 新增：图片检测状态管理
+      imageCheckStatus: [], // 存储每张图片的检测状态
+      allImagesChecked: false,
+      
+      // 🔥 新增：发布状态控制
+      isPublishing: false,
     }
   },
   
   computed: {
-    ...mapState('m_user', ['openid']),
+    ...mapState('m_user', ['openid', 'userBase']),
     
     canNext() {
-      return this.topicContent.trim().length > 0 && this.topicContent.length <= 200 && !this.uploading
+      return (
+        this.topicContent.trim().length > 0 && 
+        this.topicContent.length <= 200 && 
+        !this.uploading &&
+        !this.isPublishing
+      )
     },
     
     getHintText() {
       if (this.uploading) {
         return '图片上传中，请稍候...'
       }
+      
+      // 🔥 新增：检测状态提示
+      const checkingCount = this.imageCheckStatus.filter(s => s.checking).length
+      if (checkingCount > 0) {
+        return `${checkingCount} 张图片正在检测中...`
+      }
+      
       if (this.enableTextToImage) {
         return '下一步将为你生成话题背景图'
       }
@@ -143,7 +162,12 @@ export default {
   },
   
   methods: {
-    chooseImage() {
+    /**
+     * 🔥 修改：选择图片 - 立即添加 + 异步检测
+     */
+    async chooseImage() {
+      if (this.isPublishing) return;
+      
       const maxCount = 9 - this.selectedImages.length
       
       if (maxCount <= 0) {
@@ -159,13 +183,233 @@ export default {
         sizeType: ['compressed'],
         sourceType: ['album', 'camera'],
         success: async (res) => {
-          const tempFiles = res.tempFilePaths
-          this.selectedImages = this.selectedImages.concat(tempFiles)
-          await this.uploadImages(tempFiles)
+          console.log('📸 选择了', res.tempFilePaths.length, '张图片')
+          
+          // 🔥 立即添加到列表，提升用户体验
+          const newImages = res.tempFilePaths
+          const startIndex = this.selectedImages.length
+          
+          // 先添加图片到展示列表
+          this.selectedImages = this.selectedImages.concat(newImages)
+          
+          // 初始化检测状态（检测中）
+          newImages.forEach(() => {
+            this.imageCheckStatus.push({
+              checking: true,
+              safe: null,
+              error: false
+            })
+          })
+          
+          uni.showToast({
+            title: `已添加 ${newImages.length} 张图片`,
+            icon: 'success',
+            duration: 1000
+          })
+          
+          // 🔥 异步检测图片（不阻塞用户操作）
+          this.checkImagesInBackground(newImages, startIndex)
+        },
+        fail: (err) => {
+          console.error('❌ 选择图片失败:', err)
         }
       })
     },
     
+async checkImagesInBackground(imagePaths, startIndex) {
+  console.log('🔍 开始后台检测', imagePaths.length, '张图片')
+  
+  // 🔥 改为 for...of 串行执行
+  for (let index = 0; index < imagePaths.length; index++) {
+    const filePath = imagePaths[index]
+    const globalIndex = startIndex + index
+    
+    try {
+      // 检查文件大小
+      const fileInfo = await new Promise((resolve, reject) => {
+        uni.getFileInfo({
+          filePath: filePath,
+          success: resolve,
+          fail: reject
+        })
+      })
+      
+      console.log(`📁 图片 ${globalIndex + 1} 大小:`, (fileInfo.size / 1024).toFixed(2) + ' KB')
+      
+      if (fileInfo.size > 1024 * 1024) {
+        this.imageCheckStatus[globalIndex] = {
+          checking: false,
+          safe: null,
+          error: true,
+          reason: '文件过大'
+        }
+        continue // 跳过这张图片，继续下一张
+      }
+      
+      // 🔥 关键修复：等待单张图片上传完成后再处理下一张
+      const res = await new Promise((resolve, reject) => {
+        uni.uploadFile({
+          url: 'https://xinshi00.com/upload/imgSecCheck',
+          filePath: filePath,
+          name: 'media',
+          formData: { openid: this.openid },
+          success: resolve,
+          fail: reject
+        })
+      })
+      
+      console.log(`📥 图片 ${globalIndex + 1} 原始响应:`, {
+        statusCode: res.statusCode,
+        data: res.data
+      })
+      
+      // 解析响应
+      let result
+      try {
+        result = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
+      } catch (parseError) {
+        console.error(`❌ 图片 ${globalIndex + 1} 响应解析失败:`, parseError)
+        this.imageCheckStatus[globalIndex] = {
+          checking: false,
+          safe: null,
+          error: true,
+          reason: '响应解析失败'
+        }
+        continue
+      }
+      
+      console.log(`📥 图片 ${globalIndex + 1} 解析后响应:`, result)
+      
+      // 根据响应更新状态
+      if (res.statusCode === 200 && result.meta && result.meta.status === 200) {
+        // ✅ 图片安全
+        this.imageCheckStatus[globalIndex] = {
+          checking: false,
+          safe: true,
+          error: false
+        }
+        console.log(`✅ 图片 ${globalIndex + 1} 检测通过`)
+        
+      } else if (res.statusCode === 400 || (result.meta && result.meta.status === 400)) {
+        // 🚫 图片违规
+        this.imageCheckStatus[globalIndex] = {
+          checking: false,
+          safe: false,
+          error: false,
+          reason: result.meta?.msg || '内容违规'
+        }
+        console.warn(`🚫 图片 ${globalIndex + 1} 内容违规:`, result.meta?.msg)
+        
+      } else {
+        // ❌ 检测失败
+        this.imageCheckStatus[globalIndex] = {
+          checking: false,
+          safe: null,
+          error: true,
+          reason: result.meta?.msg || '检测失败'
+        }
+        console.error(`❌ 图片 ${globalIndex + 1} 检测失败:`, result.meta?.msg)
+      }
+      
+    } catch (err) {
+      console.error(`💥 图片 ${globalIndex + 1} 检测异常:`, err)
+      
+      this.imageCheckStatus[globalIndex] = {
+        checking: false,
+        safe: null,
+        error: true,
+        reason: '网络错误'
+      }
+    }
+  }
+  
+  // 处理违规和失败的图片
+  const unsafeImages = this.imageCheckStatus
+    .map((status, index) => ({ status, index }))
+    .filter(item => item.status.safe === false)
+  
+  const errorImages = this.imageCheckStatus
+    .map((status, index) => ({ status, index }))
+    .filter(item => item.status.safe === null && item.status.error === true)
+  
+  if (unsafeImages.length > 0) {
+    uni.showModal({
+      title: '图片检测完成',
+      content: `有 ${unsafeImages.length} 张图片未通过检测，已自动移除`,
+      showCancel: false,
+      confirmText: '我知道了',
+      success: () => {
+        unsafeImages.reverse().forEach(item => {
+          this.selectedImages.splice(item.index, 1)
+          this.imageUrls.splice(item.index, 1)
+          this.imageCheckStatus.splice(item.index, 1)
+        })
+      }
+    })
+  }
+  
+  if (errorImages.length > 0) {
+    const errorReasons = errorImages.map(item => item.status.reason).join('、')
+    uni.showModal({
+      title: '图片检测失败',
+      content: `有 ${errorImages.length} 张图片检测失败（${errorReasons}），已自动移除`,
+      showCancel: false,
+      confirmText: '我知道了',
+      success: () => {
+        errorImages.reverse().forEach(item => {
+          this.selectedImages.splice(item.index, 1)
+          this.imageUrls.splice(item.index, 1)
+          this.imageCheckStatus.splice(item.index, 1)
+        })
+      }
+    })
+  }
+  
+  this.allImagesChecked = true
+  console.log('✅ 所有图片检测完成')
+},
+
+
+
+    
+    /**
+     * 🔥 新增：文本内容安全检测
+     */
+    async checkTextSafety(text) {
+      try {
+        console.log('🔍 开始检测文本:', text.substring(0, 30) + '...')
+        
+        const { data: res } = await uni.$http.post('/upload/textSecCheck', {
+          content: text,
+          openid: this.openid
+        })
+        
+        console.log('📥 文本检测结果:', res)
+        
+        if (res.meta.status === 200) {
+          console.log('✅ 文本内容安全')
+          return true
+        } else {
+          console.warn('🚫 文本内容违规:', res.meta.msg)
+          return false
+        }
+        
+      } catch (err) {
+        console.error('💥 文本检测出错:', err)
+        
+        uni.showToast({
+          title: '文本检测失败，请重试',
+          icon: 'none',
+          duration: 2000
+        })
+        
+        return false
+      }
+    },
+    
+    /**
+     * 上传图片到OSS
+     */
     async uploadImages(filePaths) {
       if (!filePaths || filePaths.length === 0) {
         return []
@@ -230,7 +474,7 @@ export default {
           console.log(`[${i + 1}] 上传成功:`, tokenRes.message.publicUrl)
         }
         
-        this.imageUrls = this.imageUrls.concat(uploadedUrls)
+        this.imageUrls = uploadedUrls
         
         uni.hideLoading()
         uni.showToast({
@@ -251,22 +495,21 @@ export default {
           duration: 3000
         })
         
-        filePaths.forEach(path => {
-          const index = this.selectedImages.indexOf(path)
-          if (index > -1) {
-            this.selectedImages.splice(index, 1)
-          }
-        })
-        
         return []
       } finally {
         this.uploading = false
       }
     },
     
+    /**
+     * 删除图片
+     */
     deleteImage(index) {
+      if (this.isPublishing) return
+      
       this.selectedImages.splice(index, 1)
       this.imageUrls.splice(index, 1)
+      this.imageCheckStatus.splice(index, 1)
       
       uni.showToast({
         title: '已删除',
@@ -275,7 +518,12 @@ export default {
       })
     },
     
+    /**
+     * 切换文字转图片
+     */
     toggleTextToImage() {
+      if (this.isPublishing) return
+      
       this.enableTextToImage = !this.enableTextToImage
       
       uni.showToast({
@@ -285,7 +533,16 @@ export default {
       })
     },
     
-    handleNext() {
+    /**
+     * 🔥 修改：下一步 - 增加检测逻辑
+     */
+    async handleNext() {
+      // 防止重复点击
+      if (this.isPublishing) {
+        console.log('⚠️ 处理中，请勿重复点击')
+        return
+      }
+      
       if (!this.canNext) {
         if (this.uploading) {
           uni.showToast({
@@ -306,6 +563,80 @@ export default {
         return
       }
       
+      // 设置发布状态
+      this.isPublishing = true
+      
+      // 🔥 检查图片是否还在检测中
+      const stillChecking = this.imageCheckStatus.some(status => status.checking)
+      
+      if (stillChecking) {
+        this.isPublishing = false
+        uni.showModal({
+          title: '请稍候',
+          content: '图片正在检测中，请稍后再试',
+          showCancel: false,
+          confirmText: '我知道了'
+        })
+        return
+      }
+      
+      // 🔥 检查是否有违规图片
+      const hasUnsafeImages = this.imageCheckStatus.some(status => status.safe === false)
+      
+      if (hasUnsafeImages) {
+        this.isPublishing = false
+        uni.showModal({
+          title: '图片违规',
+          content: '存在违规图片，请删除后重试',
+          showCancel: false,
+          confirmText: '我知道了'
+        })
+        return
+      }
+      
+      // 🔥 文本内容安全检测
+      console.log('[1] 检测文本内容安全性...')
+      uni.showLoading({
+        title: '检测文本内容...',
+        mask: true
+      })
+      
+      const isTextSafe = await this.checkTextSafety(this.topicContent.trim())
+      
+      uni.hideLoading()
+      
+      if (!isTextSafe) {
+        this.isPublishing = false
+        uni.showModal({
+          title: '内容违规',
+          content: '话题内容包含违规内容，请修改后重试',
+          showCancel: false,
+          confirmText: '我知道了'
+        })
+        return
+      }
+      
+      console.log('✅ 文本内容检测通过')
+      
+      // 🔥 如果有图片，先上传到OSS
+      if (this.selectedImages.length > 0 && this.imageUrls.length === 0) {
+        console.log('[2] 上传图片到OSS...')
+        const uploadedUrls = await this.uploadImages(this.selectedImages)
+        
+        if (uploadedUrls.length === 0) {
+          this.isPublishing = false
+          uni.showToast({
+            title: '图片上传失败，请重试',
+            icon: 'none'
+          })
+          return
+        }
+      }
+      
+      // 重置发布状态
+      this.isPublishing = false
+      
+      // 跳转到下一步
       const content = encodeURIComponent(this.topicContent.trim())
       
       if (this.enableTextToImage) {
@@ -325,10 +656,28 @@ export default {
           url: `/subpkg/publish-post/publish-post?content=${content}${imagesParam}`
         })
       }
+    },
+    
+    /**
+     * 清空所有数据
+     */
+    clearAllData() {
+      this.topicContent = ''
+      this.selectedImages = []
+      this.imageUrls = []
+      this.enableTextToImage = false
+      
+      // 清空检测状态
+      this.imageCheckStatus = []
+      this.allImagesChecked = false
+      this.isPublishing = false
+      
+      console.log('✅ 数据已清空')
     }
   }
 }
 </script>
+
 
 <style lang="scss">
 .topic-page {

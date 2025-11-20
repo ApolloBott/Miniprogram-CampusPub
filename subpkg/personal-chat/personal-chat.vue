@@ -2,56 +2,11 @@
 	<view class="chat-container">
 		<view class="header">
 			<view class="seller-info">
-				<text class="seller-name" v-if="goods_info.publisher_id !== userBase.openid">{{ goods_info.publisher_nickname }}</text>
-				<text class="seller-name" v-else>{{ other_nickname }}</text>
+				<text class="seller-name">{{ other_nickname }}</text>
 			</view>
 			<view class="more-btn" @click="showMoreOptions">
 				<image class="more_icons" src="/static/icons/more.png"></image>
 			</view>
-		</view>
-
-		<view class="goods-bar">
-			<image class="goods-image" :src="goods_info.goods_big_logo" mode="aspectFill" @click="gotoDetail(goods_info)"></image>
-			<view class="goods-info">
-				<text class="goods-name">{{ displayGoodsName }}</text>
-				<text class="goods-price">¥{{ goods_info.goods_price }}</text>
-			</view>
-			
-			<view v-if="goods_info.publisher_id !== userBase.openid">
-			        <view class="buy-btn" @click="buyNow" v-if="transactionStatus === 0">
-			            线下交易
-			        </view>
-			        
-			        <view class="waiting-btn" v-else-if="transactionStatus === 1">
-			            等待卖家确认
-			        </view>
-			        
-			        <view class="in-progress-btn" @click="finish" v-else-if="transactionStatus === 2">
-			            确认交易完成
-			        </view>
-			        
-			        <view class="completed-btn" v-else-if="transactionStatus === 3">
-			            交易已完成
-			        </view>
-			    </view>
-				
-				<view v-else>
-				        <view class="agree-btn" @click="agreeTransaction" v-if="transactionStatus === 1">
-				            同意线下交易
-				        </view>
-				        
-				        <view class="in-progress-btn" v-else-if="transactionStatus === 2">
-				            线下交易进行中
-				        </view>
-				        
-				        <view class="completed-btn" v-else-if="transactionStatus === 3">
-				            交易已完成
-				        </view>
-				        
-				        <view class="no-transaction-btn" v-else>
-				            等待买家发起
-				        </view>
-				    </view>
 		</view>
 
 		<scroll-view 
@@ -73,8 +28,7 @@
 				</view>
 						
 		        <view v-if="msg.type === 'received'" class="message-wrapper left">
-		            <image class="avatar" :src="goods_info.publisher_avatarUrl" mode="aspectFill" v-if="goods_info.publisher_id !== openid"></image>
-					<image class="avatar" :src="other_avatarUrl" mode="aspectFill" v-else></image>
+					<image class="avatar" :src="other_avatarUrl" mode="aspectFill"></image>
 		            <view class="message-content">
 		                <view v-if="msg.message_type === 'text' || !msg.message_type" 
 		                      class="message-bubble left-bubble" 
@@ -92,60 +46,6 @@
 		                       :src="msg.content" 
 		                       mode="aspectFit"
 		                       @click="previewEmoji(msg.content)"></image>
-		                
-		                <view v-else-if="msg.message_type === 'transaction'" 
-		                      class="transaction-message left-transaction">
-		                    <view class="transaction-header">
-		                        <text class="transaction-icon">🤝</text>
-		                        <text class="transaction-title">发起线下交易</text>
-		                    </view>
-		                    <view class="transaction-body">
-
-		                        <view class="transaction-item" v-if="msg.location">
-		                            <text class="label">见面地点:</text>
-		                            <text class="value location">{{ msg.location }}</text>
-		                        </view>
-		                        <view class="transaction-item" v-else>
-		                            <text class="label">见面地点:</text>
-		                            <text class="value tips">待协商</text>
-		                        </view>
-		                    </view>
-		                    <view class="transaction-footer">
-		                        <text class="status-text">等待对方确认</text>
-		                    </view>
-		                </view>
-						
-						<view v-else-if="msg.message_type === 'agree'" 
-						      :class="['agree-message', msg.type === 'sent' ? 'right-agree' : 'left-agree']">
-						    <view class="agree-header">
-						        <text class="agree-icon">✅</text>
-						        <text class="agree-title">已同意线下交易</text>
-						    </view>
-						    <view class="agree-body">
-						        <view class="agree-item">
-						            <text class="tips-text">💬 请双方协商具体交易事宜</text>
-						        </view>
-						    </view>
-						    <view class="agree-footer">
-						        <text class="status-text">交易进行中</text>
-						    </view>
-						</view>
-						
-						<view v-else-if="msg.message_type === 'finish'" 
-						      class="finish-message left-finish">
-						    <view class="finish-header">
-						        <text class="finish-icon">🎉</text>
-						        <text class="finish-title">交易已完成</text>
-						    </view>
-						    <view class="finish-body">
-						        <view class="finish-item">
-						            <text class="tips-text">✅ 感谢您的交易，期待下次合作</text>
-						        </view>
-						    </view>
-						    <view class="finish-footer">
-						        <text class="status-text">交易成功</text>
-						    </view>
-						</view>
 		            </view>
 		        </view>
 		
@@ -167,65 +67,8 @@
 		                      class="message-emoji"
 		                      :src="msg.content" 
 		                      mode="aspectFit"
-							   @click="previewEmoji(msg.content)"></image>
-		               
-		               <view v-else-if="msg.message_type === 'transaction'" 
-		                     class="transaction-message right-transaction">
-		                   <view class="transaction-header">
-		                       <text class="transaction-icon">🤝</text>
-		                       <text class="transaction-title">发起线下交易</text>
-		                   </view>
-		                   <view class="transaction-body">
-		                       <view class="transaction-item" v-if="msg.location">
-		                           <text class="label">见面地点:</text>
-		                           <text class="value location">{{ msg.location }}</text>
-		                       </view>
-		                       <view class="transaction-item" v-else>
-		                           <text class="label">见面地点:</text>
-		                           <text class="value tips">待协商</text>
-		                       </view>
-		                   </view>
-		                   <view class="transaction-footer">
-		                       <text class="status-text">已发送交易请求</text>
-		                   </view>
-		               </view>
-		               
-		               <view v-else-if="msg.message_type === 'agree'" 
-		                     class="agree-message right-agree">
-		                   <view class="agree-header">
-		                       <text class="agree-icon">✅</text>
-		                       <text class="agree-title">已同意线下交易</text>
-		                   </view>
-		                   <view class="agree-body">
-	
-		
-		                       <view class="agree-item">
-		                           <text class="tips-text">💬 请双方协商具体交易事宜</text>
-		                       </view>
-		                   </view>
-		                   <view class="agree-footer">
-		                       <text class="status-text">交易进行中</text>
-		                   </view>
-		               </view>
-		               
-		               <view v-else-if="msg.message_type === 'finish'" 
-		                     class="finish-message right-finish">
-		                   <view class="finish-header">
-		                       <text class="finish-icon">🎉</text>
-		                       <text class="finish-title">交易已完成</text>
-		                   </view>
-		                   <view class="finish-body">
-	
-		                       <view class="finish-item">
-		                           <text class="tips-text">✅ 感谢您的交易，期待下次合作</text>
-		                       </view>
-		                   </view>
-		                   <view class="finish-footer">
-		                       <text class="status-text">交易成功</text>
-		                   </view>
-		               </view>
+							   @click="previewEmoji(msg.content)"></image>									
 		           </view>
-		           
 		           <image class="avatar" :src="userBase.avatarUrl" mode="aspectFill"></image>
 		       </view>
 		    </view>
@@ -282,51 +125,6 @@
 					<text class="iconfont">✕</text>
 				</view>
 
-				<view class="popup-goods-info">
-					<image class="popup-goods-image" :src="goods_info.goods_big_logo" mode="aspectFill"></image>
-					<view class="popup-goods-detail">
-						<text class="popup-goods-name">{{ goods_info.goods_name }}</text>
-						<text class="popup-goods-price">¥{{ goods_info.goods_price }}</text>
-					</view>
-				</view>
-
-				<view class="address-section">
-				    <view class="address-header">
-				        <text class="iconfont location-icon">📍</text>
-				        <text class="address-title">期待线下交易地点</text>
-				        <text class="address-tip">(选填)</text>
-				    </view>
-				    
-				    <view class="address-input-container">
-				        <textarea 
-				            class="address-input"
-				            v-model="addressInput"
-				            placeholder="请输入收货地址(可不填,付款后协商)"
-				            placeholder-class="address-placeholder"
-				            maxlength="200"
-				            :auto-height="true"
-				            :show-confirm-bar="false"
-				        />
-				    </view>
-				    
-				    <view class="save-address-btn" 
-				          v-if="addressInput.trim()"
-				          @click.stop="saveAddress">
-				        <text>💾 保存地址</text>
-				    </view>
-				    
-				    <view class="saved-address" v-if="savedAddressText">
-				        <text class="saved-label">已保存:</text>
-				        <text class="saved-text">{{ savedAddressText }}</text>
-				    </view>
-				</view>
-
-				<view class="payment-section">
-				    <view class="payment-button" @click="handleWechatPay">
-				        <text class="transaction-icon">🤝</text>
-				        <text class="payment-text">确认发起交易</text>
-				    </view>
-				</view>
 			</view>
 		</view>
 	</view>
@@ -361,12 +159,6 @@
 				otherOpenid: '',
 				other_nickname: '',
 				other_avatarUrl: '',
-				// 购买弹窗相关
-				showPurchasePopup: false,
-				// 收货地址输入框
-				addressInput: '',
-				// 当前订单信息
-				currentOrder: null,
 				 // 新增：表情包相关
 				showEmojiPanel: false,  // 控制表情面板显示
 				// 🔥 修改：新的表情包列表
@@ -412,9 +204,6 @@
 				],
 				// 新增：图片上传相关
 				uploading: false,
-				transactionStatus: 0, // 0=无交易, 1=买家发起待确认, 2=卖家同意交易中, 3=交易完成
-				isTransactionInitiator: false, // 是否是交易发起方(买家)
-						// 🔥 新增：交易过期时间(7天，单位毫秒)
 				TRANSACTION_EXPIRE_TIME: 7 * 24 * 60 * 60 * 1000,
 				 // 🔥 新增：新消息提示相关
 					  showNewMessageTip: false,      // 是否显示新消息提示
@@ -435,46 +224,30 @@
 				this.updateUserBase(res1.message)
 			}
 			try {
-				if (options && options.goods_info) {
-					const chatData  = JSON.parse(decodeURIComponent(options.goods_info)) || null;
-					// 判断是否传了 other_openid
-					if (chatData.other_openid) {
-						// 接收完整数据(包含 other_openid)
-						this.goods_info = chatData;
-						this.otherOpenid = chatData.other_openid;
-						console.log('接收到 other_openid:', this.otherOpenid);
-						const queryObj1 = {code: chatData.other_openid};
-						const { data: res1 } = await uni.$http.get('/users/userinfo', queryObj1);
-						if (res1.meta.status === 200) {
-							this.other_nickname = res1.message.nickname
-							this.other_avatarUrl = res1.message.avatarUrl
-						}
-					} else {
-						// 只接收 goods_info
-						this.goods_info = chatData;
-						console.log('只接收 goods_info');
-					}
+				if (options) {
+					
+					this.otherOpenid = options.openid;
+					console.log('接收到 other_openid:', this.otherOpenid);
+					const queryObj1 = {code: this.otherOpenid };
+					const { data: res1 } = await uni.$http.get('/users/userinfo', queryObj1);
+					if (res1.meta.status === 200) {
+						this.other_nickname = res1.message.nickname
+						this.other_avatarUrl = res1.message.avatarUrl
 				}
-				
+				}
 			} catch (e) {
-				console.warn('publisher 解析失败:', e)
-				this.goods_info = null
+				console.warn('other_openid 解析失败:', e)
+				// this.goods_info = null
 			}
 			
 			// 初始化加载消息
 			await this.loadMessages();
 			
 			// 🔥 新增：初始化消息数量
-			  this.lastMessagesLength = this.messages.length;
-			  
-			// 加载当前商品的订单状态
-			await this.loadCurrentOrder();
-			
+			this.lastMessagesLength = this.messages.length;
+			  	
 			// 启动轮询
 			this.startPolling();
-			
-			// 加载本地保存的地址
-			this.loadLocalAddress();
 			
 			// 🔥 新增：确保初始位置在底部
 			  this.$nextTick(() => {
@@ -503,13 +276,7 @@
 		
 		// 页面显示时恢复轮询
 		async onShow() {
-			if (this.goods_info && this.goods_info.goods_id) {
-				this.startPolling();
-			}
-			// 重新加载本地地址(可能在其他页面被修改)
-			await this.loadLocalAddress();
-			// 重新加载订单状态
-			await this.loadCurrentOrder();
+			this.startPolling();		
 		},
 		
 		// 页面卸载时停止轮询
@@ -574,182 +341,6 @@
 			      this.scrollToBottom();
 			    });
 			  },
-			  
-			/**
-			         * 🔥 新增：检查交易是否过期
-			         */
-			        async checkTransactionExpiration() {
-			            try {
-			                // 查找最后一条交易消息
-			                const lastTransactionMsg = [...this.messages]
-			                    .reverse()
-			                    .find(msg => msg.message_type === 'transaction');
-			                
-			                if (!lastTransactionMsg) {
-			                    return;
-			                }
-			                
-			                // 检查是否已经有同意、完成或系统关闭消息
-			                const hasAgreeMsg = this.messages.some(msg => msg.message_type === 'agree');
-			                const hasFinishMsg = this.messages.some(msg => msg.message_type === 'finish');
-			                const hasSystemCloseMsg = this.messages.some(msg => 
-			                    msg.message_type === 'system' && 
-			                    msg.content && 
-			                    msg.content.includes('交易自动关闭')
-			                );
-			                
-			                // 如果已经有后续操作，不需要检查过期
-			                if (hasAgreeMsg || hasFinishMsg || hasSystemCloseMsg) {
-			                    return;
-			                }
-			                
-			                // 解析交易消息时间戳（秒转毫秒）
-			                const transactionTime = lastTransactionMsg.created_at * 1000;
-			                const now = Date.now();
-			                const timePassed = now - transactionTime;
-			                
-			                // 🔥 如果超过7天，发送系统消息关闭交易
-			                if (timePassed > this.TRANSACTION_EXPIRE_TIME) {
-			                    console.log('⏰ 交易已过期，自动关闭');
-			                    await this.sendSystemCloseMessage();
-			                }
-			            } catch (error) {
-			                console.error('❌ 检查交易过期失败:', error);
-			            }
-			        },
-			        
-			        /**
-			         * 🔥 新增：发送系统关闭交易消息
-			         */
-			        async sendSystemCloseMessage() {
-			            try {
-			                const systemMessage = '因7天之内卖家没有同意，该交易自动关闭';
-			                
-			                const reqObj = {
-			                    openid1: this.openid,
-			                    openid2: this.userBase.openid !== this.goods_info.publisher_id 
-			                            ? this.goods_info.publisher_id 
-			                            : this.goods_info.other_openid,
-			                    goods_id: this.goods_info.goods_id,
-			                    senderid: 'system', // 🔥 标记为系统消息
-			                    content: systemMessage,
-			                    message_type: 'system',
-			                };
-			                
-			                const { data: res } = await uni.$http.post('/chats/message', reqObj);
-			                
-			                if (res.meta.status === 200) {
-			                    // 更新状态为无交易
-			                    this.transactionStatus = 0;
-			                    this.isTransactionInitiator = false;
-			                    
-			                    // 刷新消息列表
-			                    const newMessages = this.processMessages(res.message.messages);
-			                    this.messages = newMessages;
-			                    
-			                    if (newMessages.length > 0) {
-			                        this.lastMessageId = newMessages[newMessages.length - 1].id || 
-			                                            newMessages[newMessages.length - 1].created_at;
-			                    }
-			                    
-			                    // 滚动到最新消息
-			                    this.$nextTick(() => {
-			                        this.scrollToBottom();
-			                    });
-			                    
-			                    console.log('✅ 系统关闭交易消息已发送');
-			                }
-			            } catch (error) {
-			                console.error('❌ 发送系统消息失败:', error);
-			            }
-			        },
-					
-			/**
-			 * 买家确认交易完成
-			 */
-			async finish() {
-			    try {
-			        // 二次确认
-			        const [err, res] = await uni.showModal({
-			            title: '确认交易完成',
-			            content: '确认已完成线下交易？确认后交易状态将变为已完成',
-			            confirmText: '确认完成',
-			            cancelText: '取消'
-			        });
-			        
-			        if (err || !res.confirm) {
-			            return;
-			        }
-			        
-			        uni.showLoading({
-			            title: '确认中...',
-			            mask: true
-			        });
-			        
-			        // 构建完成交易消息内容
-			        const finishData = {
-			            goods_id: this.goods_info.goods_id,
-			            goods_name: this.goods_info.goods_name,
-			            goods_price: this.goods_info.goods_price,
-			            timestamp: Date.now()
-			        };
-			        
-			        // 发送"交易完成"类型的消息
-			        const reqObj = {
-			            openid1: this.openid,
-			            openid2: this.userBase.openid !== this.goods_info.publisher_id 
-			                    ? this.goods_info.publisher_id 
-			                    : this.goods_info.other_openid,
-			            goods_id: this.goods_info.goods_id,
-			            senderid: this.openid,
-			            content: JSON.stringify(finishData),
-			            message_type: 'finish',  // 🔥 交易完成消息类型
-			        };
-			        
-			        const { data: res2 } = await uni.$http.post('/chats/message', reqObj);
-			        
-			        uni.hideLoading();
-			        
-			        if (res2.meta.status === 200) {
-			            // 更新状态为交易完成
-			            this.transactionStatus = 3;
-			            
-			            // 刷新消息列表
-			            const newMessages = this.processMessages(res2.message.messages);
-			            this.messages = newMessages;
-			            
-			            if (newMessages.length > 0) {
-			                this.lastMessageId = newMessages[newMessages.length - 1].id || 
-			                                    newMessages[newMessages.length - 1].created_at;
-			            }
-			            
-			            uni.showToast({
-			                title: '交易已完成',
-			                icon: 'success',
-			                duration: 2000
-			            });
-			            
-			            // 滚动到最新消息
-			            this.$nextTick(() => {
-			                this.scrollToBottom();
-			            });
-			        } else {
-			            uni.showToast({
-			                title: res2.meta.msg || '操作失败',
-			                icon: 'none'
-			            });
-			        }
-			    } catch (error) {
-			        uni.hideLoading();
-			        console.error('确认交易完成失败:', error);
-			        uni.showToast({
-			            title: '操作失败',
-			            icon: 'none'
-			        });
-			    }
-			},
-
-
 			/**
 			 * 预览表情包(放大查看)
 			 */
@@ -768,9 +359,6 @@
     this.inputText = (this.inputText || '') + emoji.code;
     // 注意：不需要在这里调用发送接口，用户会点击发送按钮统一发送
 },
-			/**
-			 * 加载当前商品的订单状态
-			 */
 			parseContent(content) {
 			    if (!content) return '';
 			    
@@ -785,88 +373,6 @@
 			    });
 			    return temp;
 			},
-			async loadCurrentOrder() {
-				try {
-					// 假设后端有一个接口可以查询当前用户对该商品的最新订单
-					const { data: res } = await uni.$http.get('/orders/current', {
-						user_openid: this.userBase.openid,
-						goods_id: this.goods_info.goods_id,
-						_hideLoading: true
-					});
-					
-					if (res.code === 200 && res.data) {
-						this.currentOrder = res.data;
-						console.log('📦 当前订单状态:', this.currentOrder);
-					} else {
-						this.currentOrder = null;
-					}
-				} catch (error) {
-					console.error('❌ 加载订单状态失败:', error);
-					this.currentOrder = null;
-				}
-			},
-			
-			/**
-			 * 确认收货
-			 */
-			async confirmReceipt() {
-				// 二次确认
-				const [err, res] = await uni.showModal({
-					title: '确认收货',
-					content: '确认已收到商品?收货后款项将转入卖家账户',
-					confirmText: '确认收货',
-					cancelText: '取消'
-				});
-				
-				if (err || !res.confirm) {
-					return;
-				}
-				
-				try {
-					uni.showLoading({
-						title: '处理中...',
-						mask: true
-					});
-					
-					const { data: result } = await uni.$http.post('/orders/confirm_receipt', {
-						order_number: this.currentOrder.order_number,
-						openid: this.userBase.openid
-					});
-					
-					uni.hideLoading();
-					
-					if (result.meta.status === 200) {
-						uni.showToast({
-							title: '确认收货成功',
-							icon: 'success',
-							duration: 2000
-						});
-						
-						// 更新订单状态
-						this.currentOrder.order_status = 3;
-						
-						// 发送确认收货消息
-						await this.sendPaymentMessage('我已确认收货,交易完成!');
-						
-						// 刷新消息列表
-						await this.loadMessages();
-					} else {
-						uni.showToast({
-							title: result.meta.msg || '确认收货失败',
-							icon: 'none',
-							duration: 2000
-						});
-					}
-				} catch (error) {
-					uni.hideLoading();
-					console.error('❌ 确认收货失败:', error);
-					uni.showToast({
-						title: '确认收货失败,请重试',
-						icon: 'none',
-						duration: 2000
-					});
-				}
-			},
 			
 			/**
 			 * 🔥 修改：加载消息时检查是否有新消息
@@ -879,10 +385,8 @@
 			  try {
 			    const req = {
 			      openid1: this.openid,
-			      openid2: this.userBase.openid !== this.goods_info.publisher_id 
-			              ? this.goods_info.publisher_id 
-			              : this.goods_info.other_openid,
-			      goods_id: this.goods_info.goods_id,
+			      openid2: this.otherOpenid,
+			      goods_id: -1,
 			      _hideLoading: true
 			    };
 			    
@@ -903,7 +407,6 @@
 			          this.messages = newMessages;
 			          this.lastMessageId = newLastMessageId;
 			          
-			          await this.checkTransactionExpiration();
 			          
 			          // 🔥 新增：处理新消息逻辑
 			          if (hadMessages && !silent) {
@@ -944,6 +447,24 @@
 			  }
 			},
 			
+			processMessages(messages) {
+			    if (!Array.isArray(messages)) {
+			        console.log("messages不是数组");
+			        return [];
+			    }
+			    
+			    return messages.map(message => {
+			        const processed = {
+			            ...message,
+			            type: message.openid === this.openid ? 'sent' : 
+			                  message.message_type === 'system' ? 'system' : 'received', // 🔥 系统消息标记
+			            message_type: message.message_type || 'text',
+			            sub_type: message.sub_type || null
+			        };
+			        return processed;
+			    });
+			},
+			
 			// 启动轮询
 			startPolling() {
 				// 先清除可能存在的定时器
@@ -952,7 +473,6 @@
 				// 启动新的定时器
 				this.pollingTimer = setInterval(() => {
 					this.loadMessages(true); // silent=true 静默加载,不显示提示
-					this.loadCurrentOrder(); // 同时轮询订单状态
 				}, this.pollingInterval);
 			},
 			
@@ -1013,9 +533,9 @@
 									// 准备提交到后端的数据
 									const reportData = {
 										reporter_openid: this.openid, // 举报人 (当前用户)
-										reported_openid: this.goods_info.publisher_id, // 被举报人 (帖子作者)
+										reported_openid: this.otherOpenid, // 被举报人 (帖子作者)
 										post_id: 0, 
-										goods_id: this.goods_info.goods_id, // 相关帖子ID
+										goods_id: -1, // 相关帖子ID
 										reason: reason // 举报理由
 									}
 									
@@ -1046,194 +566,7 @@
 							}
 						})
 					},
-					
-			// 立即购买 - 显示弹窗
-			buyNow() {
-				this.showPurchasePopup = true;
-				// 每次打开弹窗时重新加载地址
-				this.loadLocalAddress();
-			},
-			
-			// 关闭购买弹窗
-			closePurchasePopup() {
-				this.showPurchasePopup = false;
-			},
-			
-			// 加载本地保存的地址
-			loadLocalAddress() {
-				// 从 Vuex 中获取本地保存的地址
-				if (this.address && typeof this.address === 'object' && Object.keys(this.address).length > 0) {
-					// 如果地址对象有 fullAddress 字段,直接使用
-					if (this.address.fullAddress) {
-						this.addressInput = this.address.fullAddress;
-					} 
-					// 如果是结构化地址,拼接显示
-					else if (this.address.provinceName || this.address.cityName) {
-						const addressParts = [
-							this.address.provinceName,
-							this.address.cityName,
-							this.address.countyName,
-							this.address.detailInfo
-						].filter(part => part); // 过滤掉空值
-						this.addressInput = addressParts.join(' ');
-					}
-				}
-			},
-			
-			// 保存收货地址
-			saveAddress() {
-				const address = this.addressInput.trim();
-				
-				// 验证地址不能为空
-				if (!address) {
-					uni.showToast({
-						title: '请输入收货地址',
-						icon: 'none',
-						duration: 2000
-					});
-					return;
-				}
-				
-				try {
-					// 构建地址对象
-					const addressObj = {
-						fullAddress: address,
-						timestamp: Date.now() // 添加时间戳
-					};
-					
-					// 调用 Vuex 的 updateAddress 方法保存地址
-					this.updateAddress(addressObj);
-					
-					uni.showToast({
-						title: '地址保存成功',
-						icon: 'success',
-						duration: 1500
-					});
-					
-					console.log('地址已保存:', addressObj);
-				} catch (error) {
-					console.error('保存地址失败:', error);
-					uni.showToast({
-						title: '保存失败,请重试',
-						icon: 'none',
-						duration: 2000
-					});
-				}
-			},
-			
-			/**
-			 * 发送支付专属消息
-			 * @param {string} content - 消息内容
-			 */
-			async sendPaymentMessage(content) {
-				try {
-					const reqObj = {
-						openid1: this.openid,
-						openid2: this.userBase.openid !== this.goods_info.publisher_id 
-								? this.goods_info.publisher_id 
-								: this.goods_info.other_openid,
-						goods_id: this.goods_info.goods_id,
-						senderid: this.openid,
-						content: content,
-						is_payment: 1  // 标记为支付消息
-					};
-					
-					const { data: res } = await uni.$http.post('/chats/message', reqObj);
-					
-					if (res.meta.status === 200) {
-						console.log('✅ 支付消息发送成功');
-						return true;
-					}
-					return false;
-				} catch (error) {
-					console.error('❌ 发送支付消息失败:', error);
-					return false;
-				}
-			},
-			
-			// 处理线下交易请求
-			async handleWechatPay() {
-			    const finalAddress = this.addressInput.trim();
-			    
-			    try {
-			        uni.showLoading({
-			            title: '发送中...',
-			            mask: true
-			        });
-			        
-			        // 构建交易消息内容（使用JSON格式存储）
-			        const transactionData = {
-			            goods_id: this.goods_info.goods_id,
-			            goods_name: this.goods_info.goods_name,
-			            goods_price: this.goods_info.goods_price,
-			            location: finalAddress || null,
-			            timestamp: Date.now()
-			        };
-			        
-			        // 发送交易类型消息
-			        const reqObj = {
-			            openid1: this.openid,
-			            openid2: this.userBase.openid !== this.goods_info.publisher_id 
-			                    ? this.goods_info.publisher_id 
-			                    : this.goods_info.other_openid,
-			            goods_id: this.goods_info.goods_id,
-			            senderid: this.openid,
-			            content: JSON.stringify(transactionData),  // 将数据序列化为JSON
-			            message_type: 'transaction',  // 新的消息类型
-			            location: finalAddress || null  // 额外保存地点字段
-			        };
-			        
-			        const { data: res } = await uni.$http.post('/chats/message', reqObj);
-			        
-			        uni.hideLoading();
-			        
-			        if (res.meta.status === 200) {
-			            // 刷新消息列表
-			            const newMessages = this.processMessages(res.message.messages);
-			            this.messages = newMessages;
-			            
-			            if (newMessages.length > 0) {
-			                this.lastMessageId = newMessages[newMessages.length - 1].id || 
-			                                    newMessages[newMessages.length - 1].created_at;
-			            }
-			            
-						 // 🔥 新增: 更新交易状态
-						    this.transactionStatus = 1; // 买家发起交易,等待卖家确认
-						    this.isTransactionInitiator = true; // 标记为交易发起方
-							
-			            // 关闭弹窗
-			            this.closePurchasePopup();
-			            
-			            // 显示成功提示
-			            uni.showToast({
-			                title: '交易请求已发送',
-			                icon: 'success',
-			                duration: 2000
-			            });
-			            
-			            // 滚动到最新消息
-			            this.$nextTick(() => {
-			                this.scrollToBottom();
-			            });
-			        } else {
-			            uni.showToast({
-			                title: res.meta.msg || '发送失败',
-			                icon: 'none',
-			                duration: 2000
-			            });
-			        }
-			    } catch (error) {
-			        uni.hideLoading();
-			        console.error('❌ 发送交易请求失败:', error);
-			        uni.showToast({
-			            title: '发送失败，请重试',
-			            icon: 'none',
-			            duration: 2000
-			        });
-			    }
-			},
 
-			
 			// 发送消息
 			async sendMessage() {
 				if (!this.inputText.trim()) {
@@ -1247,13 +580,12 @@
 					// 发送消息到后端
 					const requyObj = {
 						openid1: this.openid,
-						openid2: this.userBase.openid !== this.goods_info.publisher_id 
-								? this.goods_info.publisher_id 
-								: this.goods_info.other_openid,
-						goods_id: this.goods_info.goods_id,
+						openid2: this.otherOpenid,
+						goods_id: -1,
 						senderid: this.openid,
 						content: newMessage,
 						message_type: 'text',
+						type: 1
 					};
 					
 					const { data: res } = await uni.$http.post('/chats/message', requyObj)
@@ -1394,14 +726,13 @@
 						            // 4. 发送图片消息
 						            const reqObj = {
 						                openid1: this.openid,
-						                openid2: this.userBase.openid !== this.goods_info.publisher_id 
-						                        ? this.goods_info.publisher_id 
-						                        : this.goods_info.other_openid,
-						                goods_id: this.goods_info.goods_id,
+						                openid2: this.otherOpenid,
+						                goods_id: -1,
 						                senderid: this.openid,
 						                content: imageUrl,
 						                message_type: 'image',  // 标记为图片消息
-						                sub_type: 'image'       // 标记为普通图片
+						                sub_type: 'image',       // 标记为普通图片
+										type: 1
 						            };
 						            
 						            const { data: res } = await uni.$http.post('/chats/message', reqObj);
@@ -1436,20 +767,17 @@
 							/**
 							     * 预览图片
 							     */
-							    previewImage(imageUrl) {
-							        // 收集所有图片消息的URL
-							        const imageUrls = this.messages
-							            .filter(msg => msg.message_type === 'image')
-							            .map(msg => msg.content);
-							        
-							        uni.previewImage({
-							            current: imageUrl,
-							            urls: imageUrls
-							        });
-							    },
+							previewImage(imageUrl) {
+								// 收集所有图片消息的URL
+								const imageUrls = this.messages
+									.filter(msg => msg.message_type === 'image')
+									.map(msg => msg.content);
 								
-					
-			
+								uni.previewImage({
+									current: imageUrl,
+									urls: imageUrls
+								});
+							},	
 			// 滚动到底部
 			scrollToBottom() {
 				if (this.messages.length > 0) {
@@ -1465,214 +793,10 @@
 				const minute = String(date.getMinutes()).padStart(2, '0');
 				return `${month}-${day} ${hour}:${minute}`;
 			},
-			
-			/**
-			         * 🔥 修改：处理消息时识别系统消息
-			         */
-			        processMessages(messages) {
-			            if (!Array.isArray(messages)) {
-			                console.log("messages不是数组");
-			                return [];
-			            }
-			            
-			            // 检查是否有系统关闭消息
-			            const hasSystemCloseMsg = messages.some(msg => 
-			                msg.message_type === 'system' && 
-			                msg.content && 
-			                msg.content.includes('交易自动关闭')
-			            );
-			            
-			            // 🔥 如果有系统关闭消息，重置交易状态
-			            if (hasSystemCloseMsg) {
-			                this.transactionStatus = 0;
-			                this.isTransactionInitiator = false;
-			            } else {
-			                // 原有的状态检查逻辑
-			                const hasTransactionMessage = messages.some(msg => msg.message_type === 'transaction');
-			                const hasAgreeMessage = messages.some(msg => msg.message_type === 'agree');
-			                const hasFinishMessage = messages.some(msg => msg.message_type === 'finish');
-			                
-			                if (hasFinishMessage) {
-			                    this.transactionStatus = 3;
-			                } else if (hasAgreeMessage) {
-			                    this.transactionStatus = 2;
-			                } else if (hasTransactionMessage) {
-			                    const latestTransaction = [...messages]
-			                        .reverse()
-			                        .find(msg => msg.message_type === 'transaction');
-			                    
-			                    if (latestTransaction) {
-			                        if (latestTransaction.openid === this.openid) {
-			                            this.transactionStatus = 1;
-			                            this.isTransactionInitiator = true;
-			                        } else {
-			                            this.transactionStatus = 1;
-			                            this.isTransactionInitiator = false;
-			                        }
-			                    }
-			                }
-			            }
-			            
-			            return messages.map(message => {
-			                const processed = {
-			                    ...message,
-			                    type: message.openid === this.openid ? 'sent' : 
-			                          message.message_type === 'system' ? 'system' : 'received', // 🔥 系统消息标记
-			                    is_payment: message.is_payment || 0,
-			                    message_type: message.message_type || 'text',
-			                    sub_type: message.sub_type || null
-			                };
-			                
-			                // 交易消息处理
-			                if (message.message_type === 'transaction') {
-			                    try {
-			                        const transactionData = JSON.parse(message.content);
-			                        processed.location = transactionData.location || message.location;
-			                        processed.transactionData = transactionData;
-			                    } catch (e) {
-			                        console.error('解析交易消息失败:', e);
-			                        processed.location = message.location;
-			                    }
-			                }
-			                
-			                // 同意消息处理
-			                if (message.message_type === 'agree') {
-			                    try {
-			                        const agreeData = JSON.parse(message.content);
-			                        processed.agreeData = agreeData;
-			                    } catch (e) {
-			                        console.error('解析同意消息失败:', e);
-			                    }
-			                }
-			                
-			                // 完成消息处理
-			                if (message.message_type === 'finish') {
-			                    try {
-			                        const finishData = JSON.parse(message.content);
-			                        processed.finishData = finishData;
-			                    } catch (e) {
-			                        console.error('解析完成消息失败:', e);
-			                    }
-			                }
-			                
-			                return processed;
-			            });
-			        },
-			
-		// 在 methods 中修改 agreeTransaction 方法
-		async agreeTransaction() {
-		    try {
-		        uni.showLoading({
-		            title: '确认中...',
-		            mask: true
-		        });
-		        
-		        // 🔥 构建同意交易消息内容
-		        const agreeData = {
-		            goods_id: this.goods_info.goods_id,
-		            goods_name: this.goods_info.goods_name,
-		            goods_price: this.goods_info.goods_price,
-		            timestamp: Date.now()
-		        };
-		        
-		        // 🔥 发送"同意交易"类型的消息
-		        const reqObj = {
-		            openid1: this.openid,
-		            openid2: this.userBase.openid !== this.goods_info.publisher_id 
-		                    ? this.goods_info.publisher_id 
-		                    : this.goods_info.other_openid,
-		            goods_id: this.goods_info.goods_id,
-		            senderid: this.openid,
-		            content: JSON.stringify(agreeData),
-		            message_type: 'agree',  // 🔥 新增: 同意交易消息类型
-		        };
-		        
-		        const { data: res } = await uni.$http.post('/chats/message', reqObj);
-		        
-		        uni.hideLoading();
-		        
-		        if (res.meta.status === 200) {
-		            // 更新状态为交易进行中
-		            this.transactionStatus = 2;
-		            
-		            // 刷新消息列表
-		            const newMessages = this.processMessages(res.message.messages);
-		            this.messages = newMessages;
-		            
-		            if (newMessages.length > 0) {
-		                this.lastMessageId = newMessages[newMessages.length - 1].id || 
-		                                    newMessages[newMessages.length - 1].created_at;
-		            }
-		            
-		            uni.showToast({
-		                title: '已同意交易',
-		                icon: 'success'
-		            });
-		            
-		            // 滚动到最新消息
-		            this.$nextTick(() => {
-		                this.scrollToBottom();
-		            });
-		        } else {
-		            uni.showToast({
-		                title: res.meta.msg || '操作失败',
-		                icon: 'none'
-		            });
-		        }
-		    } catch (error) {
-		        uni.hideLoading();
-		        console.error('同意交易失败:', error);
-		        uni.showToast({
-		            title: '操作失败',
-		            icon: 'none'
-		        });
-		    }
-		},
-			
-			
-			// 跳转到商品详情
-			async gotoDetail(item) {
-				try {
-					// 1. 先增加浏览次数
-					console.log('📊 增加商品浏览次数:', item.goods_id);
-					const { data: res } = await uni.$http.post('/goods/view', {
-						goods_id: item.goods_id,
-						// 可选：添加用户信息用于统计分析
-						user_openid: this.openid || null
-					});
-				
-					if (res.meta.status === 200) {
-						console.log('✅ 浏览次数增加成功');
-					} else {
-						console.warn('⚠️ 浏览次数增加失败:', res.meta.msg);
-					}
-				} catch (error) {
-					console.error('❌ 浏览次数增加接口错误:', error);
-					// 即使接口失败也继续跳转，不影响用户体验
-				}
-				uni.navigateTo({
-					url: '/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id
-				})
-			},
+					
 		},
 		computed: {
-			...mapState('m_user', ['token', 'code', 'userBase', 'openid', 'address']),
-			 // 🔥 新增：处理商品名称截断
-			    displayGoodsName() {
-			        if (!this.goods_info || !this.goods_info.goods_name) {
-			            return '';
-			        }
-			        const name = this.goods_info.goods_name;
-			        return name.length > 15 ? name.substring(0, 13) + '...' : name;
-			    },
-				
-			// 显示已保存的地址文本
-			savedAddressText() {
-				if (this.address && this.address.fullAddress) {
-					return this.address.fullAddress;
-				}
-				return '';
-			}
+			...mapState('m_user', ['token', 'code', 'userBase', 'openid', 'address']),		
 		}
 	}
 </script>
@@ -1832,7 +956,7 @@
 
 .chat-content {
 	position: fixed;
-	top: 228rpx;
+	top: 88rpx;
 	bottom: 100rpx;
 	left: 0;
 	right: 0;

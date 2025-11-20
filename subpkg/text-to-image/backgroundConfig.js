@@ -97,6 +97,17 @@ export const fontLibrary = {
 		highlightGeometry: { yOffset: -0.2, height: 0.5 }
 	},
 	
+	'yunfengjinglongxingshu': {
+		name: '云峰静龙行书',
+		family: 'JingLongXingShu', 
+		weight: 'bold',                
+		style: 'normal',
+		url: 'https://img.xinshi00.com/fonts/yunfengjinglongxingshu.TTF',
+		textColor: '#333333',
+		highlightColor: '#A6ECA6',
+		highlightGeometry: { yOffset: -0.2, height: 0.5 }
+	},
+	
 	'mashan': {
 		name: '谷歌字体',
 		family: 'MaShanZheng', 
@@ -129,7 +140,7 @@ export const backgroundCategories = [
 					hAlign: 'center', vAlign: 'middle'
 		        },
 				currentFontIndex: 0,
-				fonts: ['yingbishoujinti', 'siyuan', 'liukaiti', 'sansheng', 'kaiti'] 
+				fonts: ['yingbishoujinti', 'siyuan', 'liukaiti', 'sansheng', 'kaiti','yunfengjinglongxingshu'] 
 			},
 			{ 
 				path: 'https://img.xinshi00.com/bg-pictures/memo/memo2.png', 
@@ -240,7 +251,7 @@ export const backgroundCategories = [
 			},
 		]
 	},
-	/*
+	
 	//4. emoji
 	{
 		name: '情绪',
@@ -308,60 +319,60 @@ export const backgroundCategories = [
 			},
 		]
 	},
-	*/
+	
    //4. emoji:inquiring
-	{
-		name: '疑惑',
-		currentStyleIndex: 0,
-		styles: [
-			{
-				path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring.jpg', 
-				name: '疑惑1', 
-				textBox: { 
-					x: 60, y: 40, width: 650, height: 650,
-					hAlign: 'center', vAlign: 'middle' 
-				},
-				currentFontIndex: 0,
-				fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-			},
-			{ 
-				path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring2.jpg', 
-				name: '疑惑2',
-				textBox: { 
-					x: 60, y: 20, width: 650, height: 650,
-					hAlign: 'center', vAlign: 'middle'
-				},
-				currentFontIndex: 0,
-				fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-			}, 
-		],
-	},
+	// {
+	// 	name: '疑惑',
+	// 	currentStyleIndex: 0,
+	// 	styles: [
+	// 		{
+	// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring.jpg', 
+	// 			name: '疑惑1', 
+	// 			textBox: { 
+	// 				x: 60, y: 40, width: 650, height: 650,
+	// 				hAlign: 'center', vAlign: 'middle' 
+	// 			},
+	// 			currentFontIndex: 0,
+	// 			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
+	// 		},
+	// 		{ 
+	// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring2.jpg', 
+	// 			name: '疑惑2',
+	// 			textBox: { 
+	// 				x: 60, y: 20, width: 650, height: 650,
+	// 				hAlign: 'center', vAlign: 'middle'
+	// 			},
+	// 			currentFontIndex: 0,
+	// 			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
+	// 		}, 
+	// 	],
+	// },
 	
 	//5. emoji: angry
-	{
-		name: '生气',
-		currentStyleIndex: 0,
-		styles: [
-			{
-				path: 'https://img.xinshi00.com/bg-pictures/emoji/angry.jpg', 
-				name: '生气1', 
-				textBox: { 
-					x: 60, y: 40, width: 650, height: 650,
-					hAlign: 'center', vAlign: 'middle' 
-				},
-				currentFontIndex: 0,
-				fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-			},
-			{ 
-				path: 'https://img.xinshi00.com/bg-pictures/emoji/angry2.jpg', 
-				name: '生气2',
-				textBox: { 
-					x: 60, y: 20, width: 650, height: 650,
-					hAlign: 'center', vAlign: 'middle'
-				},
-				currentFontIndex: 0,
-				fonts: [ 'sansheng', 'yingbishoujinti','kaishu', 'liukaiti']
-			}, 
-		],
-	},
+	// {
+	// 	name: '生气',
+	// 	currentStyleIndex: 0,
+	// 	styles: [
+	// 		{
+	// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/angry.jpg', 
+	// 			name: '生气1', 
+	// 			textBox: { 
+	// 				x: 60, y: 40, width: 650, height: 650,
+	// 				hAlign: 'center', vAlign: 'middle' 
+	// 			},
+	// 			currentFontIndex: 0,
+	// 			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
+	// 		},
+	// 		{ 
+	// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/angry2.jpg', 
+	// 			name: '生气2',
+	// 			textBox: { 
+	// 				x: 60, y: 20, width: 650, height: 650,
+	// 				hAlign: 'center', vAlign: 'middle'
+	// 			},
+	// 			currentFontIndex: 0,
+	// 			fonts: [ 'sansheng', 'yingbishoujinti','kaishu', 'liukaiti']
+	// 		}, 
+	// 	],
+	// },
 ];

@@ -1,9 +1,31 @@
 <template>
   <view class="goods-item">
     <!-- 图片 -->
+    <!-- 🔥 修改：带骨架屏的商品图片 -->
     <view class="goods-item-image" @click="gotoDetail(goods)">
-      <image :src="goods.goods_big_logo" class="goods-pic" mode="aspectFill"></image>
+      <!-- 图片占位符容器 -->
+      <view class="image-placeholder" :class="{ 'image-loaded': imageLoaded }">
+        <!-- 骨架屏 -->
+        <view class="skeleton-box" v-if="!imageLoaded && !imageError"></view>
+        
+        <!-- 实际图片 -->
+        <image 
+          class="goods-pic" 
+          :src="goods.goods_big_logo" 
+          mode="aspectFill"
+          :lazy-load="true"
+          @load="onImageLoad"
+          @error="onImageError"
+        ></image>
+        
+        <!-- 加载失败占位图 -->
+        <view class="image-error" v-if="imageError">
+          <text class="error-icon">📷</text>
+          <text class="error-text">图片加载失败</text>
+        </view>
+      </view>
     </view>
+
 
     <!-- 文本信息 -->
     <view class="goods-item-info">
@@ -51,6 +73,8 @@ export default {
   data() {
     return {
       isNavigating: false,
+	  imageLoaded: false,  // 🔥 新增：图片加载状态
+	      imageError: false    // 🔥 新增：图片错误状态
     };
   },
   computed: {
@@ -77,6 +101,17 @@ export default {
     },
   },
   methods: {
+	  // 🔥 新增：图片加载成功回调
+	    onImageLoad() {
+	      this.imageLoaded = true
+	      console.log(`✅ 商品图片加载成功: ${this.goods.goods_id}`)
+	    },
+	    
+	    // 🔥 新增：图片加载失败回调
+	    onImageError() {
+	      this.imageError = true
+	      console.error(`❌ 商品图片加载失败: ${this.goods.goods_id}`)
+	    },
     async gotoProfile(openid) {
       if (!this.openid) {
         uni.switchTab({
@@ -202,13 +237,94 @@ export default {
   height: 370rpx;
   background: #f5f5f5;
   flex-shrink: 0;
+  overflow: hidden; // 🔥 添加：防止内容溢出
 
-  .goods-pic {
+  // 🔥 新增：图片占位符容器
+  .image-placeholder {
     width: 100%;
     height: 100%;
-    display: block;
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;
+    
+    // 🔥 骨架屏动画
+    .skeleton-box {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+      );
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s ease-in-out infinite;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    
+    // 🔥 商品图片
+    .goods-pic {
+      width: 100%;
+      height: 100%;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+    
+    // 🔥 图片加载完成后显示
+    &.image-loaded {
+      .goods-pic {
+        opacity: 1;
+      }
+      
+      .skeleton-box {
+        display: none;
+      }
+    }
+    
+    // 🔥 加载失败状态
+    .image-error {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f8f8f8;
+      z-index: 3;
+      
+      .error-icon {
+        font-size: 48rpx;
+        margin-bottom: 12rpx;
+        opacity: 0.5;
+      }
+      
+      .error-text {
+        font-size: 24rpx;
+        color: #999;
+      }
+    }
   }
 }
+
+// 🔥 骨架屏动画
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 
 .goods-item-info {
   padding: 20rpx;

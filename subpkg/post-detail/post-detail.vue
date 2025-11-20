@@ -600,68 +600,165 @@ export default {
 			this.commentContent = '';
 		},
 		async submitComment() {
-		    try {
-		       if (!this.openid) {
-		         uni.switchTab({
-		           url: '/pages/my/my'
-		         })
-		         return
-		       }
-		        const content = this.commentContent.trim();
-		        if (!content) {
-		            uni.showToast({
-		                title: this.replyTarget ? '请输入回复内容' : '请输入评论内容',
-		                icon: 'none'
-		            });
-		            return;
-		        }
-		        if (this.isSubmittingComment) return;
-		        this.isSubmittingComment = true;
-		        const params = {
-		            post_id: this.postId,
-		            openid: this.userBase.openid,
-		            nickname: this.userBase.nickname || '用户',
-		            avatar: this.userBase.avatarUrl || '',
-		            content: content
-		        };
-		        if (this.replyTarget) {
-		            params.parent_id = this.replyTarget.parent_id;
-		            params.reply_to_openid = this.replyTarget.user_openid;
-		            params.reply_to_nickname = this.replyTarget.nickname;
-		        }
-		        console.log('提交参数:', params);
-		        const { data: res } = await uni.$http.post('/posts/comment', params);
-		        if (res.meta.status === 201) {
-		            this.commentContent = '';
-		            this.hideReplyInput();
-		            this.commentList = [];
-		            this.commentPage = 1;
-		            this.commentHasMore = true;
-		            await this.loadComments();
-		            if (!this.replyTarget && this.post) {
-		                this.post.commentCount += 1;
-		            }
-		            uni.showToast({
-		                title: this.replyTarget ? '回复成功' : '评论成功',
-		                icon: 'success'
-		            });
-		        } else {
-		            uni.showToast({
-		                title: res.meta.msg || '提交失败',
-		                icon: 'none'
-		            });
-		        }
-		    } catch (error) {
-		        console.error('提交失败:', error);
-		        console.error('错误详情:', error.response || error);
-		        uni.showToast({
-		            title: error.response?.data?.meta?.msg || '提交失败，请重试',
-		            icon: 'none'
-		        });
-		    } finally {
-		        this.isSubmittingComment = false;
+		  try {
+		    // 检查登录状态
+		    if (!this.openid) {
+		      uni.switchTab({
+		        url: '/pages/my/my'
+		      });
+		      return;
 		    }
+		    
+		    // 检查内容是否为空
+		    const content = this.commentContent.trim();
+		    if (!content) {
+		      uni.showToast({
+		        title: this.replyTarget ? '请输入回复内容' : '请输入评论内容',
+		        icon: 'none'
+		      });
+		      return;
+		    }
+		    
+		    // 防止重复提交
+		    if (this.isSubmittingComment) {
+		      console.log('⚠️ 提交中，请勿重复点击');
+		      return;
+		    }
+		    
+		    // 🔥 新增：文本内容安全检测
+		    console.log('[1] 开始检测文本内容安全性...');
+		    uni.showLoading({
+		      title: '检测内容...',
+		      mask: true
+		    });
+		    
+		    const isTextSafe = await this.checkTextSafety(content);
+		    
+		    if (!isTextSafe) {
+		      uni.hideLoading();
+		      uni.showModal({
+		        title: '内容违规',
+		        content: this.replyTarget ? '回复内容包含违规信息，请修改后重试' : '评论内容包含违规信息，请修改后重试',
+		        showCancel: false,
+		        confirmText: '我知道了'
+		      });
+		      return;
+		    }
+		    
+		    console.log('✅ 文本内容检测通过');
+		    
+		    // ✅ 检测通过，继续提交评论/回复
+		    this.isSubmittingComment = true;
+		    
+		    uni.showLoading({
+		      title: this.replyTarget ? '发送回复...' : '发送评论...',
+		      mask: true
+		    });
+		    
+		    // 构造请求参数
+		    const params = {
+		      post_id: this.postId,
+		      openid: this.userBase.openid,
+		      nickname: this.userBase.nickname || '用户',
+		      avatar: this.userBase.avatarUrl || '',
+		      content: content
+		    };
+		    
+		    // 如果是回复
+		    if (this.replyTarget) {
+		      params.parent_id = this.replyTarget.parent_id;
+		      params.reply_to_openid = this.replyTarget.user_openid;
+		      params.reply_to_nickname = this.replyTarget.nickname;
+		    }
+		    
+		    console.log('[2] 提交参数:', params);
+		    
+		    // 调用后端接口
+		    const { data: res } = await uni.$http.post('/posts/comment', params);
+		    
+		    if (res.meta.status === 201) {
+		      // 清空输入框
+		      this.commentContent = '';
+		      this.hideReplyInput();
+		      
+		      // 重新加载评论列表
+		      this.commentList = [];
+		      this.commentPage = 1;
+		      this.commentHasMore = true;
+		      await this.loadComments();
+		      
+		      // 更新帖子评论数
+		      if (!this.replyTarget && this.post) {
+		        this.post.commentCount += 1;
+		      }
+		      
+		      uni.hideLoading();
+		      uni.showToast({
+		        title: this.replyTarget ? '回复成功' : '评论成功',
+		        icon: 'success'
+		      });
+		      
+		    } else {
+		      uni.hideLoading();
+		      uni.showToast({
+		        title: res.meta.msg || '提交失败',
+		        icon: 'none'
+		      });
+		    }
+		    
+		  } catch (error) {
+		    console.error('[💥] 提交失败:', error);
+		    console.error('错误详情:', error.response || error);
+		    
+		    uni.hideLoading();
+		    uni.showToast({
+		      title: error.response?.data?.meta?.msg || '提交失败，请重试',
+		      icon: 'none'
+		    });
+		    
+		  } finally {
+		    this.isSubmittingComment = false;
+		  }
 		},
+		
+		/**
+		 * 🔥 新增：文本内容安全检测
+		 */
+		async checkTextSafety(text) {
+		  try {
+		    console.log('🔍 开始检测文本:', text.substring(0, 30) + '...');
+		    
+		    const { data: res } = await uni.$http.post('/upload/textSecCheck', {
+		      content: text,
+		      openid: this.openid
+		    });
+		    
+		    console.log('📥 文本检测结果:', res);
+		    
+		    if (res.meta.status === 200) {
+		      console.log('✅ 文本内容安全');
+		      return true;
+		    } else {
+		      console.warn('🚫 文本内容违规:', res.meta.msg);
+		      return false;
+		    }
+		    
+		  } catch (err) {
+		    console.error('💥 文本检测出错:', err);
+		    
+		    // 🔥 网络错误时提示用户
+		    uni.showToast({
+		      title: '文本检测失败，请重试',
+		      icon: 'none',
+		      duration: 2000
+		    });
+		    
+		    return false;
+		  }
+		},
+
+
+		
 		async deleteComment(commentId) {
 			uni.showModal({
 				title: '删除评论',

@@ -156,48 +156,7 @@
     <view class="department-section">
       <text class="section-title">发布范围（可选）</text>
       
-      <view class="department-option">
-        <view class="option-header" @click="showDepartmentPicker('exclude')">
-          <text class="option-label">不发布到</text>
-          <view class="option-value">
-            <text class="value-text" v-if="excludeDepartments.length === 0">全部院系</text>
-            <text class="value-text selected" v-else>已选 {{ excludeDepartments.length }} 个院系</text>
-            <text class="arrow">›</text>
-          </view>
-        </view>
-        <view class="selected-tags" v-if="excludeDepartments.length > 0">
-          <view 
-            class="tag-item exclude"
-            v-for="(dept, index) in excludeDepartments"
-            :key="index"
-            @click="removeDepartment('exclude', index)"
-          >
-            <text>{{ dept }}</text>
-            <text class="tag-close">×</text>
-          </view>
-        </view>
-      </view>
-      
-      <view class="department-option">
-        <view class="option-header" @click="showDepartmentPicker('include')">
-          <text class="option-label">只发布到</text>
-          <view class="option-value">
-            <text class="value-text" v-if="!includeDepartment">全部院系</text>
-            <text class="value-text selected" v-else>{{ includeDepartment }}</text>
-            <text class="arrow">›</text>
-          </view>
-        </view>
-        <view class="selected-tags" v-if="includeDepartment">
-          <view 
-            class="tag-item include single"
-            @click="clearIncludeDepartment"
-          >
-            <text>{{ includeDepartment }}</text>
-            <text class="tag-close">×</text>
-          </view>
-        </view>
-      </view>
-	  
+
 	  <!-- 🔥 新增:仅自己可见选项 -->
 	  <view class="only-myself-option">
 	    <view class="option-header" @click="toggleOnlyMyself">
@@ -332,12 +291,30 @@ export default {
       ],
 	   // 🔥 新增:仅自己可见开关
 	  onlyMyself: false,  // 默认关闭
+	  
+	  // 🔥 新增：图片检测状态管理
+	      imageCheckStatus: [], // 存储每张图片的检测状态
+	      allImagesChecked: false,
     }
   },
   
   computed: {
     ...mapState('m_user', ['openid', 'userBase']),
     
+	  // 🔥 新增：检查是否可以发布
+	  canPublish() {
+	    // 检查图片是否还在检测中
+	    const stillChecking = this.imageCheckStatus.some(status => status.checking)
+	    
+	    // 检查是否有违规图片
+	    const hasUnsafeImages = this.imageCheckStatus.some(status => status.safe === false)
+	    
+	    return !this.isPublishing && 
+	           !this.uploading && 
+	           !stillChecking && 
+	           !hasUnsafeImages
+	  },
+	  
     isTopicDiscussion() {
       return this.imageUrls.length > 0
     },
@@ -587,7 +564,9 @@ export default {
       }
     },
     
-    chooseImage() {
+    async chooseImage() {
+      if (this.isPublishing) return;
+      
       const maxCount = 9 - this.selectedImages.length;
     
       if (maxCount <= 0) {
@@ -603,13 +582,224 @@ export default {
         sizeType: ['compressed'],
         sourceType: ['album', 'camera'],
         success: async (res) => {
-          const tempFiles = res.tempFilePaths;
-          this.selectedImages = this.selectedImages.concat(tempFiles);
-          await this.uploadImages(tempFiles);
+          console.log('📸 选择了', res.tempFilePaths.length, '张图片')
+          
+          // 🔥 立即添加到列表，提升用户体验
+          const newImages = res.tempFilePaths
+          const startIndex = this.selectedImages.length
+          
+          // 先添加图片到展示列表
+          this.selectedImages = this.selectedImages.concat(newImages)
+          
+          // 初始化检测状态（检测中）
+          newImages.forEach(() => {
+            this.imageCheckStatus.push({
+              checking: true,
+              safe: null,
+              error: false
+            })
+          })
+          
+          uni.showToast({
+            title: `已添加 ${newImages.length} 张图片`,
+            icon: 'success',
+            duration: 1000
+          })
+          
+          // 🔥 异步检测图片（不阻塞用户操作）
+          this.checkImagesInBackground(newImages, startIndex)
+        },
+        fail: (err) => {
+          console.error('❌ 选择图片失败:', err)
         }
       });
     },
-    
+
+	async checkImagesInBackground(imagePaths, startIndex) {
+	  console.log('🔍 开始后台检测', imagePaths.length, '张图片')
+	  
+	  // 🔥 串行执行检测
+	  for (let index = 0; index < imagePaths.length; index++) {
+	    const filePath = imagePaths[index]
+	    const globalIndex = startIndex + index
+	    
+	    try {
+	      // 检查文件大小
+	      const fileInfo = await new Promise((resolve, reject) => {
+	        uni.getFileInfo({
+	          filePath: filePath,
+	          success: resolve,
+	          fail: reject
+	        })
+	      })
+	      
+	      console.log(`📁 图片 ${globalIndex + 1} 大小:`, (fileInfo.size / 1024).toFixed(2) + ' KB')
+	      
+	      if (fileInfo.size > 1024 * 1024) {
+	        this.imageCheckStatus[globalIndex] = {
+	          checking: false,
+	          safe: null,
+	          error: true,
+	          reason: '文件过大'
+	        }
+	        continue
+	      }
+	      
+	      // 上传检测
+	      const res = await new Promise((resolve, reject) => {
+	        uni.uploadFile({
+	          url: 'https://xinshi00.com/upload/imgSecCheck',
+	          filePath: filePath,
+	          name: 'media',
+	          formData: { openid: this.openid },
+	          success: resolve,
+	          fail: reject
+	        })
+	      })
+	      
+	      console.log(`📥 图片 ${globalIndex + 1} 原始响应:`, {
+	        statusCode: res.statusCode,
+	        data: res.data
+	      })
+	      
+	      // 解析响应
+	      let result
+	      try {
+	        result = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
+	      } catch (parseError) {
+	        console.error(`❌ 图片 ${globalIndex + 1} 响应解析失败:`, parseError)
+	        this.imageCheckStatus[globalIndex] = {
+	          checking: false,
+	          safe: null,
+	          error: true,
+	          reason: '响应解析失败'
+	        }
+	        continue
+	      }
+	      
+	      console.log(`📥 图片 ${globalIndex + 1} 解析后响应:`, result)
+	      
+	      // 根据响应更新状态
+	      if (res.statusCode === 200 && result.meta && result.meta.status === 200) {
+	        // ✅ 图片安全
+	        this.imageCheckStatus[globalIndex] = {
+	          checking: false,
+	          safe: true,
+	          error: false
+	        }
+	        console.log(`✅ 图片 ${globalIndex + 1} 检测通过`)
+	        
+	      } else if (res.statusCode === 400 || (result.meta && result.meta.status === 400)) {
+	        // 🚫 图片违规
+	        this.imageCheckStatus[globalIndex] = {
+	          checking: false,
+	          safe: false,
+	          error: false,
+	          reason: result.meta?.msg || '内容违规'
+	        }
+	        console.warn(`🚫 图片 ${globalIndex + 1} 内容违规:`, result.meta?.msg)
+	        
+	      } else {
+	        // ❌ 检测失败
+	        this.imageCheckStatus[globalIndex] = {
+	          checking: false,
+	          safe: null,
+	          error: true,
+	          reason: result.meta?.msg || '检测失败'
+	        }
+	        console.error(`❌ 图片 ${globalIndex + 1} 检测失败:`, result.meta?.msg)
+	      }
+	      
+	    } catch (err) {
+	      console.error(`💥 图片 ${globalIndex + 1} 检测异常:`, err)
+	      
+	      this.imageCheckStatus[globalIndex] = {
+	        checking: false,
+	        safe: null,
+	        error: true,
+	        reason: '网络错误'
+	      }
+	    }
+	  }
+	  
+	  // 处理违规和失败的图片
+	  const unsafeImages = this.imageCheckStatus
+	    .map((status, index) => ({ status, index }))
+	    .filter(item => item.status.safe === false)
+	  
+	  const errorImages = this.imageCheckStatus
+	    .map((status, index) => ({ status, index }))
+	    .filter(item => item.status.safe === null && item.status.error === true)
+	  
+	  if (unsafeImages.length > 0) {
+	    uni.showModal({
+	      title: '图片检测完成',
+	      content: `有 ${unsafeImages.length} 张图片未通过检测，已自动移除`,
+	      showCancel: false,
+	      confirmText: '我知道了',
+	      success: () => {
+	        unsafeImages.reverse().forEach(item => {
+	          this.selectedImages.splice(item.index, 1)
+	          this.imageUrls.splice(item.index, 1)
+	          this.imageCheckStatus.splice(item.index, 1)
+	        })
+	      }
+	    })
+	  }
+	  
+	  if (errorImages.length > 0) {
+	    const errorReasons = errorImages.map(item => item.status.reason).join('、')
+	    uni.showModal({
+	      title: '图片检测失败',
+	      content: `有 ${errorImages.length} 张图片检测失败（${errorReasons}），已自动移除`,
+	      showCancel: false,
+	      confirmText: '我知道了',
+	      success: () => {
+	        errorImages.reverse().forEach(item => {
+	          this.selectedImages.splice(item.index, 1)
+	          this.imageUrls.splice(item.index, 1)
+	          this.imageCheckStatus.splice(item.index, 1)
+	        })
+	      }
+	    })
+	  }
+	  
+	  this.allImagesChecked = true
+	  console.log('✅ 所有图片检测完成')
+	},
+	
+	async checkTextSafety(text) {
+	  try {
+	    console.log('🔍 开始检测文本:', text.substring(0, 30) + '...')
+	    
+	    const { data: res } = await uni.$http.post('/upload/textSecCheck', {
+	      content: text,
+	      openid: this.openid
+	    })
+	    
+	    console.log('📥 文本检测结果:', res)
+	    
+	    if (res.meta.status === 200) {
+	      console.log('✅ 文本内容安全')
+	      return true
+	    } else {
+	      console.warn('🚫 文本内容违规:', res.meta.msg)
+	      return false
+	    }
+	    
+	  } catch (err) {
+	    console.error('💥 文本检测出错:', err)
+	    
+	    uni.showToast({
+	      title: '文本检测失败，请重试',
+	      icon: 'none',
+	      duration: 2000
+	    })
+	    
+	    return false
+	  }
+	},
+	
     async uploadImages(filePaths) {
       if (!filePaths || filePaths.length === 0) {
         return [];
@@ -709,6 +899,8 @@ export default {
     },
     
     deleteImage(index) {
+      if (this.isPublishing) return
+      
       const deletedImage = this.selectedImages[index];
       
       if (deletedImage === this.generatedBgImage) {
@@ -717,7 +909,15 @@ export default {
       
       this.selectedImages.splice(index, 1);
       this.imageUrls.splice(index, 1);
+      this.imageCheckStatus.splice(index, 1); // 🔥 新增：删除检测状态
+      
+      uni.showToast({
+        title: '已删除',
+        icon: 'success',
+        duration: 1000
+      })
     },
+
     
     // 🔥 分类选择逻辑（UI层面仍使用数组）
     selectCategory(category) {
@@ -969,7 +1169,56 @@ export default {
       if (!this.validateForm()) {
         return;
       }
-  
+	
+	// 🔥 新增：检查图片是否还在检测中
+	    const stillChecking = this.imageCheckStatus.some(status => status.checking)
+		if (stillChecking) {
+		      uni.showModal({
+		        title: '请稍候',
+		        content: '图片正在检测中，请稍后再试',
+		        showCancel: false,
+		        confirmText: '我知道了'
+		      })
+		      return
+		    }
+		    
+		    // 🔥 新增：检查是否有违规图片
+		    const hasUnsafeImages = this.imageCheckStatus.some(status => status.safe === false)
+		    
+		    if (hasUnsafeImages) {
+		      uni.showModal({
+		        title: '图片违规',
+		        content: '存在违规图片，请删除后重试',
+		        showCancel: false,
+		        confirmText: '我知道了'
+		      })
+		      return
+		    }
+			
+			// 🔥 新增：文本内容安全检测
+			    console.log('[1] 检测文本内容安全性...')
+			    uni.showLoading({
+			      title: '检测文本内容...',
+			      mask: true
+			    })
+			    
+			    const pureContent = this.postContent.trim()
+			    const isTextSafe = await this.checkTextSafety(pureContent)
+			    
+			    uni.hideLoading()
+			    
+			    if (!isTextSafe) {
+			      uni.showModal({
+			        title: '内容违规',
+			        content: '帖子内容包含违规内容，请修改后重试',
+			        showCancel: false,
+			        confirmText: '我知道了'
+			      })
+			      return
+			    }
+			    
+			    console.log('✅ 文本内容检测通过')
+			
       if (!this.openid) {
         uni.showToast({
           title: '请先登录',
@@ -998,7 +1247,7 @@ export default {
       const finalImages = [...this.imageUrls];
       
 	   // ✅ 使用纯内容（不包含标签）
-	        const pureContent = this.postContent.trim();
+	    const pureContent1 = this.postContent.trim();
 	        
 			
      // ✅ 标签转为字符串
@@ -1007,7 +1256,7 @@ export default {
              : 'null';
       
      console.log('📤 发送数据:', {
-             content: pureContent,  // 纯内容
+             content: pureContent1,  // 纯内容
              properties: propertiesString,  // 标签字符串
            });
   
@@ -1015,7 +1264,7 @@ export default {
         openid: this.openid,
         nickname: this.userBase.nickname || '用户',
         avatar: this.userBase.avatarUrl || '',
-        content: pureContent,  // ✅ 只发送纯内容
+        content: pureContent1,  // ✅ 只发送纯内容
         properties: propertiesString,  // ✅ 标签单独发送
         images: finalImages,
         excludeDepartments: this.excludeDepartments,
@@ -1029,6 +1278,36 @@ export default {
       uni.hideLoading();
   
       if (res.meta.status === 201) {
+		  // 🔥 新增：保存当前图片状态
+		        const hasImages = this.selectedImages.length > 0;
+				
+				// 🔥 新增：构建完整的 post 对象
+				      const postData = {
+				        post_id: res.message.post_id,
+				        openid: this.openid,
+				        nickname: this.userBase.nickname || '用户',
+				        avatar: this.userBase.avatarUrl || '',
+				        content: pureContent1,
+				        properties: propertiesString,
+				        images: finalImages,
+				        excludeDepartments: this.excludeDepartments,
+				        includeDepartment: this.includeDepartment,
+				        contactInfo: this.enableContact ? this.contactInfo.trim() : null,
+				        relatedGoodsId: this.enableGoodsLink ? this.relatedGoodsId : null,
+				        isTopicDiscussion: this.isTopicDiscussion,
+				        onlyMyself: this.onlyMyself ? 1 : 0,
+				        created_at: new Date().toISOString(),
+				        // 添加其他可能需要的字段
+				        likes_count: 0,
+				        comments_count: 0,
+				        shares_count: 0
+				      };
+					  
+					  // 🔥 核心改动：使用 Vuex 存储数据
+					        this.$store.commit('m_posts/setNewPost', {
+					          post: postData,
+					          targetPage: hasImages ? 'home' : 'treehole'
+					        });
         // 清空分类数组
         this.selectedTagsInContent = [];
         this.availableTags = ['日常', '二手', '交友', '吐槽'];
@@ -1052,14 +1331,37 @@ export default {
           icon: 'success',
           duration: 1500
         });
-  
-        setTimeout(() => {
-          uni.switchTab({
-            url: '/pages/home/home'
-          })
-        }, 1500);
+		
+		// 清空检测状态
+		this.imageCheckStatus = []
+		this.allImagesChecked = false
+		
+		      console.log('📊 是否有图片:', hasImages);
   
         console.log('✅ 发布成功,帖子ID:', res.message.post_id);
+		
+		// 🔥 核心改动：简化跳转逻辑（不传参数）
+		      setTimeout(() => {
+		        if (hasImages) {
+		          console.log('📸 有图片，跳转到 home 页面');
+		          uni.switchTab({
+		            url: '/pages/home/home', // 不带参数
+		            success: () => {
+		              console.log('✅ 成功跳转到 home 页面');
+		            }
+		          });
+		        } else {
+		          console.log('💬 无图片，跳转到 treehole 页面');
+		          uni.switchTab({
+		            url: '/pages/treehole/treehole', // 不带参数
+		            success: () => {
+		              console.log('✅ 成功跳转到 treehole 页面');
+		            }
+		          });
+		        }
+		      }, 1500);
+			  
+		
       } else {
         uni.showToast({
           title: res.meta.msg || '发布失败',

@@ -158,7 +158,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex';
 export default {
   data() {
     return {
@@ -244,9 +244,45 @@ export default {
 		excludeGoodsIds: [], // ✅ 新增：已获取的商品ID列表
     };
   },
+	  
   
   methods: {
     ...mapMutations('m_user', ['updateUserInfo', 'updateToken', 'updateUserBase']),
+	  ...mapMutations('m_posts', ['clearNewPost']),
+	  
+	  insertNewPost(post) {
+	    if (!post) return;
+	    
+	    // 检查是否已存在（避免重复插入）
+	    const exists = this.goodsList.some(p => p.goods_id === post.goods_id);
+	    if (exists) {
+	      console.log('⚠️ 商品已存在，跳过插入');
+	      return;
+	    }
+	    
+	    // 🔥 关键修改：完整初始化帖子对象（与 loadPostList 保持一致）
+	    const formattedPost = {
+	      ...post,
+		  add_time: Date.now()
+	      // timeText: this.formatTime(post.created_at || new Date().toISOString()),
+	      // images: this.processPostImages(post.images),
+	      // 🔥 核心：初始化图片加载状态
+	      // imageLoaded: false,
+	      // imageError: false
+	    };
+	    
+	    // 插入到列表顶部
+	    this.goodsList.unshift(formattedPost);
+	    console.log('✅ 新商品已插入列表顶部:', formattedPost.goods_id);
+	    
+	    // 显示提示
+	    uni.showToast({
+	      title: '帖子已发布',
+	      icon: 'success',
+	      duration: 2000
+	    });
+	  },
+	  
     // 🔥 新增:打开侧边菜单
       openSideMenu() {
         if (!this.openid) {
@@ -551,134 +587,144 @@ export default {
       })
     },
     
-    async activeChanged(i) {
-		 this.resetNavBar() // 切换标签时重置导航栏
-      try {
-        this.active = i;
-        // 🔥 切换标签时隐藏分类商品
-		 // 🔥 关键修改：如果点击的是分类选项(index=2)
-		 
-		 // 🔥 如果点击的是"新品"标签(index=1)
-		     if (i === 1) {
-		       if (!this.openid) {
-		         this.active = 0;
-		         uni.switchTab({
-		           url: '/pages/my/my'
-		         });
-		         return;
-		       }
-		       
-		       // 🔥 如果是第一次加载新品,则请求数据
-		       if (this.recentGoodsList.length === 0) {
-		         await this.getRecentGoodsList();
-		       }
-		       return;
-		     }
-			 
-		if (i === 2) {
-		  // 🔥 如果之前已经选中了某个分类，此时应该重置状态，显示分类选择页面
-		  if (this.showCategoryGoods) {
-			 this.showCategoryGoods = false
-			      this.selectedCategoryIndex = 0
-			
-			uni.showToast({
-			  title: '请选择分类',
-			  icon: 'none',
-			  duration: 1500
-			});
-		  }
-		  return;
-		}
-		// 🔥 切换到其他标签时，隐藏分类商品并重置选中状态
-		       this.showCategoryGoods = false
-		            this.selectedCategoryIndex = 0
-				
-        if (this.active === 2) {
-          // 分类页面不需要特殊处理
-          return;
-        }
-
-        if (this.active === 1) {
-          if (!this.openid) {
-            this.active = 0
-            uni.switchTab({
-              url: '/pages/my/my'
-            })
-            return;
-          }
-          const queryObj = { code: this.openid };
-          const { data: res } = await uni.$http.get('/users/userinfo', queryObj);
-
-          if (res.meta.status === 200) {
-            this.updateUserBase(res.message);
-          }
-
-          const followingIds = res.message.following_ids;
-
-          if (!Array.isArray(followingIds) || followingIds.length === 0) {
-            this.followers = [];
-            this.filteredgoodsList = [];
-            return;
-          }
-
-          const followerPromises = followingIds.map(async (userId) => {
-            try {
-              const queryObj1 = { code: userId };
-              const { data: res1 } = await uni.$http.get('/users/userinfo', queryObj1);
-              if (res1.meta.status === 200) {
-                return res1.message;
-              } else {
-                return null;
-              }
-            } catch (error) {
-              return null;
-            }
-          });
-
-          const followersResults = await Promise.all(followerPromises);
-          this.followers = followersResults.filter(f => f !== null);
-
-          this.goods_ids = [];
-          
-          if (Array.isArray(this.followers) && this.followers.length > 0) {
-            this.followers.forEach(follower => {
-              if (Array.isArray(follower?.goods_id)) {
-                this.goods_ids.push(...follower.goods_id.map(id => String(id)));
-              } else if (follower?.goods_id) {
-                this.goods_ids.push(String(follower.goods_id));
-              }
-            });
-          } else {
-            this.filteredgoodsList = [];
-            return;
-          }
-
-          if (this.goods_ids.length === 0) {
-            this.filteredgoodsList = [];
-            return;
-          }
-          
-          const queryObj2 = { goods_id: this.goods_ids };
-          const { data: res2 } = await uni.$http.get('/goods/historysearch', queryObj2);
-
-          if (res2.meta.status === 200) {
-            this.filteredgoodsList = res2.message;
-          } else {
-            uni.showToast({
-              title: '获取商品信息失败',
-              icon: 'none'
-            });
-            this.filteredgoodsList = [];
-          }
-        }
-      } catch (error) {
-        console.error('activeChanged 方法执行出错:', error);
-        uni.showToast({
-          title: '操作失败，请稍后重试',
-          icon: 'none'
-        });
-      }
-    },
+   async activeChanged(i) {
+     // 🔥 新增：如果点击当前已激活的选项，只滚动到顶部
+     if (this.active === i) {
+       uni.pageScrollTo({
+         scrollTop: 0,
+         duration: 300  // 300毫秒的平滑动画
+       })
+       // 重置导航栏状态
+       this.resetNavBar()
+       console.log(`🔄 重复点击标签 ${i}，滚动到顶部`)
+       return
+     }
+     
+     // 🔥 新增：切换不同选项时，先滚动到顶部
+     uni.pageScrollTo({
+       scrollTop: 0,
+       duration: 300
+     })
+     
+     this.resetNavBar() // 切换标签时重置导航栏
+     
+     try {
+       this.active = i;
+       
+       // 🔥 如果点击的是"新品"标签(index=1)
+       if (i === 1) {
+         // if (!this.openid) {
+         //   this.active = 0;
+         //   uni.switchTab({
+         //     url: '/pages/my/my'
+         //   });
+         //   return;
+         // }
+         
+         // 🔥 如果是第一次加载新品,则请求数据
+         if (this.recentGoodsList.length === 0) {
+           await this.getRecentGoodsList();
+         }
+         return;
+       }
+       
+       if (i === 2) {
+         // 🔥 如果之前已经选中了某个分类，此时应该重置状态，显示分类选择页面
+         if (this.showCategoryGoods) {
+           this.showCategoryGoods = false
+           this.selectedCategoryIndex = 0
+           
+           uni.showToast({
+             title: '请选择分类',
+             icon: 'none',
+             duration: 1500
+           });
+         }
+         return;
+       }
+       
+       // 🔥 切换到其他标签时，隐藏分类商品并重置选中状态
+       this.showCategoryGoods = false
+       this.selectedCategoryIndex = 0
+       
+       if (this.active === 2) {
+         // 分类页面不需要特殊处理
+         return;
+       }
+       
+       if (this.active === 1) {
+         if (!this.openid) {
+           this.active = 0
+           uni.switchTab({
+             url: '/pages/my/my'
+           })
+           return;
+         }
+         const queryObj = { code: this.openid };
+         const { data: res } = await uni.$http.get('/users/userinfo', queryObj);
+         if (res.meta.status === 200) {
+           this.updateUserBase(res.message);
+         }
+         const followingIds = res.message.following_ids;
+         if (!Array.isArray(followingIds) || followingIds.length === 0) {
+           this.followers = [];
+           this.filteredgoodsList = [];
+           return;
+         }
+         const followerPromises = followingIds.map(async (userId) => {
+           try {
+             const queryObj1 = { code: userId };
+             const { data: res1 } = await uni.$http.get('/users/userinfo', queryObj1);
+             if (res1.meta.status === 200) {
+               return res1.message;
+             } else {
+               return null;
+             }
+           } catch (error) {
+             return null;
+           }
+         });
+         const followersResults = await Promise.all(followerPromises);
+         this.followers = followersResults.filter(f => f !== null);
+         this.goods_ids = [];
+         
+         if (Array.isArray(this.followers) && this.followers.length > 0) {
+           this.followers.forEach(follower => {
+             if (Array.isArray(follower?.goods_id)) {
+               this.goods_ids.push(...follower.goods_id.map(id => String(id)));
+             } else if (follower?.goods_id) {
+               this.goods_ids.push(String(follower.goods_id));
+             }
+           });
+         } else {
+           this.filteredgoodsList = [];
+           return;
+         }
+         if (this.goods_ids.length === 0) {
+           this.filteredgoodsList = [];
+           return;
+         }
+         
+         const queryObj2 = { goods_id: this.goods_ids };
+         const { data: res2 } = await uni.$http.get('/goods/historysearch', queryObj2);
+         if (res2.meta.status === 200) {
+           this.filteredgoodsList = res2.message;
+         } else {
+           uni.showToast({
+             title: '获取商品信息失败',
+             icon: 'none'
+           });
+           this.filteredgoodsList = [];
+         }
+       }
+     } catch (error) {
+       console.error('activeChanged 方法执行出错:', error);
+       uni.showToast({
+         title: '操作失败，请稍后重试',
+         icon: 'none'
+       });
+     }
+   },
     
 	 /**
 	   * 🔥 获取最新商品列表(72小时内)
@@ -888,6 +934,8 @@ export default {
 		  
 		  computed: {
 		    ...mapState('m_user', ['token', 'code', 'userBase', 'openid']),
+			...mapState('m_posts', ['newPublishedPost']),
+			...mapGetters('m_posts', ['shouldShowNewPost']),
 		    // recentGoods() {
 		    //   const now = Math.floor(Date.now() / 1000);
 		    //   const maxAge = 72 * 3600;
@@ -954,6 +1002,16 @@ export default {
 		  
 		  // 🔥 修改：onShow - 重置导航栏
 		    async onShow() {
+				console.log('📄 cate 页面 onShow 触发');
+				if (this.shouldShowNewPost('cate')) {
+				  console.log('📥 收到新发布的帖子:', this.newPublishedPost);
+				  
+				  // 插入到列表
+				  this.insertNewPost(this.newPublishedPost);
+				  
+				  // 清空 Vuex 状态（防止重复显示）
+				  this.clearNewPost();
+				}
 			  this.updateTabBar(1);
 		    },
 		  
