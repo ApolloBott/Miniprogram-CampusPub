@@ -837,8 +837,74 @@
 			},
 			
 			async uploadToOSS(filePath) {
-				// 请替换为真实的上传逻辑
-				return new Promise(resolve => resolve(filePath)); 
+			  if (!filePath) {
+			    throw new Error('文件路径不能为空');
+			  }
+			
+			  uni.showLoading({
+			    title: '上传中...',
+			    mask: true
+			  });
+			
+			  try {
+			    // 1. 获取上传凭证
+			    const { data: tokenRes } = await uni.$http.get('/upload/token', {
+			      openid: this.openid,
+			      fileType: 'image'
+			    });
+			
+			    if (tokenRes.meta.status !== 200) {
+			      throw new Error('获取上传凭证失败');
+			    }
+			
+			    // 2. 读取文件内容（转 base64）
+			    const fileContent = await new Promise((resolve, reject) => {
+			      uni.getFileSystemManager().readFile({
+			        filePath: filePath,
+			        encoding: 'base64',
+			        success: (res) => resolve(res.data),
+			        fail: (err) => reject(new Error('读取文件失败'))
+			      });
+			    });
+			
+			    // 3. 上传到 OSS
+			    await new Promise((resolve, reject) => {
+			      uni.request({
+			        url: tokenRes.message.publicUrl,
+			        method: 'PUT',
+			        header: {
+			          'Content-Type': 'application/octet-stream'
+			        },
+			        data: uni.base64ToArrayBuffer(fileContent),
+			        success: (res) => {
+			          if (res.statusCode === 200) {
+			            resolve(res);
+			          } else {
+			            reject(new Error(`上传失败: ${res.statusCode}`));
+			          }
+			        },
+			        fail: (err) => reject(new Error('网络请求失败'))
+			      });
+			    });
+			
+			    uni.hideLoading();
+			    
+			    // 4. 返回 OSS 公开访问 URL
+			    return tokenRes.message.publicUrl;
+			
+			  } catch (error) {
+			    console.error('OSS 上传失败:', error);
+			    uni.hideLoading();
+			    
+			    // 显示错误提示
+			    uni.showToast({
+			      title: error.message || '上传失败，请重试',
+			      icon: 'none',
+			      duration: 3000
+			    });
+			    
+			    throw error; // 抛出错误，让调用方处理
+			  }
 			},
 			
 			async confirmSelection() {

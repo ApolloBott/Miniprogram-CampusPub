@@ -1088,40 +1088,118 @@ var _default = {
       });
     },
     uploadToOSS: function uploadToOSS(filePath) {
+      var _this15 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee9() {
+        var _yield$uni$$http$get, tokenRes, fileContent;
         return _regenerator.default.wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
-                return _context9.abrupt("return", new Promise(function (resolve) {
-                  return resolve(filePath);
-                }));
-              case 1:
+                if (filePath) {
+                  _context9.next = 2;
+                  break;
+                }
+                throw new Error('文件路径不能为空');
+              case 2:
+                uni.showLoading({
+                  title: '上传中...',
+                  mask: true
+                });
+                _context9.prev = 3;
+                _context9.next = 6;
+                return uni.$http.get('/upload/token', {
+                  openid: _this15.openid,
+                  fileType: 'image'
+                });
+              case 6:
+                _yield$uni$$http$get = _context9.sent;
+                tokenRes = _yield$uni$$http$get.data;
+                if (!(tokenRes.meta.status !== 200)) {
+                  _context9.next = 10;
+                  break;
+                }
+                throw new Error('获取上传凭证失败');
+              case 10:
+                _context9.next = 12;
+                return new Promise(function (resolve, reject) {
+                  uni.getFileSystemManager().readFile({
+                    filePath: filePath,
+                    encoding: 'base64',
+                    success: function success(res) {
+                      return resolve(res.data);
+                    },
+                    fail: function fail(err) {
+                      return reject(new Error('读取文件失败'));
+                    }
+                  });
+                });
+              case 12:
+                fileContent = _context9.sent;
+                _context9.next = 15;
+                return new Promise(function (resolve, reject) {
+                  uni.request({
+                    url: tokenRes.message.publicUrl,
+                    method: 'PUT',
+                    header: {
+                      'Content-Type': 'application/octet-stream'
+                    },
+                    data: uni.base64ToArrayBuffer(fileContent),
+                    success: function success(res) {
+                      if (res.statusCode === 200) {
+                        resolve(res);
+                      } else {
+                        reject(new Error("\u4E0A\u4F20\u5931\u8D25: ".concat(res.statusCode)));
+                      }
+                    },
+                    fail: function fail(err) {
+                      return reject(new Error('网络请求失败'));
+                    }
+                  });
+                });
+              case 15:
+                uni.hideLoading();
+
+                // 4. 返回 OSS 公开访问 URL
+                return _context9.abrupt("return", tokenRes.message.publicUrl);
+              case 19:
+                _context9.prev = 19;
+                _context9.t0 = _context9["catch"](3);
+                console.error('OSS 上传失败:', _context9.t0);
+                uni.hideLoading();
+
+                // 显示错误提示
+                uni.showToast({
+                  title: _context9.t0.message || '上传失败，请重试',
+                  icon: 'none',
+                  duration: 3000
+                });
+                throw _context9.t0;
+              case 25:
               case "end":
                 return _context9.stop();
             }
           }
-        }, _callee9);
+        }, _callee9, null, [[3, 19]]);
       }))();
     },
     confirmSelection: function confirmSelection() {
-      var _this15 = this;
+      var _this16 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee10() {
         var ossUrl;
         return _regenerator.default.wrap(function _callee10$(_context10) {
           while (1) {
             switch (_context10.prev = _context10.next) {
               case 0:
-                if (!(!_this15.tempImagePath || _this15.isGenerating || _this15.isUploading)) {
+                if (!(!_this16.tempImagePath || _this16.isGenerating || _this16.isUploading)) {
                   _context10.next = 2;
                   break;
                 }
                 return _context10.abrupt("return");
               case 2:
-                _this15.isUploading = true;
+                _this16.isUploading = true;
                 _context10.prev = 3;
                 _context10.next = 6;
-                return _this15.uploadToOSS(_this15.tempImagePath);
+                return _this16.uploadToOSS(_this16.tempImagePath);
               case 6:
                 ossUrl = _context10.sent;
                 uni.navigateTo({
@@ -1129,9 +1207,9 @@ var _default = {
                   success: function success(res) {
                     res.eventChannel.emit('topicImageData', {
                       imageUrl: ossUrl,
-                      images: [ossUrl].concat((0, _toConsumableArray2.default)(_this15.existingImages)),
-                      content: _this15.contentText,
-                      isTopic: _this15.isTopic
+                      images: [ossUrl].concat((0, _toConsumableArray2.default)(_this16.existingImages)),
+                      content: _this16.contentText,
+                      isTopic: _this16.isTopic
                     });
                   }
                 });
@@ -1146,7 +1224,7 @@ var _default = {
                 });
               case 13:
                 _context10.prev = 13;
-                _this15.isUploading = false;
+                _this16.isUploading = false;
                 return _context10.finish(13);
               case 16:
               case "end":
