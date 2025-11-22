@@ -23,21 +23,27 @@
 				
 				<!-- 关注/粉丝数和关注按钮 -->
 				<view class="stats-follow-row">
-					<view class="stats">
-						<text class="stat-item" @click="gotoFollower()">{{ (user.followers_ids || []).length }} 粉丝</text>
-						<text class="stat-divider">|</text>
-						<text class="stat-item" @click="gotoFollow()">{{ (user.following_ids || []).length }} 关注</text>
-					</view>
-					
-					<!-- 关注按钮（非本人显示） -->
-					<button 
-						v-if="!ismyself"
-						class="follow-btn" 
-						:class="{ following: isFollowing }"
-						@click="toggleFollow"
-					>
-						{{ isFollowing ? '已关注' : '+ 关注' }}
-					</button>
+				  <view class="stats">
+				    <text class="stat-item" @click="gotoFollower()">{{ (user.followers_ids || []).length }} 粉丝</text>
+				    <text class="stat-divider">|</text>
+				    <text class="stat-item" @click="gotoFollow()">{{ (user.following_ids || []).length }} 关注</text>
+				  </view>
+				  
+				  <!-- 按钮组（关注按钮和私聊按钮） -->
+				  <view class="action-buttons" v-if="!ismyself">
+				    <!-- 私聊按钮 -->
+				    <button class="msg-btn" @click="goToChat">
+				      私聊
+				    </button>
+				    <!-- 关注按钮 -->
+				    <button 
+				      class="follow-btn" 
+				      :class="{ following: isFollowing }"
+				      @click="toggleFollow"
+				    >
+				      {{ isFollowing ? '已关注' : '+ 关注' }}
+				    </button>
+				  </view>
 				</view>
 			</view>
 		</view>
@@ -132,26 +138,42 @@
 		</view>
 
 		<!-- 二手商品内容 -->
+		<!-- 二手商品内容 -->
 		<view v-if="contentType === 'goods'">
-			<!-- 商品列表 - 双列瀑布流 -->
-			<view class="waterfall" v-if="goodsList && goodsList.length > 0">
-				<view class="col">
-					<view v-for="(item, i) in leftColumn" :key="i" @click="gotoDetail(item)">
-						<my-goods v-if="item" :goods="item" />
-					</view>
-				</view>
-				<view class="col">
-					<view v-for="(item, i) in rightColumn" :key="i" @click="gotoDetail(item)">
-						<my-goods v-if="item" :goods="item" />
-					</view>
-				</view>
-			</view>
-
-			<!-- 商品空状态 -->
-			<view v-if="goodsList.length === 0 && !loading" class="empty-state">
-				<text class="empty-icon">📦</text>
-				<text class="empty-text">{{ ismyself ? '你还没有发布过商品' : 'TA还没有发布过商品' }}</text>
-			</view>
+		  <!-- 🔥 修改：添加 scroll-view 支持滚动加载 -->
+		  <scroll-view 
+		    class="goods-scroll" 
+		    scroll-y 
+		    @scrolltolower="loadMoreGoods"
+		  >
+		    <!-- 商品列表 - 双列瀑布流 -->
+		    <view class="waterfall" v-if="goodsList && goodsList.length > 0">
+		      <view class="col">
+		        <view v-for="(item, i) in leftColumn" :key="i" @click="gotoDetail(item)">
+		          <my-goods v-if="item" :goods="item" />
+		        </view>
+		      </view>
+		      <view class="col">
+		        <view v-for="(item, i) in rightColumn" :key="i" @click="gotoDetail(item)">
+		          <my-goods v-if="item" :goods="item" />
+		        </view>
+		      </view>
+		    </view>
+		
+		    <!-- 🔥 新增：商品加载状态提示 -->
+		    <view class="load-more" v-if="loadingGoods && goodsList.length > 0">
+		      <text class="load-text">加载中...</text>
+		    </view>
+		    <view class="no-more-posts" v-else-if="!goodsHasMore && goodsList.length > 0">
+		      <text class="no-more-text">没有更多了</text>
+		    </view>
+		
+		    <!-- 商品空状态 -->
+		    <view v-if="goodsList.length === 0 && !loadingGoods" class="empty-state">
+		      <text class="empty-icon">📦</text>
+		      <text class="empty-text">{{ ismyself ? '你还没有发布过商品' : 'TA还没有发布过商品' }}</text>
+		    </view>
+		  </scroll-view>
 		</view>
 
 		<!-- 头像查看弹出层（仅非本人时使用） -->
@@ -199,6 +221,10 @@ export default {
 			iconLikeUrl: 'https://img.xinshi00.com/label/like.png',
 			iconLikedUrl: 'https://img.xinshi00.com/label/liked.png',
 			iconCommentUrl: 'https://img.xinshi00.com/label/chat.png',
+			goodsPage: 1,
+			    goodsPageSize: 10,
+			    goodsHasMore: true,
+			    loadingGoods: false, // 🔥 新增：商品加载状态
 		}
 	},
 
@@ -237,6 +263,11 @@ export default {
 		    this.hasMorePosts = true
 		    this.postList = []
 			
+		// 🔥 新增：初始化商品分页状态
+		  this.goodsPage = 1
+		  this.goodsHasMore = true
+		  this.goodsList = []
+			
 		// 加载数据（默认显示树洞）
 		await Promise.all([
 			this.loadUserPosts(),
@@ -262,16 +293,40 @@ export default {
 			return this.postList.length + this.goodsList.length
 		}
 	},
-
+	
+	
 	methods: {
 		...mapMutations('m_user', ['updateUserInfo', 'updateToken', 'updateUserBase', 'updateCode', 'updateOpenid']),
+		
+		// 新增：跳转到私聊页面
+		  goToChat() {
+		    uni.navigateTo({
+		      url: `/subpkg/personal-chat/personal-chat?openid=${this.user.openid}`
+		    });
+		  },
+		  
 		// ✅ 点赞/取消点赞
 		async toggleLike(post) {
 			try {
 				if (!this.openid) {
-					uni.switchTab({ url: '/pages/my/my' })
-					return
-				}
+						  // 弹出登录提示框
+						  uni.showModal({
+						    title: '提示',
+						    content: '需要登录才能体验更多内容哦',
+						    cancelText: '取消',
+						    confirmText: '登录',
+						    success: (res) => {
+						      if (res.confirm) {
+						        // 用户点击了"登录"按钮
+						        uni.switchTab({
+						          url: '/pages/my/my'
+						        })
+						      }
+						      // 用户点击了"取消"按钮，不做任何操作
+						    }
+						  })
+						  return
+						}
 				
 				const { data: res } = await uni.$http.post('/posts/like', {
 					post_id: post.id,
@@ -396,24 +451,76 @@ export default {
 		},
 
 		// 加载用户商品
+		// 加载用户商品
 		async loadPublisherGoods() {
-			try {
-				uni.showLoading({ title: '加载中...' })
-				const ids = Array.isArray(this.user?.goods_id) ? this.user.goods_id : []
-				if (ids.length === 0) {
-					this.goodsList = []
-					return
-				}
-				const { data: res } = await uni.$http.get('/goods/historysearch', { goods_id: ids })
-				this.goodsList = (res?.meta?.status === 200 && Array.isArray(res?.message)) ? res.message : []
-			} catch (err) {
-				console.error('加载商品失败:', err)
-				this.goodsList = []
-			} finally {
-				uni.hideLoading()
-			}
+		  try {
+		    // 🔥 修改：使用专门的加载状态
+		    this.loadingGoods = true
+		    
+		    const ids = Array.isArray(this.user?.goods_id) ? this.user.goods_id : []
+		    if (ids.length === 0) {
+		      this.goodsList = []
+		      this.goodsHasMore = false
+		      return
+		    }
+		    
+		    // 计算当前页的商品ID
+		    const startIndex = (this.goodsPage - 1) * this.goodsPageSize
+		    const endIndex = startIndex + this.goodsPageSize
+		    const pageIds = ids.slice(startIndex, endIndex)
+		    
+		    console.log(`📦 加载商品 - 第${this.goodsPage}页，商品ID:`, pageIds)
+		    
+		    if (pageIds.length === 0) {
+		      this.goodsHasMore = false
+		      return
+		    }
+		    
+		    const { data: res } = await uni.$http.get('/goods/publishsearch', { goods_id: pageIds })
+		    if (res?.meta?.status === 200 && Array.isArray(res?.message)) {
+		      // 🔥 修改：第一页直接赋值，后续页追加
+		      if (this.goodsPage === 1) {
+		        this.goodsList = res.message
+		      } else {
+		        this.goodsList = [...this.goodsList, ...res.message]
+		      }
+		      
+		      // 判断是否还有更多数据
+		      this.goodsHasMore = endIndex < ids.length
+		      
+		      console.log(`✅ 商品加载成功 - 当前总数: ${this.goodsList.length}, 是否还有更多: ${this.goodsHasMore}`)
+		    }
+		  } catch (err) {
+		    console.error('❌ 加载商品失败:', err)
+		    uni.showToast({
+		      title: '加载失败',
+		      icon: 'none'
+		    })
+		  } finally {
+		    this.loadingGoods = false
+		  }
 		},
-
+		
+		// 🔥 新增：加载更多商品
+		async loadMoreGoods() {
+		  console.log('🔄 触发商品加载更多 - 当前页:', this.goodsPage, '是否还有更多:', this.goodsHasMore, '是否正在加载:', this.loadingGoods)
+		  
+		  // 检查条件
+		  if (!this.goodsHasMore) {
+		    console.log('⚠️ 没有更多商品了')
+		    return
+		  }
+		  
+		  if (this.loadingGoods) {
+		    console.log('⚠️ 正在加载中，跳过')
+		    return
+		  }
+		  
+		  // 增加页码并加载
+		  this.goodsPage++
+		  await this.loadPublisherGoods()
+		},
+		
 		// 处理帖子图片
 		processPostImages(images) {
 			if (!images) return []
@@ -566,6 +673,27 @@ export default {
 </script>
 
 <style lang="scss">
+	
+	/* 🔥 新增：商品滚动容器 */
+	.goods-scroll {
+	  height: calc(100vh - 350rpx);
+	  background-color: #f7f7f7;
+	}
+	
+	/* 商品列表瀑布流 */
+	.waterfall {
+	  display: flex;
+	  padding: 20rpx 10rpx;
+	  gap: 20rpx;
+	  
+	  .col {
+	    flex: 1;
+	    display: flex;
+	    flex-direction: column;
+	    gap: 20rpx;
+	  }
+	}
+	
 .publisher-container {
 	min-height: 100vh;
 	background-color: #f7f7f7;
@@ -620,38 +748,55 @@ export default {
 		}
 		
 		.stats-follow-row {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			
-			.stats {
-				display: flex;
-				align-items: center;
-				
-				.stat-item {
-					font-size: 26rpx;
-					color: #666;
-				}
-				
-				.stat-divider {
-					margin: 0 16rpx;
-					color: #ddd;
-				}
-			}
-			
-			.follow-btn {
-				padding: 10rpx 32rpx;
-				background-color: #c00000;
-				color: #fff;
-				font-size: 26rpx;
-				border-radius: 40rpx;
-				border: none;
-				
-				&.following {
-					background-color: #f0f0f0;
-					color: #666;
-				}
-			}
+		  display: flex;
+		  align-items: center;
+		  justify-content: space-between;
+		  
+		  .stats {
+		    display: flex;
+		    align-items: center;
+		    
+		    .stat-item {
+		      font-size: 26rpx;
+		      color: #666;
+		    }
+		    
+		    .stat-divider {
+		      margin: 0 16rpx;
+		      color: #ddd;
+		    }
+		  }
+		  
+		  /* 🔥 新增：按钮组容器 */
+		  .action-buttons {
+		    display: flex;
+		    gap: 12rpx;
+		    align-items: center;
+		  }
+		  
+		  /* 🔥 新增：私聊按钮样式 */
+		  .msg-btn {
+		    padding: 10rpx 24rpx;
+		    background-color: #fff;
+		    color: #333;
+		    font-size: 26rpx;
+		    border-radius: 40rpx;
+		    border: 1rpx solid #e6e6e6;
+		  }
+		  
+		  .follow-btn {
+		    padding: 10rpx 32rpx;
+		    background-color: #c00000;
+		    color: #fff;
+		    font-size: 26rpx;
+		    border-radius: 40rpx;
+		    border: none;
+		    
+		    &.following {
+		      background-color: #f0f0f0;
+		      color: #666;
+		    }
+		  }
 		}
 	}
 }

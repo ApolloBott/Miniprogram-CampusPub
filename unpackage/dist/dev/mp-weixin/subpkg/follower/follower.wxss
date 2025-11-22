@@ -5,6 +5,12 @@
 .iconfont {
   font-family: "iconfont";
 }
+.msg-btn {
+  background: #fff;
+  color: #333;
+  border-color: #e6e6e6;
+  font-weight: 500;
+}
 /* 页面背景 */
 .follow-page {
   min-height: 100vh;

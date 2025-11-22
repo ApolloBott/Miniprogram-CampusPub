@@ -6,8 +6,11 @@
 		{
 			"navigationBarTitleText" : "",
 			"onReachBottomDistance": 150,
-			"enablePullDownRefresh": true,
-			"backgroundColor": "#F8F8F8"
+			"enablePullDownRefresh": false,  // 🔥 关闭默认下拉刷新
+			// "enablePullDownRefresh": true,
+			"backgroundColor": "#F8F8F8",
+			"disableScroll": false  // 🔥 确保页面可滚动
+			// "navigationStyle": "custom"  // 🔥 关键：启用自定义导航栏
 		}
 	},
 	{
@@ -58,8 +61,9 @@
 		{
 			"navigationBarTitleText" : "",
 			"onReachBottomDistance": 150,
-			"enablePullDownRefresh": true,
+			"enablePullDownRefresh": true, 
 			"backgroundColor": "#F8F8F8"
+			
 		}
 	},
 	{
@@ -124,8 +128,9 @@
 		{
 			"navigationBarTitleText" : "",
 			"onReachBottomDistance": 150,
-			"enablePullDownRefresh": true,
+			"enablePullDownRefresh": true, 
 			"backgroundColor": "#F8F8F8"
+			
 		}
 	},
 	{
@@ -289,6 +294,34 @@
 	},
 	{
 		"path" : "subpkg/comment-message/comment-message",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/sold/sold",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/bought/bought",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/feedback/feedback",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "subpkg/personal-chat/personal-chat",
 		"style" : 
 		{
 			"navigationBarTitleText" : ""

@@ -1,28 +1,49 @@
 <template>
   <view class="message-page" v-if="token">
-    <!-- 🆕 消息类型选择框 -->
     <view class="message-tabs">
-      <view class="tab-item" @click="navigateToFollow">
-        <view class="icon-circle">
-          <text class="iconfont icon-follow">👤</text>
-          <view v-if="userBase.unread_followers > 0" class="tab-unread-badge">
-            <text class="tab-unread-text">{{ userBase.unread_followers }}</text>
-          </view>
-        </view>
-        <text class="tab-text">新增关注</text>
-      </view>
+      
       <view class="tab-item" @click="navigateToComment">
-        <view class="icon-circle">
-          <text class="iconfont icon-comment">💬</text>
+        <view class="icon-box">
+          <image class="tab-icon" src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/message-replyf7.png" mode="aspectFit"></image>
           <view v-if="userBase.unread_messages > 0" class="tab-unread-badge">
             <text class="tab-unread-text">{{ userBase.unread_messages }}</text>
           </view>
         </view>
-        <text class="tab-text">评论和@</text>
+        <text class="tab-text">回复与@</text>
       </view>
+
+      <view class="tab-item" @click="navigateToLike">
+        <view class="icon-box">
+          <image class="tab-icon" src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/message-likef7.png" mode="aspectFit"></image>
+          <view v-if="userBase.unread_like > 0" class="tab-unread-badge">
+            <text class="tab-unread-text">{{ userBase.unread_like }}</text>
+          </view>
+        </view>
+        <text class="tab-text">收到的赞</text>
+      </view>
+
+      <view class="tab-item" @click="navigateToFollow">
+        <view class="icon-box">
+          <image class="tab-icon" src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/message-followf7.png" mode="aspectFit"></image>
+          <view v-if="userBase.unread_followers > 0" class="tab-unread-badge">
+            <text class="tab-unread-text">{{ userBase.unread_followers }}</text>
+          </view>
+        </view>
+        <text class="tab-text">新增粉丝</text>
+      </view>
+
+      <view class="tab-item" @click="navigateToCate">
+        <view class="icon-box">
+          <image class="tab-icon" src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/message-catef7.png" mode="aspectFit"></image>
+          <view v-if="userBase.unread_cate > 0" class="tab-unread-badge">
+            <text class="tab-unread-text">{{ userBase.unread_cate }}</text>
+          </view>
+        </view>
+        <text class="tab-text">集市消息</text>
+      </view>
+
     </view>
 
-    <!-- 消息列表 -->
     <view class="message-list">
       <view
         v-for="(chat, index) in chatList"
@@ -37,17 +58,22 @@
             <text class="time">{{ chat.time }}</text>
           </view>
           <view class="bottom-row">
-            <text class="last-message">{{ chat.lastMessage }}</text>
+            <text class="last-message" v-if="chat.type === 'text' || chat.type === 'system'">{{ chat.lastMessage }}</text>
+            <text class="last-message" v-if="chat.type === 'image'">[图片]</text>
+            <text class="last-message" v-if="chat.type === 'emoji'">[表情]</text>
+            <text class="last-message" v-if="chat.type === 'transaction'">[买家发起线下交易]</text>
+            <text class="last-message" v-if="chat.type === 'agree'">[卖家已同意线下交易]</text>
+            <text class="last-message" v-if="chat.type === 'finish'">[交易已完成]</text>
             <view v-if="getUnreadCount(chat.chat_id) > 0" class="unread-badge">
               <text class="unread-text">{{ getUnreadCount(chat.chat_id) }}</text>
             </view>
           </view>
         </view>
-        <image class="goods-image" :src="chat.goodsImage" mode="aspectFill"></image>
       </view>
     </view>
   </view>
 </template>
+
 
 <script>
 import { mapState, mapMutations } from 'vuex'
@@ -56,27 +82,51 @@ export default {
     return {
       chatList: [],
       goods_info: [],
-      userUnreadList: []
+      userUnreadList: [],
+	  // unread_cate: 0
     }
   },
   methods: {
     ...mapMutations('m_user', ['updateUserInfo', 'updateToken', 'updateUserBase']),
-
+	
+	 // 🔥 新增：跳转到赞与收藏页面
+	  async navigateToLike() {
+		  if (this.userBase.unread_like > 0) {
+		    await this.clearLikeUnread();
+		  }
+	    uni.navigateTo({
+	      url: '/subpkg/like-message/like-message'
+	    });
+	  },
+	  
+	  // 🔥 新增：跳转到集市消息页面
+	  navigateToCate() {
+	    uni.navigateTo({
+	      url: '/subpkg/cate-message/cate-message'
+	    });
+	  },
+	  
     // 🆕 新增：加载页面数据的统一方法
     async loadPageData() {
-      if (!this.token) {
-        uni.switchTab({
-          url: '/pages/my/my',
-          success: () => {
-            uni.showToast({
-              title: '请先登录',
-              icon: 'none',
-              duration: 2000
-            });
-          }
-        });
-        return;
-      }
+      if (!this.openid) {
+      		  // 弹出登录提示框
+      		  uni.showModal({
+      		    title: '提示',
+      		    content: '需要登录才能体验更多内容哦',
+      		    cancelText: '取消',
+      		    confirmText: '登录',
+      		    success: (res) => {
+      		      if (res.confirm) {
+      		        // 用户点击了"登录"按钮
+      		        uni.switchTab({
+      		          url: '/pages/my/my'
+      		        })
+      		      }
+      		      // 用户点击了"取消"按钮，不做任何操作
+      		    }
+      		  })
+      		  return
+      		}
 
       try {
         // 加载用户信息
@@ -89,11 +139,11 @@ export default {
           // 更新 TabBar 徽章
           if (this.userBase.total_unread > 0) {
             uni.setTabBarBadge({
-              index: 2,
+              index: 4,
               text: this.userBase.total_unread + ''
             });
           } else {
-            uni.removeTabBarBadge({ index: 2 });
+            uni.removeTabBarBadge({ index: 4 });
           }
 
           // 处理未读消息列表
@@ -112,7 +162,7 @@ export default {
         }
 
         // 加载聊天列表
-        const req = { openid: this.openid };
+        const req = { openid: this.openid, type: 1};
         const { data: res } = await uni.$http.get('/chats/list', req);
         if (res.meta.status === 200) {
           this.chatList = res.message;
@@ -126,11 +176,11 @@ export default {
       }
     },
 
-    navigateToLike() {
-      uni.navigateTo({
-        url: '/subpkg/like-message/like-message'
-      });
-    },
+    // navigateToLike() {
+    //   uni.navigateTo({
+    //     url: '/subpkg/like-message/like-message'
+    //   });
+    // },
     
     async navigateToFollow() {
       if (this.userBase.unread_followers > 0) {
@@ -168,11 +218,11 @@ export default {
             // 更新 TabBar 徽章
             if (res2.message.total_unread > 0) {
               uni.setTabBarBadge({
-                index: 2,
+                index: 4,
                 text: res2.message.total_unread + ''
               });
             } else {
-              uni.removeTabBarBadge({ index: 2 });
+              uni.removeTabBarBadge({ index: 4 });
             }
           }
         }
@@ -180,6 +230,38 @@ export default {
         console.error('清空关注未读消息失败:', error);
       }
     },
+	
+	async clearLikeUnread() {
+		console.log("iii")
+		try {
+		  const queryObj = {
+		    openid: this.openid,
+		    type: 'like'
+		  };
+		  const { data: res } = await uni.$http.post('/users/clearUnread', queryObj);
+		  
+		  if (res.meta.status === 200) {
+		    const query = { code: this.openid };
+		    const { data: res2 } = await uni.$http.get('/users/userinfo', query);
+		    
+		    if (res2.meta.status === 200) {
+		      this.updateUserBase(res2.message);
+		      
+		      // 更新 TabBar 徽章
+		      if (res2.message.total_unread > 0) {
+		        uni.setTabBarBadge({
+		          index: 4,
+		          text: res2.message.total_unread + ''
+		        });
+		      } else {
+		        uni.removeTabBarBadge({ index: 4 });
+		      }
+		    }
+		  }
+		} catch (error) {
+		  console.error('清空关注未读消息失败:', error);
+		}
+	},
 
     async clearMessagesUnread() {
       try {
@@ -199,11 +281,11 @@ export default {
             // 更新 TabBar 徽章
             if (res2.message.total_unread > 0) {
               uni.setTabBarBadge({
-                index: 2,
+                index: 4,
                 text: res2.message.total_unread + ''
               });
             } else {
-              uni.removeTabBarBadge({ index: 2 });
+              uni.removeTabBarBadge({ index: 4 });
             }
           }
         }
@@ -221,27 +303,10 @@ export default {
     },
 
     async openChat(chat) {
-      const { data: res } = await uni.$http.get('/goods/detail', { goods_id: chat.users.goods_id });
-      if (res.meta.status !== 200) return uni.$showMsg();
-      this.goods_info = res.message[0];
-
       await this.clearChatUnread(chat.chat_id);
-
-      if (this.userBase.openid !== this.goods_info.publisher_id) {
-        const payload = encodeURIComponent(JSON.stringify(this.goods_info));
-        uni.navigateTo({
-          url: `/subpkg/chat/chat?goods_info=${payload}`
-        });
-      } else {
-        const chatData = {
-          ...this.goods_info,
-          other_openid: chat.users.otheropenid,
-        };
-        const payload = encodeURIComponent(JSON.stringify(chatData));
-        uni.navigateTo({
-          url: `/subpkg/chat/chat?goods_info=${payload}`
-        });
-      }
+		uni.navigateTo({
+		  url: `/subpkg/personal-chat/personal-chat?openid=${chat.users.otheropenid}`
+		});
     },
 
     async clearChatUnread(chatId) {
@@ -261,11 +326,18 @@ export default {
   },
   computed: {
     ...mapState('m_user', ['token', 'code', 'userBase', 'openid']),
+	
+	// unread_cate() {
+	// 	return this.userBase.unread.reduce((sum, item) => sum + item.unread, 0);
+	// }
   },
   
   // 🆕 页面显示时加载数据
   async onShow() {
     await this.loadPageData();
+	// console.log("111")
+	// console.log(this.userBase.unread)
+	
   },
 
   // 🆕 下拉刷新
@@ -289,33 +361,16 @@ export default {
 .message-page {
   min-height: 100vh;
   background-color: #f5f5f5;
-  /* 让整个页面都能滚动 */
   overflow-y: auto;
-}
-
-/* 顶部标题 */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: 20rpx 32rpx;
-  background-color: #ffffff;
-  border-bottom: 1rpx solid #e5e5e5;
-
-  .title {
-    font-size: 40rpx;
-    font-weight: bold;
-    color: #333333;
-  }
 }
 
 /* 消息类型选择框 */
 .message-tabs {
   display: flex;
-  background-color: #ffffff;
-  padding: 40rpx 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-
+  background-color: #f7f7f7;
+  padding: 30rpx 0; /* 调整上下间距 */
+  margin-bottom: 1rpx; 
+  
   .tab-item {
     flex: 1;
     display: flex;
@@ -323,80 +378,60 @@ export default {
     align-items: center;
     justify-content: center;
 
-    .icon-circle {
-      position: relative; /* 🆕 让徽章相对于圆形定位 */
-      width: 100rpx;
-      height: 100rpx;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16rpx;
-      box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
-      transition: all 0.3s ease;
-
-      .iconfont {
-        font-size: 48rpx;
-        color: #ffffff;
+    /* 图片容器 */
+    .icon-box {
+      position: relative;
+      width: 68rpx;  /* 图标大小，推荐 96rpx */
+      height: 68rpx;
+      margin-bottom: 10rpx;
+      
+      .tab-icon {
+        width: 100%;
+        height: 100%;
+        /* 如果你的图片本身是方形的，可以用 border-radius 切圆角；
+           如果图片本身就是设计好的透明底图标，可以去掉这个圆角 */
+        border-radius: 20rpx; 
       }
 
-      /* 🆕 圆形图标上的未读徽章 */
+      /* 角标样式 */
       .tab-unread-badge {
         position: absolute;
-        top: -8rpx;
-        right: -8rpx;
-        min-width: 36rpx;
-        height: 36rpx;
-        padding: 0 8rpx;
+        top: -6rpx;
+        right: -6rpx;
+        min-width: 32rpx;
+        height: 32rpx;
+        padding: 0 6rpx;
         background-color: #ff3b30;
-        border-radius: 18rpx;
+        color: #fff;
+        border-radius: 16rpx;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3rpx solid #ffffff; /* 白色边框，与背景分离 */
-        box-shadow: 0 2rpx 8rpx rgba(255, 59, 48, 0.4);
+        border: 2rpx solid #ffffff;
+        z-index: 10;
 
         .tab-unread-text {
           font-size: 20rpx;
-          color: #ffffff;
-          font-weight: bold;
+          font-weight: 500;
           line-height: 1;
         }
       }
     }
 
     .tab-text {
-      font-size: 24rpx;
-      color: #666666;
-      white-space: nowrap;
+      font-size: 26rpx;
+      color: #333333;
+      font-weight: 400;
     }
 
     &:active {
-      .icon-circle {
-        transform: scale(0.9);
-        box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.2);
-      }
+      opacity: 0.7;
     }
-  }
-
-  // 渐变色
-  .tab-item:nth-child(1) .icon-circle {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 4rpx 12rpx rgba(245, 87, 108, 0.3);
-  }
-  .tab-item:nth-child(2) .icon-circle {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    box-shadow: 0 4rpx 12rpx rgba(79, 172, 254, 0.3);
-  }
-  .tab-item:nth-child(3) .icon-circle {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    box-shadow: 0 4rpx 12rpx rgba(67, 233, 123, 0.3);
   }
 }
 
-/* 消息列表 */
+/* 消息列表样式保持不变 */
 .message-list {
-  /* 删除固定高度，默认撑开 */
   padding-bottom: 40rpx;
 }
 
@@ -483,13 +518,6 @@ export default {
         }
       }
     }
-  }
-
-  .goods-image {
-    width: 100rpx;
-    height: 100rpx;
-    border-radius: 8rpx;
-    flex-shrink: 0;
   }
 }
 </style>

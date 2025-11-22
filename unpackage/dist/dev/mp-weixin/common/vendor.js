@@ -563,7 +563,7 @@ var promiseInterceptor = {
     });
   }
 };
-var SYNC_API_RE = /^\$|__f__|Window$|WindowStyle$|sendHostEvent|sendNativeEvent|restoreGlobal|requireGlobal|getCurrentSubNVue|getMenuButtonBoundingClientRect|^report|interceptors|Interceptor$|getSubNVueById|requireNativePlugin|rpx2px|upx2px|hideKeyboard|canIUse|^create|Sync$|Manager$|base64ToArrayBuffer|arrayBufferToBase64|getLocale|setLocale|invokePushCallback|getWindowInfo|getDeviceInfo|getAppBaseInfo|getSystemSetting|getAppAuthorizeSetting|initUTS|requireUTS|registerUTS|getFacialRecognitionMetaInfo/;
+var SYNC_API_RE = /^\$|__f__|Window$|WindowStyle$|sendHostEvent|sendNativeEvent|restoreGlobal|requireGlobal|getCurrentSubNVue|getMenuButtonBoundingClientRect|^report|interceptors|Interceptor$|getSubNVueById|requireNativePlugin|rpx2px|upx2px|hideKeyboard|canIUse|^create|Sync$|Manager$|base64ToArrayBuffer|arrayBufferToBase64|getLocale|setLocale|invokePushCallback|getWindowInfo|getDeviceInfo|getAppBaseInfo|getSystemSetting|getAppAuthorizeSetting|initUTS|requireUTS|registerUTS/;
 var CONTEXT_API_RE = /^create|Manager$/;
 
 // Context例外情况
@@ -1030,9 +1030,9 @@ function populateParameters(result) {
     appVersion: "1.0.0",
     appVersionCode: "100",
     appLanguage: getAppLanguage(hostLanguage),
-    uniCompileVersion: "4.84",
-    uniCompilerVersion: "4.84",
-    uniRuntimeVersion: "4.84",
+    uniCompileVersion: "4.76",
+    uniCompilerVersion: "4.76",
+    uniRuntimeVersion: "4.76",
     uniPlatform: undefined || "mp-weixin",
     deviceBrand: deviceBrand,
     deviceModel: model,
@@ -1138,9 +1138,9 @@ var getAppBaseInfo = {
       hostTheme: theme,
       isUniAppX: false,
       uniPlatform: undefined || "mp-weixin",
-      uniCompileVersion: "4.84",
-      uniCompilerVersion: "4.84",
-      uniRuntimeVersion: "4.84"
+      uniCompileVersion: "4.76",
+      uniCompilerVersion: "4.76",
+      uniRuntimeVersion: "4.76"
     }));
   }
 };
@@ -9426,9 +9426,9 @@ internalMixin(Vue);
 /***/ }),
 
 /***/ 26:
-/*!**********************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/pages.json ***!
-  \**********************************************************/
+/*!**************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/pages.json ***!
+  \**************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -9436,10 +9436,10 @@ internalMixin(Vue);
 
 /***/ }),
 
-/***/ 260:
-/*!****************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/subpkg/text-to-image/backgroundConfig.js ***!
-  \****************************************************************************************/
+/***/ 261:
+/*!********************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/subpkg/text-to-image/backgroundConfig.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9567,6 +9567,19 @@ var fontLibrary = {
       height: 0.5
     }
   },
+  'yunfengjinglongxingshu': {
+    name: '云峰静龙行书',
+    family: 'JingLongXingShu',
+    weight: 'bold',
+    style: 'normal',
+    url: 'https://img.xinshi00.com/fonts/yunfengjinglongxingshu.TTF',
+    textColor: '#333333',
+    highlightColor: '#A6ECA6',
+    highlightGeometry: {
+      yOffset: -0.2,
+      height: 0.5
+    }
+  },
   'mashan': {
     name: '谷歌字体',
     family: 'MaShanZheng',
@@ -9605,7 +9618,7 @@ var backgroundCategories = [
       vAlign: 'middle'
     },
     currentFontIndex: 0,
-    fonts: ['yingbishoujinti', 'siyuan', 'liukaiti', 'sansheng', 'kaiti']
+    fonts: ['yingbishoujinti', 'siyuan', 'liukaiti', 'sansheng', 'kaiti', 'yunfengjinglongxingshu']
   }, {
     path: 'https://img.xinshi00.com/bg-pictures/memo/memo2.png',
     name: '备忘录2',
@@ -9737,139 +9750,147 @@ var backgroundCategories = [
     fonts: ['sansheng', 'yingbishoujinti', 'liukaiti']
   }]
 },
-/*
 //4. emoji
 {
-	name: '情绪',
-	currentStyleIndex: 0,
-	styles: [
-		{
-		    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/inquiring.jpg', 
-		    name: '疑惑', 
-			textBox: { 
-		        x: 60, y: 40, width: 650, height: 650,
-		        hAlign: 'center', vAlign: 'middle' 
-		    },
-			currentFontIndex: 0,
-			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-		},
-		{ 
-			path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/angry.jpg', 
-			name: '愤怒',
-			textBox: { 
-				x: 60, y: 20, width: 650, height: 650,
-				hAlign: 'center', vAlign: 'middle'
-			},
-			currentFontIndex: 0,
-			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-		},  
-		{ 
-	        path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/sad.jpg', 
-	        name: '难过', 
-			textBox: { 
-	            x: 60, y: 20, width: 650, height: 650,
-	            hAlign: 'center', vAlign: 'middle' 
-	        },
-			currentFontIndex: 0,
-			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-	    },
-		{
-		    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/comfortable.jpg', 
-		    name: '懒洋洋', 
-			textBox: { 
-		        x: 60, y: 20, width: 650, height: 650,
-		        hAlign: 'center', vAlign: 'middle' 
-		    },
-			currentFontIndex: 0,
-			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-		},
-		{
-		    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/happy.jpg', 
-		    name: '开心', 
-			textBox: { 
-		        x: 60, y: 20, width: 650, height: 650,
-		        hAlign: 'center', vAlign: 'middle' 
-		    },
-			currentFontIndex: 0,
-			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-		},
-		{
-		    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/cry.jpg', 
-		    name: '哭', 
-			textBox: { 
-		        x: 60, y: 20, width: 650, height: 650,
-		        hAlign: 'center', vAlign: 'middle' 
-		    },
-			currentFontIndex: 0,
-			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
-		},
-	]
-},
-*/
+  name: '情绪',
+  currentStyleIndex: 0,
+  styles: [{
+    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/inquiring.jpg',
+    name: '疑惑',
+    textBox: {
+      x: 60,
+      y: 40,
+      width: 650,
+      height: 650,
+      hAlign: 'center',
+      vAlign: 'middle'
+    },
+    currentFontIndex: 0,
+    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
+  }, {
+    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/angry.jpg',
+    name: '愤怒',
+    textBox: {
+      x: 60,
+      y: 20,
+      width: 650,
+      height: 650,
+      hAlign: 'center',
+      vAlign: 'middle'
+    },
+    currentFontIndex: 0,
+    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
+  }, {
+    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/sad.jpg',
+    name: '难过',
+    textBox: {
+      x: 60,
+      y: 20,
+      width: 650,
+      height: 650,
+      hAlign: 'center',
+      vAlign: 'middle'
+    },
+    currentFontIndex: 0,
+    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
+  }, {
+    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/comfortable.jpg',
+    name: '懒洋洋',
+    textBox: {
+      x: 60,
+      y: 20,
+      width: 650,
+      height: 650,
+      hAlign: 'center',
+      vAlign: 'middle'
+    },
+    currentFontIndex: 0,
+    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
+  }, {
+    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/happy.jpg',
+    name: '开心',
+    textBox: {
+      x: 60,
+      y: 20,
+      width: 650,
+      height: 650,
+      hAlign: 'center',
+      vAlign: 'middle'
+    },
+    currentFontIndex: 0,
+    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
+  }, {
+    path: 'https://wait00.oss-cn-shanghai.aliyuncs.com/bg-pictures/emoji/cry.jpg',
+    name: '哭',
+    textBox: {
+      x: 60,
+      y: 20,
+      width: 650,
+      height: 650,
+      hAlign: 'center',
+      vAlign: 'middle'
+    },
+    currentFontIndex: 0,
+    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
+  }]
+}
+
 //4. emoji:inquiring
-{
-  name: '疑惑',
-  currentStyleIndex: 0,
-  styles: [{
-    path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring.jpg',
-    name: '疑惑1',
-    textBox: {
-      x: 60,
-      y: 40,
-      width: 650,
-      height: 650,
-      hAlign: 'center',
-      vAlign: 'middle'
-    },
-    currentFontIndex: 0,
-    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
-  }, {
-    path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring2.jpg',
-    name: '疑惑2',
-    textBox: {
-      x: 60,
-      y: 20,
-      width: 650,
-      height: 650,
-      hAlign: 'center',
-      vAlign: 'middle'
-    },
-    currentFontIndex: 0,
-    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
-  }]
-},
+// {
+// 	name: '疑惑',
+// 	currentStyleIndex: 0,
+// 	styles: [
+// 		{
+// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring.jpg', 
+// 			name: '疑惑1', 
+// 			textBox: { 
+// 				x: 60, y: 40, width: 650, height: 650,
+// 				hAlign: 'center', vAlign: 'middle' 
+// 			},
+// 			currentFontIndex: 0,
+// 			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
+// 		},
+// 		{ 
+// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/inquiring2.jpg', 
+// 			name: '疑惑2',
+// 			textBox: { 
+// 				x: 60, y: 20, width: 650, height: 650,
+// 				hAlign: 'center', vAlign: 'middle'
+// 			},
+// 			currentFontIndex: 0,
+// 			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
+// 		}, 
+// 	],
+// },
+
 //5. emoji: angry
-{
-  name: '生气',
-  currentStyleIndex: 0,
-  styles: [{
-    path: 'https://img.xinshi00.com/bg-pictures/emoji/angry.jpg',
-    name: '生气1',
-    textBox: {
-      x: 60,
-      y: 40,
-      width: 650,
-      height: 650,
-      hAlign: 'center',
-      vAlign: 'middle'
-    },
-    currentFontIndex: 0,
-    fonts: ['yingbishoujinti', 'kaishu', 'sansheng', 'liukaiti']
-  }, {
-    path: 'https://img.xinshi00.com/bg-pictures/emoji/angry2.jpg',
-    name: '生气2',
-    textBox: {
-      x: 60,
-      y: 20,
-      width: 650,
-      height: 650,
-      hAlign: 'center',
-      vAlign: 'middle'
-    },
-    currentFontIndex: 0,
-    fonts: ['sansheng', 'yingbishoujinti', 'kaishu', 'liukaiti']
-  }]
-}];
+// {
+// 	name: '生气',
+// 	currentStyleIndex: 0,
+// 	styles: [
+// 		{
+// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/angry.jpg', 
+// 			name: '生气1', 
+// 			textBox: { 
+// 				x: 60, y: 40, width: 650, height: 650,
+// 				hAlign: 'center', vAlign: 'middle' 
+// 			},
+// 			currentFontIndex: 0,
+// 			fonts: ['yingbishoujinti','kaishu', 'sansheng', 'liukaiti']
+// 		},
+// 		{ 
+// 			path: 'https://img.xinshi00.com/bg-pictures/emoji/angry2.jpg', 
+// 			name: '生气2',
+// 			textBox: { 
+// 				x: 60, y: 20, width: 650, height: 650,
+// 				hAlign: 'center', vAlign: 'middle'
+// 			},
+// 			currentFontIndex: 0,
+// 			fonts: [ 'sansheng', 'yingbishoujinti','kaishu', 'liukaiti']
+// 		}, 
+// 	],
+// },
+];
 exports.backgroundCategories = backgroundCategories;
 
 /***/ }),
@@ -11671,10 +11692,225 @@ function normalizeComponent (
 
 /***/ }),
 
-/***/ 361:
-/*!***************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-icons/components/uni-icons/uniicons_file_vue.js ***!
-  \***************************************************************************************************************/
+/***/ 37:
+/*!******************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/store/store.js ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 25));
+var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ 33));
+var _user = _interopRequireDefault(__webpack_require__(/*! @/store/user.js */ 38));
+var _m_posts = _interopRequireDefault(__webpack_require__(/*! @/store/m_posts */ 39));
+// 新增
+
+_vue.default.use(_vuex.default);
+var store = new _vuex.default.Store({
+  modules: {
+    'm_user': _user.default,
+    m_posts: _m_posts.default // 新增
+  }
+});
+var _default = store;
+exports.default = _default;
+
+/***/ }),
+
+/***/ 38:
+/*!*****************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/store/user.js ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  //开启命名空间
+  namespaced: true,
+  //数据节点
+  state: function state() {
+    return {
+      address: JSON.parse(uni.getStorageSync('address') || '{}'),
+      token: uni.getStorageSync('token') || '',
+      userInfo: JSON.parse(uni.getStorageSync('userinfo') || '{}'),
+      userBase: JSON.parse(uni.getStorageSync('userBase') || '{}'),
+      code: uni.getStorageSync('code') || '',
+      openid: uni.getStorageSync('openid') || '',
+      unionid: uni.getStorageSync('unionid') || '',
+      userMajor: uni.getStorageSync('userMajor') || '',
+      preference: uni.getStorageSync('preference') || ''
+    };
+  },
+  //方法节点
+  mutations: {
+    updateMajor: function updateMajor(state, userMajor) {
+      state.userMajor = userMajor;
+      this.commit('m_user/saveMajorToStorage');
+    },
+    // 持久化存储 address
+    saveMajorToStorage: function saveMajorToStorage(state) {
+      uni.setStorageSync('userMajor', JSON.stringify(state.userMajor));
+    },
+    // 更新收货地址
+    updateAddress: function updateAddress(state, address) {
+      state.address = address;
+      this.commit('m_user/saveAddressToStorage');
+    },
+    // 持久化存储 address
+    saveAddressToStorage: function saveAddressToStorage(state) {
+      uni.setStorageSync('address', JSON.stringify(state.address));
+    },
+    //更新用户的基本信息
+    updateUserInfo: function updateUserInfo(state, userinfo) {
+      state.userinfo = userinfo;
+      // 通过 this.commit() 方法，调用 m_user 模块下的 saveUserInfoToStorage 方法，将 userinfo 对象持久化存储到本地
+      this.commit('m_user/saveUserInfoToStorage');
+    },
+    // 将 userinfo 持久化存储到本地
+    saveUserInfoToStorage: function saveUserInfoToStorage(state) {
+      uni.setStorageSync('userinfo', JSON.stringify(state.userinfo));
+    },
+    //更新用户数据库的信息
+    updateUserBase: function updateUserBase(state, userBase) {
+      state.userBase = userBase;
+      // 通过 this.commit() 方法，调用 m_user 模块下的 saveUserBaseToStorage 方法，将 userBase 对象持久化存储到本地
+      this.commit('m_user/saveUserBaseToStorage');
+    },
+    // 将 userinfo 持久化存储到本地
+    saveUserBaseToStorage: function saveUserBaseToStorage(state) {
+      uni.setStorageSync('userinfo', JSON.stringify(state.userinfo));
+    },
+    updatepreference: function updatepreference(state, preference) {
+      state.preference = preference;
+      // 通过 this.commit() 方法，调用 m_user 模块下的 savepreferenceToStorage 方法，将 userBase 对象持久化存储到本地
+      this.commit('m_user/savepreferenceToStorage');
+    },
+    // 将 userinfo 持久化存储到本地
+    savepreferenceToStorage: function savepreferenceToStorage(state) {
+      uni.setStorageSync('preference');
+    },
+    // 更新 token 字符串
+    updateToken: function updateToken(state, token) {
+      state.token = token;
+      // 通过 this.commit() 方法，调用 m_user 模块下的 saveTokenToStorage 方法，将 token 字符串持久化存储到本地
+      this.commit('m_user/saveTokenToStorage');
+    },
+    // 将 token 字符串持久化存储到本地
+    saveTokenToStorage: function saveTokenToStorage(state) {
+      uni.setStorageSync('token', state.token);
+    },
+    updateCode: function updateCode(state, code) {
+      state.code = code;
+      // 通过 this.commit() 方法，调用 m_user 模块下的 saveTokenToStorage 方法，将 token 字符串持久化存储到本地
+      this.commit('m_user/saveCodeToStorage');
+    },
+    saveCodeToStorage: function saveCodeToStorage(state) {
+      uni.setStorageSync('code', state.code);
+    },
+    updateOpenid: function updateOpenid(state, openid) {
+      state.openid = openid;
+      // 通过 this.commit() 方法，调用 m_user 模块下的 saveTokenToStorage 方法，将 token 字符串持久化存储到本地
+      this.commit('m_user/saveOpenidToStorage');
+    },
+    saveOpenidToStorage: function saveOpenidToStorage(state) {
+      uni.setStorageSync('openid', state.openid);
+    },
+    // 更新 unionid
+    updateUnionid: function updateUnionid(state, unionid) {
+      state.unionid = unionid;
+    },
+    // 清除登录信息（退出登录时使用）
+    clearUserInfo: function clearUserInfo(state) {
+      state.token = '';
+      state.openid = '';
+      state.unionid = '';
+      state.userInfo = {};
+      uni.removeStorageSync('token');
+      uni.removeStorageSync('openid');
+      uni.removeStorageSync('unionid');
+      uni.removeStorageSync('userInfo');
+      uni.removeStorageSync('userId');
+    }
+  },
+  getters: {
+    // 收货地址
+    addstr: function addstr(state) {
+      if (!state.address.provinceName) return '';
+      return state.address.provinceName + state.address.cityName + state.address.countyName + state.address.detailInfo;
+    }
+  }
+};
+exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+
+/***/ }),
+
+/***/ 39:
+/*!********************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/store/m_posts.js ***!
+  \********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  namespaced: true,
+  state: {
+    newPublishedPost: null,
+    // 新发布的帖子
+    targetPage: '' // 目标页面标识
+  },
+
+  mutations: {
+    // 设置新发布的帖子
+    setNewPost: function setNewPost(state, payload) {
+      state.newPublishedPost = payload.post;
+      state.targetPage = payload.targetPage;
+    },
+    // 清空新帖子数据
+    clearNewPost: function clearNewPost(state) {
+      state.newPublishedPost = null;
+      state.targetPage = '';
+    }
+  },
+  getters: {
+    // 判断当前页面是否为目标页面
+    shouldShowNewPost: function shouldShowNewPost(state) {
+      return function (currentPage) {
+        return state.targetPage === currentPage && state.newPublishedPost !== null;
+      };
+    }
+  }
+};
+exports.default = _default;
+
+/***/ }),
+
+/***/ 396:
+/*!*******************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-icons/components/uni-icons/uniicons_file_vue.js ***!
+  \*******************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12175,234 +12411,26 @@ exports.fontData = fontData;
 
 /***/ }),
 
-/***/ 37:
-/*!**************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/store/store.js ***!
-  \**************************************************************/
+/***/ 4:
+/*!**********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
+  \**********************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 25));
-var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ 33));
-var _user = _interopRequireDefault(__webpack_require__(/*! @/store/user.js */ 38));
-_vue.default.use(_vuex.default);
-var store = new _vuex.default.Store({
-  modules: {
-    'm_user': _user.default
-  }
-});
-var _default = store;
-exports.default = _default;
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
-/***/ 38:
-/*!*************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/store/user.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _default = {
-  //开启命名空间
-  namespaced: true,
-  //数据节点
-  state: function state() {
-    return {
-      address: JSON.parse(uni.getStorageSync('address') || '{}'),
-      token: uni.getStorageSync('token') || '',
-      userInfo: JSON.parse(uni.getStorageSync('userinfo') || '{}'),
-      userBase: JSON.parse(uni.getStorageSync('userBase') || '{}'),
-      code: uni.getStorageSync('code') || '',
-      openid: uni.getStorageSync('openid') || '',
-      unionid: uni.getStorageSync('unionid') || '',
-      userMajor: uni.getStorageSync('userMajor') || '',
-      preference: uni.getStorageSync('preference') || ''
-    };
-  },
-  //方法节点
-  mutations: {
-    updateMajor: function updateMajor(state, userMajor) {
-      state.userMajor = userMajor;
-      this.commit('m_user/saveMajorToStorage');
-    },
-    // 持久化存储 address
-    saveMajorToStorage: function saveMajorToStorage(state) {
-      uni.setStorageSync('userMajor', JSON.stringify(state.userMajor));
-    },
-    // 更新收货地址
-    updateAddress: function updateAddress(state, address) {
-      state.address = address;
-      this.commit('m_user/saveAddressToStorage');
-    },
-    // 持久化存储 address
-    saveAddressToStorage: function saveAddressToStorage(state) {
-      uni.setStorageSync('address', JSON.stringify(state.address));
-    },
-    //更新用户的基本信息
-    updateUserInfo: function updateUserInfo(state, userinfo) {
-      state.userinfo = userinfo;
-      // 通过 this.commit() 方法，调用 m_user 模块下的 saveUserInfoToStorage 方法，将 userinfo 对象持久化存储到本地
-      this.commit('m_user/saveUserInfoToStorage');
-    },
-    // 将 userinfo 持久化存储到本地
-    saveUserInfoToStorage: function saveUserInfoToStorage(state) {
-      uni.setStorageSync('userinfo', JSON.stringify(state.userinfo));
-    },
-    //更新用户数据库的信息
-    updateUserBase: function updateUserBase(state, userBase) {
-      state.userBase = userBase;
-      // 通过 this.commit() 方法，调用 m_user 模块下的 saveUserBaseToStorage 方法，将 userBase 对象持久化存储到本地
-      this.commit('m_user/saveUserBaseToStorage');
-    },
-    // 将 userinfo 持久化存储到本地
-    saveUserBaseToStorage: function saveUserBaseToStorage(state) {
-      uni.setStorageSync('userinfo', JSON.stringify(state.userinfo));
-    },
-    updatepreference: function updatepreference(state, preference) {
-      state.preference = preference;
-      // 通过 this.commit() 方法，调用 m_user 模块下的 savepreferenceToStorage 方法，将 userBase 对象持久化存储到本地
-      this.commit('m_user/savepreferenceToStorage');
-    },
-    // 将 userinfo 持久化存储到本地
-    savepreferenceToStorage: function savepreferenceToStorage(state) {
-      uni.setStorageSync('preference');
-    },
-    // 更新 token 字符串
-    updateToken: function updateToken(state, token) {
-      state.token = token;
-      // 通过 this.commit() 方法，调用 m_user 模块下的 saveTokenToStorage 方法，将 token 字符串持久化存储到本地
-      this.commit('m_user/saveTokenToStorage');
-    },
-    // 将 token 字符串持久化存储到本地
-    saveTokenToStorage: function saveTokenToStorage(state) {
-      uni.setStorageSync('token', state.token);
-    },
-    updateCode: function updateCode(state, code) {
-      state.code = code;
-      // 通过 this.commit() 方法，调用 m_user 模块下的 saveTokenToStorage 方法，将 token 字符串持久化存储到本地
-      this.commit('m_user/saveCodeToStorage');
-    },
-    saveCodeToStorage: function saveCodeToStorage(state) {
-      uni.setStorageSync('code', state.code);
-    },
-    updateOpenid: function updateOpenid(state, openid) {
-      state.openid = openid;
-      // 通过 this.commit() 方法，调用 m_user 模块下的 saveTokenToStorage 方法，将 token 字符串持久化存储到本地
-      this.commit('m_user/saveOpenidToStorage');
-    },
-    saveOpenidToStorage: function saveOpenidToStorage(state) {
-      uni.setStorageSync('openid', state.openid);
-    },
-    // 更新 unionid
-    updateUnionid: function updateUnionid(state, unionid) {
-      state.unionid = unionid;
-    },
-    // 清除登录信息（退出登录时使用）
-    clearUserInfo: function clearUserInfo(state) {
-      state.token = '';
-      state.openid = '';
-      state.unionid = '';
-      state.userInfo = {};
-      uni.removeStorageSync('token');
-      uni.removeStorageSync('openid');
-      uni.removeStorageSync('unionid');
-      uni.removeStorageSync('userInfo');
-      uni.removeStorageSync('userId');
-    }
-  },
-  getters: {
-    // 收货地址
-    addstr: function addstr(state) {
-      if (!state.address.provinceName) return '';
-      return state.address.provinceName + state.address.cityName + state.address.countyName + state.address.detailInfo;
-    }
-  }
-};
-exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
-
-/***/ }),
-
-/***/ 383:
-/*!******************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/index.js ***!
-  \******************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _en = _interopRequireDefault(__webpack_require__(/*! ./en.json */ 384));
-var _zhHans = _interopRequireDefault(__webpack_require__(/*! ./zh-Hans.json */ 385));
-var _zhHant = _interopRequireDefault(__webpack_require__(/*! ./zh-Hant.json */ 386));
-var _default = {
-  en: _en.default,
-  'zh-Hans': _zhHans.default,
-  'zh-Hant': _zhHant.default
-};
-exports.default = _default;
-
-/***/ }),
-
-/***/ 384:
-/*!*****************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/en.json ***!
-  \*****************************************************************************************************************/
-/*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
-/***/ (function(module) {
-
-module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"cancel\",\"uni-search-bar.placeholder\":\"Search enter content\"}");
-
-/***/ }),
-
-/***/ 385:
-/*!**********************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hans.json ***!
-  \**********************************************************************************************************************/
-/*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
-/***/ (function(module) {
-
-module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"取消\",\"uni-search-bar.placeholder\":\"请输入搜索内容\"}");
-
-/***/ }),
-
-/***/ 386:
-/*!**********************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hant.json ***!
-  \**********************************************************************************************************************/
-/*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
-/***/ (function(module) {
-
-module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"取消\",\"uni-search-bar.placeholder\":\"請輸入搜索內容\"}");
-
-/***/ }),
-
-/***/ 39:
-/*!******************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/node_modules/@escook/request-miniprogram/miniprogram_dist/index.js ***!
-  \******************************************************************************************************************/
+/***/ 40:
+/*!**********************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/node_modules/@escook/request-miniprogram/miniprogram_dist/index.js ***!
+  \**********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12511,26 +12539,70 @@ exports.$http = $http;
 
 /***/ }),
 
-/***/ 4:
-/*!**********************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
-  \**********************************************************************/
+/***/ 425:
+/*!**********************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/index.js ***!
+  \**********************************************************************************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    "default": obj
-  };
-}
-module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _en = _interopRequireDefault(__webpack_require__(/*! ./en.json */ 426));
+var _zhHans = _interopRequireDefault(__webpack_require__(/*! ./zh-Hans.json */ 427));
+var _zhHant = _interopRequireDefault(__webpack_require__(/*! ./zh-Hant.json */ 428));
+var _default = {
+  en: _en.default,
+  'zh-Hans': _zhHans.default,
+  'zh-Hant': _zhHant.default
+};
+exports.default = _default;
 
 /***/ }),
 
-/***/ 408:
-/*!***********************************************************************************************************************!*\
-  !*** E:/ECNU/front-end/Miniprogram-CampusPub/uni_modules/uni-transition/components/uni-transition/createAnimation.js ***!
-  \***********************************************************************************************************************/
+/***/ 426:
+/*!*********************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/en.json ***!
+  \*********************************************************************************************************************************/
+/*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"cancel\",\"uni-search-bar.placeholder\":\"Search enter content\"}");
+
+/***/ }),
+
+/***/ 427:
+/*!**************************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hans.json ***!
+  \**************************************************************************************************************************************/
+/*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"取消\",\"uni-search-bar.placeholder\":\"请输入搜索内容\"}");
+
+/***/ }),
+
+/***/ 428:
+/*!**************************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-search-bar/components/uni-search-bar/i18n/zh-Hant.json ***!
+  \**************************************************************************************************************************************/
+/*! exports provided: uni-search-bar.cancel, uni-search-bar.placeholder, default */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"uni-search-bar.cancel\":\"取消\",\"uni-search-bar.placeholder\":\"請輸入搜索內容\"}");
+
+/***/ }),
+
+/***/ 443:
+/*!***************************************************************************************************************************************!*\
+  !*** D:/HBuilderX.4.76.2025082103/HBuilderX/project/shopping/uni_modules/uni-transition/components/uni-transition/createAnimation.js ***!
+  \***************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

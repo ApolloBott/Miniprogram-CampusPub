@@ -104,7 +104,7 @@ page {
   justify-content: center;
   width: 72rpx;
   height: 64rpx;
-  background: #f5f5f5;
+  background: transparent;
   border-radius: 16rpx;
   transition: all 0.3s ease;
   flex-shrink: 0;
@@ -114,12 +114,12 @@ page {
   -webkit-transform: scale(0.95);
           transform: scale(0.95);
 }
-.menu-btn .menu-icon {
-  font-size: 44rpx;
-  color: #333;
-  font-weight: bold;
+.menu-btn .menu-icon-img {
+  width: 20px;
+  height: 20px;
 }
-/* 🔥🔥🔥 侧边菜单遮罩层 🔥🔥🔥 */
+/* ================= 复制开始 ================= */
+/* 遮罩层 */
 .side-menu-overlay {
   position: fixed;
   top: 0;
@@ -137,103 +137,177 @@ page {
   visibility: visible;
   background: rgba(0, 0, 0, 0.5);
 }
-/* 🔥🔥🔥 侧边菜单抽屉 🔥🔥🔥 */
+/* 侧边栏容器 */
 .side-menu-drawer {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 560rpx;
-  background: #ffffff;
-  box-shadow: 4rpx 0 24rpx rgba(0, 0, 0, 0.15);
+  width: 600rpx;
+  background: #F6F6F6;
+  /* 背景色与 treehole 一致 */
+  box-shadow: 4rpx 0 24rpx rgba(0, 0, 0, 0.05);
   -webkit-transform: translateX(-100%);
           transform: translateX(-100%);
-  transition: -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: -webkit-transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), -webkit-transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   display: flex;
   flex-direction: column;
   z-index: 9999;
+  border-top-right-radius: 32rpx;
+  border-bottom-right-radius: 32rpx;
 }
 .side-menu-drawer.show {
   -webkit-transform: translateX(0);
           transform: translateX(0);
 }
-/* 🔥 菜单头部 */
-.menu-header {
+/* 滚动区域 */
+.menu-scroll-area {
+  flex: 1;
+  height: 0;
+  /* 🔥 关键修复：顶部给 24rpx 间距，避免卡片贴顶或空白太大 */
+  padding: 0 24rpx;
+  box-sizing: border-box;
+}
+/* 顶部垫片 (Treehole 中设为 0，我们保持一致) */
+.drawer-spacer {
+  height: 0;
+  width: 0;
+  display: none;
+}
+/* 底部垫片 (防止内容被底部栏遮挡) */
+.bottom-spacer {
+  height: 180rpx;
+}
+/* 分组卡片 */
+.group-card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  margin-top: 0 !important;
+  margin-bottom: 24rpx;
+  /* 只保留底部间距 */
+  padding: 8rpx 0;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+/* 菜单行 */
+.menu-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 32rpx 24rpx;
-  background: linear-gradient(135deg, #C00000 0%, #ff4757 100%);
-  box-shadow: 0 4rpx 12rpx rgba(192, 0, 0, 0.1);
+  padding: 32rpx 32rpx;
+  /* Treehole 标准间距 */
+  position: relative;
+  transition: background 0.2s;
+  /* 图标容器 */
+  /* 菜单文字 - 强制深色加粗 */
+  /* 右侧信息（红点/数字） */
 }
-.menu-header .menu-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #ffffff;
+.menu-row:active {
+  background-color: #f9f9f9;
 }
-.menu-header .close-btn {
-  width: 56rpx;
-  height: 56rpx;
+.menu-row .icon-wrapper {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transition: all 0.3s ease;
+  /* 图标图片 */
 }
-.menu-header .close-btn:active {
-  background: rgba(255, 255, 255, 0.3);
-  -webkit-transform: scale(0.9);
-          transform: scale(0.9);
+.menu-row .icon-wrapper .menu-icon-img {
+  width: 40rpx;
+  /* Treehole 标准大小 */
+  height: 40rpx;
 }
-.menu-header .close-btn .close-icon {
-  font-size: 40rpx;
-  color: #ffffff;
-  font-weight: bold;
-  line-height: 1;
-}
-/* 🔥 菜单列表 */
-.menu-list {
-  flex: 1;
-  padding: 16rpx 0;
-  overflow-y: auto;
-}
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 32rpx 24rpx;
-  margin: 8rpx 16rpx;
-  background: #f8f9fa;
-  border-radius: 16rpx;
-  transition: all 0.3s ease;
-  border: 2rpx solid transparent;
-}
-.menu-item:active {
-  background: #e8ecef;
-  -webkit-transform: scale(0.98);
-          transform: scale(0.98);
-  border-color: #C00000;
-}
-.menu-item .menu-item-icon {
-  font-size: 44rpx;
-  margin-right: 20rpx;
-  width: 48rpx;
-  text-align: center;
-}
-.menu-item .menu-item-text {
+.menu-row .menu-text {
   flex: 1;
   font-size: 30rpx;
   color: #333;
+  /* 深黑色 */
   font-weight: 500;
+  /* 加粗 */
+  letter-spacing: 0.5rpx;
 }
-.menu-item .menu-arrow {
-  font-size: 48rpx;
+.menu-row .menu-right {
+  display: flex;
+  align-items: center;
+}
+.menu-row .menu-right .info-count {
+  font-size: 24rpx;
   color: #999;
-  line-height: 1;
-  margin-left: 12rpx;
+  margin-right: 10rpx;
 }
+.menu-row .menu-right .red-dot {
+  width: 16rpx;
+  height: 16rpx;
+  background: #ff2442;
+  border-radius: 50%;
+}
+/* 底部固定栏 */
+.drawer-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160rpx;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.03);
+  border-bottom-right-radius: 32rpx;
+}
+.drawer-bottom .bottom-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  /* 圆形图标背景 */
+}
+.drawer-bottom .bottom-item:active {
+  opacity: 0.7;
+}
+.drawer-bottom .bottom-item .bottom-icon-wrapper {
+  width: 90px;
+  height: 90px;
+  background: transparent;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -18px;
+  position: relative;
+}
+.drawer-bottom .bottom-item .bottom-icon-wrapper .bottom-icon-img {
+  width: 30px;
+  height: 30px;
+}
+.drawer-bottom .bottom-item .bottom-text {
+  font-size: 24rpx;
+  color: #666;
+}
+/* 重置按钮样式 (用于客服按钮) */
+.icon-btn-reset {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  border: none;
+}
+.icon-btn-reset::after {
+  border: none;
+  width: 0;
+  height: 0;
+}
+/* ================= 复制结束 ================= */
 /* 🔥 响应式优化 - 小屏幕 */
 @media screen and (max-width: 375px) {
 .side-menu-drawer {
@@ -286,7 +360,7 @@ page {
   justify-content: center;
   width: 72rpx;
   height: 64rpx;
-  background: #f5f5f5;
+  background: transparent;
   border-radius: 16rpx;
   transition: all 0.3s ease;
   flex-shrink: 0;
@@ -296,8 +370,9 @@ page {
   -webkit-transform: scale(0.95);
           transform: scale(0.95);
 }
-.search-btn .search-icon {
-  font-size: 36rpx;
+.search-btn .search-icon-img {
+  width: 44rpx;
+  height: 44rpx;
 }
 /* 🔥 分类页面样式 */
 .category-page {

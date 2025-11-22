@@ -9,8 +9,12 @@
 	<view class="top-nav-bar">
      <!-- 🔥 菜单按钮 - 替换原来的消息按钮 -->
            <view class="menu-btn" @click="openSideMenu">
-             <text class="menu-icon">☰</text>
-           </view>
+                <image 
+                  class="menu-icon-img" 
+                  src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/shaixuan.png" 
+                  mode="aspectFit"
+                ></image>
+              </view>
       
       <!-- 🔥 中间标签区域 - 只保留推荐和新品 -->
       <view class="nav-tabs">
@@ -26,44 +30,72 @@
       
       <!-- 搜索图标按钮 -->
       <view class="search-btn" @click="gotoSearch">
-        <text class="search-icon">🔍</text>
+        <image 
+                class="search-icon-img" 
+                src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/searchupdate.png"
+                mode="aspectFit"
+            ></image>
       </view>
     </view>
 	
 	<!-- 🔥🔥🔥 新增:左侧弹出菜单 🔥🔥🔥 -->
+	<view 
+	  class="side-menu-overlay" 
+	  :class="{ 'show': showSideMenu }"
+	  @click="closeSideMenu"
+	></view>
+	
+	<view 
+	  class="side-menu-drawer" 
+	  :class="{ 'show': showSideMenu }"
+	  @click.stop
+	>
+	  <scroll-view class="menu-scroll-area" scroll-y>
+	   
+	
 	    <view 
-	      class="side-menu-overlay" 
-	      :class="{ 'show': showSideMenu }"
-	      @click="closeSideMenu"
+	      class="group-card" 
+	      v-for="(group, gIndex) in menuGroups" 
+	      :key="group.id"
 	    >
 	      <view 
-	        class="side-menu-drawer" 
-	        :class="{ 'show': showSideMenu }"
-	        @click.stop
+	        class="menu-row"
+	        v-for="(item, iIndex) in group.items"
+	        :key="iIndex"
+	        @click="handleMenuClick(item)"
 	      >
-	        <!-- 菜单头部 -->
-	        <view class="menu-header">
-	          <text class="menu-title">我的菜单</text>
-	          <view class="close-btn" @click="closeSideMenu">
-	            <text class="close-icon">✕</text>
-	          </view>
+	        <view class="icon-wrapper">
+	           <image 
+	              class="menu-icon-img" 
+	              :src="item.icon" 
+	              mode="aspectFit"
+	            ></image>
 	        </view>
 	        
-	        <!-- 菜单列表 -->
-	        <scroll-view class="menu-list" scroll-y>
-	          <view 
-	            v-for="(item, index) in menuItems" 
-	            :key="index"
-	            class="menu-item"
-	            @click="handleMenuClick(item)"
-	          >
-	            <text class="menu-item-icon">{{ item.icon }}</text>
-	            <text class="menu-item-text">{{ item.name }}</text>
-	            <text class="menu-arrow">›</text>
-	          </view>
-	        </scroll-view>
+	        <text class="menu-text">{{ item.name }}</text>
+	        
+	        <view class="menu-right">
+	             <text v-if="item.count" class="info-count">{{ item.count }}</text>
+	             </view>
 	      </view>
 	    </view>
+	    
+	    <view class="bottom-spacer"></view>
+	  </scroll-view>
+	
+	  <view class="drawer-bottom">
+	    <view class="bottom-item" v-for="(action, index) in bottomActions" :key="index"
+	      @click="handleBottomAction(action)">
+	      <view class="bottom-icon-wrapper">
+	        <button class="icon-btn-reset" open-type="contact" v-if="action.action === 'help'">
+	          <image class="bottom-icon-img" :src="action.icon" mode="aspectFit"></image>
+	        </button>
+	        <image class="bottom-icon-img" :src="action.icon" mode="aspectFit" v-if="action.action !== 'help'"></image>
+	      </view>
+	      <text class="bottom-text">{{ action.name }}</text>
+	    </view>
+	  </view>
+	</view>    
 	
     <!-- 🔥🔥🔥 新增：类别选项栏 🔥🔥🔥 -->
     <view 
@@ -233,13 +265,37 @@ export default {
 		recentLoadedIds: new Set(), // 已加载的商品ID
 		// 🔥 新增:侧边菜单相关
 		showSideMenu: false, // 控制菜单显示/隐藏
-		menuItems: [
-		  { name: '我发布的', icon: '📝', route: '/subpkg/publish/publish' },
-		  { name: '我买到的', icon: '🛍️', route: '/subpkg/my-bought/my-bought' },
-		  { name: '我卖出的', icon: '💰', route: '/subpkg/my-sold/my-sold' },
-		  { name: '收藏的商品', icon: '⭐', route: '/subpkg/collect/collect' },
-		  { name: '浏览足迹', icon: '👣', route: '/subpkg/history/history' },
-		  { name: '评价的商品', icon: '💬', route: '/subpkg/comment/comment' }
+		menuGroups: [
+		  {
+		    id: 'mine',
+		    items: [
+		      { name: '我发布的', icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/photo.png', route: '/subpkg/publish/publish' },
+		      { name: '我买到的', icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/cate-maidao.png', route: '/subpkg/my-bought/my-bought' }, // 示例icon
+		      { name: '我卖出的', icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/cate-maichu.png', route: '/subpkg/my-sold/my-sold' } // 示例icon
+		    ]
+		  },
+		  {
+		    id: 'history',
+		    items: [
+		      { name: '收藏的商品', icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/cate-shoucang.png', route: '/subpkg/collect/collect' }, // 示例icon
+		      { name: '浏览足迹', icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/cate-zuji.png', route: '/subpkg/history/history' }, // 示例icon
+		      { name: '评价的商品', icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/cate-pingjia.png', route: '/subpkg/comment/comment' } // 示例icon
+		    ]
+		  }
+		],
+		
+		// ✅ 新增底部功能区数据
+		bottomActions: [
+		  { 
+		    name: '帮助与客服', 
+		    icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/bottom-kefu.png', 
+		    action: 'help' 
+		  },
+		  { 
+		    name: '设置', 
+		    icon: 'https://wait00.oss-cn-shanghai.aliyuncs.com/label/bottom-shezhi.png', 
+		    route: '/subpkg/edit/edit' 
+		  }
 		],
 		excludeGoodsIds: [], // ✅ 新增：已获取的商品ID列表
     };
@@ -250,11 +306,24 @@ export default {
     // 🔥 新增:打开侧边菜单
       openSideMenu() {
         if (!this.openid) {
-          uni.switchTab({
-            url: '/pages/my/my'
-          });
-          return;
-        }
+        		  // 弹出登录提示框
+        		  uni.showModal({
+        		    title: '提示',
+        		    content: '需要登录才能体验更多内容哦',
+        		    cancelText: '取消',
+        		    confirmText: '登录',
+        		    success: (res) => {
+        		      if (res.confirm) {
+        		        // 用户点击了"登录"按钮
+        		        uni.switchTab({
+        		          url: '/pages/my/my'
+        		        })
+        		      }
+        		      // 用户点击了"取消"按钮，不做任何操作
+        		    }
+        		  })
+        		  return
+        		}
         this.showSideMenu = true;
       },
       
@@ -281,6 +350,17 @@ export default {
           });
         }, 300);
       },
+	  handleBottomAction(action) {
+	    console.log('点击底部功能:', action.name);
+	    this.closeSideMenu(); // 1. 关闭菜单
+	    
+	    if (action.route) {
+	      uni.navigateTo({ url: action.route });
+	    } else if (action.action === 'help') {
+	      // 2. 客服逻辑：留空即可，因为 <button open-type="contact"> 会自动接管
+	      // 不要在这里写 uni.showToast
+	    }
+	  },
 	// 🔥 新增：选择类别选项
 	    async selectCategoryOption(index) {
 	      this.selectedCategoryIndex = index
@@ -346,11 +426,24 @@ export default {
     // 🔥 新增：跳转到消息页面
     gotoMessage() {
 		if (!this.openid) {
-			uni.switchTab({
-		  url: '/pages/my/my'
-		})
-		return
-		}
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		
       uni.navigateTo({
         url: '/pages/message/message'
@@ -541,11 +634,24 @@ export default {
     
     gotoSearch() {
 		if (!this.openid) {
-			uni.switchTab({
-		  url: '/pages/my/my'
-		})
-		return
-		}
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
       uni.navigateTo({
         url: '/subpkg/search/search'
       })
@@ -561,12 +667,25 @@ export default {
 		 // 🔥 如果点击的是"新品"标签(index=1)
 		     if (i === 1) {
 		       if (!this.openid) {
-		         this.active = 0;
-		         uni.switchTab({
-		           url: '/pages/my/my'
-		         });
-		         return;
-		       }
+				   this.active = 0
+		       		  // 弹出登录提示框
+		       		  uni.showModal({
+		       		    title: '提示',
+		       		    content: '需要登录才能体验更多内容哦',
+		       		    cancelText: '取消',
+		       		    confirmText: '登录',
+		       		    success: (res) => {
+		       		      if (res.confirm) {
+		       		        // 用户点击了"登录"按钮
+		       		        uni.switchTab({
+		       		          url: '/pages/my/my'
+		       		        })
+		       		      }
+		       		      // 用户点击了"取消"按钮，不做任何操作
+		       		    }
+		       		  })
+		       		  return
+		       		}
 		       
 		       // 🔥 如果是第一次加载新品,则请求数据
 		       if (this.recentGoodsList.length === 0) {
@@ -600,12 +719,25 @@ export default {
 
         if (this.active === 1) {
           if (!this.openid) {
-            this.active = 0
-            uni.switchTab({
-              url: '/pages/my/my'
-            })
-            return;
-          }
+			  this.active = 0
+          		  // 弹出登录提示框
+          		  uni.showModal({
+          		    title: '提示',
+          		    content: '需要登录才能体验更多内容哦',
+          		    cancelText: '取消',
+          		    confirmText: '登录',
+          		    success: (res) => {
+          		      if (res.confirm) {
+          		        // 用户点击了"登录"按钮
+          		        uni.switchTab({
+          		          url: '/pages/my/my'
+          		        })
+          		      }
+          		      // 用户点击了"取消"按钮，不做任何操作
+          		    }
+          		  })
+          		  return
+          		}
           const queryObj = { code: this.openid };
           const { data: res } = await uni.$http.get('/users/userinfo', queryObj);
 
@@ -1146,7 +1278,7 @@ export default {
 		  justify-content: center;
 		  width: 72rpx;
 		  height: 64rpx;
-		  background: #f5f5f5;
+		  background: transparent;
 		  border-radius: 16rpx;
 		  transition: all 0.3s ease;
 		  flex-shrink: 0;
@@ -1156,14 +1288,15 @@ export default {
 		    transform: scale(0.95);
 		  }
 		
-		  .menu-icon {
-		    font-size: 44rpx;
-		    color: #333;
-		    font-weight: bold;
-		  }
+		  .menu-icon-img {
+		      width: 20px;
+		      height: 20px;
+		    }
 		}
 		
-		/* 🔥🔥🔥 侧边菜单遮罩层 🔥🔥🔥 */
+		/* ================= 复制开始 ================= */
+		
+		/* 遮罩层 */
 		.side-menu-overlay {
 		  position: fixed;
 		  top: 0;
@@ -1183,109 +1316,188 @@ export default {
 		  }
 		}
 		
-		/* 🔥🔥🔥 侧边菜单抽屉 🔥🔥🔥 */
+		/* 侧边栏容器 */
 		.side-menu-drawer {
 		  position: fixed;
 		  top: 0;
 		  left: 0;
 		  bottom: 0;
-		  width: 560rpx;
-		  background: #ffffff;
-		  box-shadow: 4rpx 0 24rpx rgba(0, 0, 0, 0.15);
+		  width: 600rpx;
+		  background: #F6F6F6; /* 背景色与 treehole 一致 */
+		  box-shadow: 4rpx 0 24rpx rgba(0, 0, 0, 0.05);
 		  transform: translateX(-100%);
-		  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 		  display: flex;
 		  flex-direction: column;
 		  z-index: 9999;
+		  border-top-right-radius: 32rpx;
+		  border-bottom-right-radius: 32rpx;
 		
 		  &.show {
 		    transform: translateX(0);
 		  }
 		}
 		
-		/* 🔥 菜单头部 */
-		.menu-header {
-		  display: flex;
-		  justify-content: space-between;
-		  align-items: center;
-		  padding: 32rpx 24rpx;
-		  background: linear-gradient(135deg, #C00000 0%, #ff4757 100%);
-		  box-shadow: 0 4rpx 12rpx rgba(192, 0, 0, 0.1);
+		/* 滚动区域 */
+		.menu-scroll-area {
+		  flex: 1;
+		  height: 0;
+		  /* 🔥 关键修复：顶部给 24rpx 间距，避免卡片贴顶或空白太大 */
+		  padding: 0 24rpx;
+		  box-sizing: border-box;
+		}
 		
-		  .menu-title {
-		    font-size: 36rpx;
-		    font-weight: bold;
-		    color: #ffffff;
+		/* 顶部垫片 (Treehole 中设为 0，我们保持一致) */
+		.drawer-spacer {
+		   height: 0;
+		   width: 0;
+		   display: none;
+		}
+		
+		/* 底部垫片 (防止内容被底部栏遮挡) */
+		.bottom-spacer {
+		  height: 180rpx;
+		}
+		
+		/* 分组卡片 */
+		.group-card {
+		  background: #ffffff;
+		  border-radius: 24rpx;
+		  margin-top: 0 !important;
+		  margin-bottom: 24rpx; /* 只保留底部间距 */
+		  padding: 8rpx 0;
+		  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.02);
+		  overflow: hidden;
+		}
+		
+		/* 菜单行 */
+		.menu-row {
+		  display: flex;
+		  align-items: center;
+		  padding: 32rpx 32rpx; /* Treehole 标准间距 */
+		  position: relative;
+		  transition: background 0.2s;
+		
+		  &:active {
+		    background-color: #f9f9f9;
 		  }
 		
-		  .close-btn {
-		    width: 56rpx;
-		    height: 56rpx;
+		  /* 图标容器 */
+		  .icon-wrapper {
+		    width: 48rpx;
+		    height: 48rpx;
+		    margin-right: 24rpx;
 		    display: flex;
 		    align-items: center;
 		    justify-content: center;
-		    background: rgba(255, 255, 255, 0.2);
-		    border-radius: 50%;
-		    transition: all 0.3s ease;
 		
-		    &:active {
-		      background: rgba(255, 255, 255, 0.3);
-		      transform: scale(0.9);
-		    }
-		
-		    .close-icon {
-		      font-size: 40rpx;
-		      color: #ffffff;
-		      font-weight: bold;
-		      line-height: 1;
+		    /* 图标图片 */
+		    .menu-icon-img {
+		      width: 40rpx; /* Treehole 标准大小 */
+		      height: 40rpx;
 		    }
 		  }
-		}
 		
-		/* 🔥 菜单列表 */
-		.menu-list {
-		  flex: 1;
-		  padding: 16rpx 0;
-		  overflow-y: auto;
-		}
-		
-		.menu-item {
-		  display: flex;
-		  align-items: center;
-		  padding: 32rpx 24rpx;
-		  margin: 8rpx 16rpx;
-		  background: #f8f9fa;
-		  border-radius: 16rpx;
-		  transition: all 0.3s ease;
-		  border: 2rpx solid transparent;
-		
-		  &:active {
-		    background: #e8ecef;
-		    transform: scale(0.98);
-		    border-color: #C00000;
-		  }
-		
-		  .menu-item-icon {
-		    font-size: 44rpx;
-		    margin-right: 20rpx;
-		    width: 48rpx;
-		    text-align: center;
-		  }
-		
-		  .menu-item-text {
+		  /* 菜单文字 - 强制深色加粗 */
+		  .menu-text {
 		    flex: 1;
 		    font-size: 30rpx;
-		    color: #333;
-		    font-weight: 500;
+		    color: #333;      /* 深黑色 */
+		    font-weight: 500; /* 加粗 */
+		    letter-spacing: 0.5rpx;
 		  }
 		
-		  .menu-arrow {
-		    font-size: 48rpx;
-		    color: #999;
-		    line-height: 1;
-		    margin-left: 12rpx;
+		  /* 右侧信息（红点/数字） */
+		  .menu-right {
+		    display: flex;
+		    align-items: center;
+		
+		    .info-count {
+		      font-size: 24rpx;
+		      color: #999;
+		      margin-right: 10rpx;
+		    }
+		
+		    .red-dot {
+		      width: 16rpx;
+		      height: 16rpx;
+		      background: #ff2442;
+		      border-radius: 50%;
+		    }
 		  }
 		}
+		
+		/* 底部固定栏 */
+		.drawer-bottom {
+		  position: absolute;
+		  bottom: 0;
+		  left: 0;
+		  right: 0;
+		  height: 160rpx;
+		  background: #ffffff;
+		  display: flex;
+		  justify-content: space-around;
+		  align-items: center;
+		  padding-bottom: env(safe-area-inset-bottom);
+		  border-top: 1rpx solid rgba(0, 0, 0, 0.03);
+		  border-bottom-right-radius: 32rpx;
+		
+		  .bottom-item {
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    justify-content: center;
+		    padding: 20rpx;
+		
+		    &:active {
+		      opacity: 0.7;
+		    }
+		
+		    /* 圆形图标背景 */
+		    .bottom-icon-wrapper {
+		      width: 90px;
+		      height: 90px;
+		      background: transparent;
+		      border-radius: 0;
+		      display: flex;
+		      align-items: center;
+		      justify-content: center;
+		      margin-bottom: -18px;
+		      position: relative;
+		
+		      .bottom-icon-img {
+		        width: 30px;
+		        height: 30px;
+		      }
+		    }
+		
+		    .bottom-text {
+		      font-size: 24rpx;
+		      color: #666;
+		    }
+		  }
+		}
+		
+		/* 重置按钮样式 (用于客服按钮) */
+		.icon-btn-reset {
+		  width: 100%;
+		  height: 100%;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  background: transparent;
+		  padding: 0;
+		  margin: 0;
+		  line-height: 1;
+		  border: none;
+		  
+		  &::after {
+		    border: none;
+		    width: 0;
+		    height: 0;
+		  }
+		}
+		/* ================= 复制结束 ================= */
 		
 		/* 🔥 响应式优化 - 小屏幕 */
 		@media screen and (max-width: 375px) {
@@ -1361,7 +1573,7 @@ export default {
 		  justify-content: center;
 		  width: 72rpx;
 		  height: 64rpx;
-		  background: #f5f5f5;
+		  background: transparent;
 		  border-radius: 16rpx;
 		  transition: all 0.3s ease;
 		  flex-shrink: 0;
@@ -1371,9 +1583,11 @@ export default {
 		    transform: scale(0.95);
 		  }
 		
-		  .search-icon {
-		    font-size: 36rpx;
-		  }
+		 .search-icon-img {
+		 			// 设置图片宽高，建议 40-48rpx 之间
+		 			width: 44rpx;  
+		 			height: 44rpx;
+		 		}
 		}
 		
 		/* 🔥 分类页面样式 */

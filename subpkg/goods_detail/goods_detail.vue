@@ -96,7 +96,7 @@
               <image 
                 :src=item.pics_big 
                 class="swiper-image"
-                mode="aspectFill"
+                mode="aspectFit"
                 @click="preview(i)"
               ></image>
             </swiper-item>
@@ -668,11 +668,24 @@ export default {
 			reportUser() {
 				// 安全检查
 				if (!this.openid) {
-					uni.switchTab({
-					  url: '/pages/my/my',
-					});
-					return;
-				}
+						  // 弹出登录提示框
+						  uni.showModal({
+						    title: '提示',
+						    content: '需要登录才能体验更多内容哦',
+						    cancelText: '取消',
+						    confirmText: '登录',
+						    success: (res) => {
+						      if (res.confirm) {
+						        // 用户点击了"登录"按钮
+						        uni.switchTab({
+						          url: '/pages/my/my'
+						        })
+						      }
+						      // 用户点击了"取消"按钮，不做任何操作
+						    }
+						  })
+						  return
+						}
 	
 				// 弹出一个可编辑的输入框
 				uni.showModal({
@@ -732,12 +745,25 @@ export default {
 			
 	// 🔥 新增：分享给好友
 	  onShareAppMessage(res) {
-	  if (!this.openid) {
-	    uni.switchTab({
-	      url: '/pages/my/my'
-	    })
-	    return
-	  }
+	 if (!this.openid) {
+	 		  // 弹出登录提示框
+	 		  uni.showModal({
+	 		    title: '提示',
+	 		    content: '需要登录才能体验更多内容哦',
+	 		    cancelText: '取消',
+	 		    confirmText: '登录',
+	 		    success: (res) => {
+	 		      if (res.confirm) {
+	 		        // 用户点击了"登录"按钮
+	 		        uni.switchTab({
+	 		          url: '/pages/my/my'
+	 		        })
+	 		      }
+	 		      // 用户点击了"取消"按钮，不做任何操作
+	 		    }
+	 		  })
+	 		  return
+	 		}
 	
 	    return {
 	      title: this.goods_info.goods_name || '发现一个好物推荐给你',
@@ -811,12 +837,25 @@ export default {
 	
 	// 🔥 新增:显示快速留言输入框
 	  showQuickReply() {
-	    if (!this.token) {
-	      uni.switchTab({
-	        url: '/pages/my/my',
-	      });
-	      return;
-	    }
+	   if (!this.openid) {
+	   		  // 弹出登录提示框
+	   		  uni.showModal({
+	   		    title: '提示',
+	   		    content: '需要登录才能体验更多内容哦',
+	   		    cancelText: '取消',
+	   		    confirmText: '登录',
+	   		    success: (res) => {
+	   		      if (res.confirm) {
+	   		        // 用户点击了"登录"按钮
+	   		        uni.switchTab({
+	   		          url: '/pages/my/my'
+	   		        })
+	   		      }
+	   		      // 用户点击了"取消"按钮，不做任何操作
+	   		    }
+	   		  })
+	   		  return
+	   		}
 	    
 	    this.showQuickReplyPanel = true;
 	    this.quickComment = '';
@@ -855,19 +894,25 @@ export default {
 		
 		// 🔥 修改：显示购买确认弹窗
 		ShowBuyPanel() {
-		  if (!this.openid) {
-		    uni.switchTab({
-		      url: '/pages/my/my',
-		      success: () => {
-		        uni.showToast({
-		          title: '请先登录',
-		          icon: 'none',
-		          duration: 2000
-		        });
-		      }
-		    });
-		    return;
-		  }
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		  
 		  // 加载默认地址
 		  this.loadDefaultAddress();
@@ -912,11 +957,24 @@ export default {
 		// 🔥 修改：确认购买方法
 		async confirmPurchase() {
 			if (!this.openid) {
-			  uni.switchTab({
-			    url: '/pages/my/my'
-			  })
-			  return
-			}
+					  // 弹出登录提示框
+					  uni.showModal({
+					    title: '提示',
+					    content: '需要登录才能体验更多内容哦',
+					    cancelText: '取消',
+					    confirmText: '登录',
+					    success: (res) => {
+					      if (res.confirm) {
+					        // 用户点击了"登录"按钮
+					        uni.switchTab({
+					          url: '/pages/my/my'
+					        })
+					      }
+					      // 用户点击了"取消"按钮，不做任何操作
+					    }
+					  })
+					  return
+					}
 		  // 验证地址
 		  const address = this.deliveryAddress.trim();
 		  if (!address) {
@@ -1021,11 +1079,24 @@ export default {
     // 新增：显示回复输入框
     showReplyInput(index, comment) {
 		if (!this.openid) {
-		  uni.switchTab({
-		    url: '/pages/my/my'
-		  })
-		  return
-		}
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
       this.replyToCommentIndex = index;
       this.replyToComment = comment;
       this.replyToUser = comment.nickname;
@@ -1042,15 +1113,26 @@ export default {
       this.replyToUser = '';
     },
     
-// 新增:发送回复
 async sendReply() {
-  if (!this.token) {
-    uni.switchTab({
-      url: '/pages/my/my',
-      
-    });
-    return;
-  }
+  if (!this.openid) {
+  		  // 弹出登录提示框
+  		  uni.showModal({
+  		    title: '提示',
+  		    content: '需要登录才能体验更多内容哦',
+  		    cancelText: '取消',
+  		    confirmText: '登录',
+  		    success: (res) => {
+  		      if (res.confirm) {
+  		        // 用户点击了"登录"按钮
+  		        uni.switchTab({
+  		          url: '/pages/my/my'
+  		        })
+  		      }
+  		      // 用户点击了"取消"按钮，不做任何操作
+  		    }
+  		  })
+  		  return
+  		}
 
   const content = this.newReply.trim();
   if (!content) {
@@ -1061,12 +1143,29 @@ async sendReply() {
     return;
   }
 
-  const currentTimestamp = Math.floor(Date.now() / 1000);
+  // 🔥 新增：文本内容安全检测
+  uni.showLoading({
+    title: '检测内容...',
+    mask: true
+  });
 
-  // ✅ 使用 comment_id 作为唯一标识
+  const isTextSafe = await this.checkTextSafety(content);
+  uni.hideLoading();
+
+  if (!isTextSafe) {
+    uni.showModal({
+      title: '内容违规',
+      content: '回复内容包含违规信息，请修改后重试',
+      showCancel: false,
+      confirmText: '我知道了'
+    });
+    return;
+  }
+
+  // ✅ 检测通过，继续发送回复
+  const currentTimestamp = Math.floor(Date.now() / 1000);
   const targetCommentId = this.replyToComment.comment_id;
 
-  // 构造新回复对象
   const newReplyObj = {
     reply_id: 'reply_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
     user_openid: this.userBase.openid,
@@ -1076,7 +1175,6 @@ async sendReply() {
     created_at: currentTimestamp
   };
 
-  // ✅ 使用 comment_id 查找对应的留言(而不是索引)
   const targetComment = this.comments.find(c => c.comment_id === targetCommentId);
   
   if (!targetComment) {
@@ -1087,26 +1185,23 @@ async sendReply() {
     return;
   }
 
-  // 添加到对应留言的回复列表
   if (!targetComment.replies) {
     targetComment.replies = [];
   }
   targetComment.replies.push(newReplyObj);
 
-  // 更新显示的回复列表
   if (!targetComment.showAllReplies) {
     targetComment.displayReplies = targetComment.replies.slice(0, 1);
   } else {
     targetComment.displayReplies = targetComment.replies;
   }
 
-  // 关闭回复输入框
   this.closeReply();
 
-  // ✅ 调用后端API保存回复
+  // 保存到后端
   try {
     const { data: res } = await uni.$http.post('/goods/reply', {
-      comment_id: targetCommentId,  // 传入留言ID
+      comment_id: targetCommentId,
       user_openid: this.userBase.openid,
       nickname: this.userBase.nickname,
       avatarUrl: this.userBase.avatarUrl || '/images/1.jpg',
@@ -1126,14 +1221,29 @@ async sendReply() {
     console.error('调用回复API失败:', error);
   }
 },
+
     
     // 新增：切换显示所有回复
     toggleShowAllReplies(index) {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			this.comments[index].showAllReplies = !this.comments[index].showAllReplies;
 			if (this.comments[index].showAllReplies) {
@@ -1146,11 +1256,25 @@ async sendReply() {
     },
     
     async gotoPublisherProfile() {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			const payload = encodeURIComponent(JSON.stringify(this.publisher_info));
 			uni.navigateTo({
@@ -1159,11 +1283,25 @@ async sendReply() {
 		}
     },
     async gotoProfile(openid) {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 	  else {
 		  const queryObj = {code: openid};
 		  const {data: res} = await uni.$http.get('/users/userinfo', queryObj);
@@ -1272,21 +1410,48 @@ async sendReply() {
       },
     gotoSearch() {
 		if (!this.openid) {
-		  uni.switchTab({
-		    url: '/pages/my/my'
-		  })
-		  return
-		}
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
       uni.navigateTo({
         url: '/subpkg/search/search'
       })
     },
     async toggleFollow() {
-		if (!this.token) {
-			await uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 	  else {
 		  this.isFollowing = !this.isFollowing;
 		  const url1 = this.isFollowing ? '/users/follow' : '/users/unfollow';
@@ -1300,21 +1465,49 @@ async sendReply() {
      
     },
     toggleLike(index) {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			this.comments[index].isLiked = !this.comments[index].isLiked;
 		}
     },	
     openMessage() {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			 this.showMessagePanel = true;
 		}
@@ -1324,11 +1517,25 @@ async sendReply() {
       this.showMessagePanel = false;
     },
     async toggleCollect() {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			this.isCollected = !this.isCollected;
       const url = this.isCollected ? '/users/collect' : '/users/uncollect';
@@ -1341,11 +1548,25 @@ async sendReply() {
 	}  
 },
     buyNow() {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			uni.showToast({
 			title: '立即购买',
@@ -1354,11 +1575,25 @@ async sendReply() {
 		}
     },
     startChat() {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
+		if (!this.openid) {
+				  // 弹出登录提示框
+				  uni.showModal({
+				    title: '提示',
+				    content: '需要登录才能体验更多内容哦',
+				    cancelText: '取消',
+				    confirmText: '登录',
+				    success: (res) => {
+				      if (res.confirm) {
+				        // 用户点击了"登录"按钮
+				        uni.switchTab({
+				          url: '/pages/my/my'
+				        })
+				      }
+				      // 用户点击了"取消"按钮，不做任何操作
+				    }
+				  })
+				  return
+				}
 		else {
 			const payload = encodeURIComponent(JSON.stringify(this.goods_info));
 		  uni.navigateTo({
@@ -1367,48 +1602,84 @@ async sendReply() {
 		}
     },
     async sendComment() {
-		if (!this.token) {
-			uni.switchTab({
-				url: '/pages/my/my',
-			});
-		}
-		else {
-			const content = this.newComment.trim();
-			if (!content) {
-			  uni.showToast({
-			    title: '请输入留言内容',
-			    icon: 'none'
-			  });
-			  return;
-			}
-			const currentTimestamp = Math.floor(Date.now() / 1000);
-			const newCommentObj = {
-			  comment_id: 'cmt_1700000000000',
-			  user_openid: this.userBase.openid,
-			  nickname: this.userBase.nickname,
-			  avatarUrl: this.userBase.avatarUrl,
-			  content: content,
-			  created_at: currentTimestamp,
-			  like_count: 0,
-			  replies: [],
-			  showAllReplies: false,
-			  displayReplies: []
-			};
-			
-			this.comments.unshift(newCommentObj);
-			this.newComment = '';
-			this.scrollIntoView = 'msg-0';
-			
-			uni.showToast({
-			  title: '留言成功',
-			  icon: 'success'
-			});
-			const queryObj = {goods_id: this.goods_id, comment: newCommentObj};
-			const { data: res } = await uni.$http.post('/goods/comment', queryObj);
-			
-			const queryObj1 = {code: this.openid, goods_id: this.goods_id, content: newCommentObj};
-			const { data: res1 } = await uni.$http.post('/users/comment', queryObj1);
-		}
+     if (!this.openid) {
+     		  // 弹出登录提示框
+     		  uni.showModal({
+     		    title: '提示',
+     		    content: '需要登录才能体验更多内容哦',
+     		    cancelText: '取消',
+     		    confirmText: '登录',
+     		    success: (res) => {
+     		      if (res.confirm) {
+     		        // 用户点击了"登录"按钮
+     		        uni.switchTab({
+     		          url: '/pages/my/my'
+     		        })
+     		      }
+     		      // 用户点击了"取消"按钮，不做任何操作
+     		    }
+     		  })
+     		  return
+     		}
+    
+      const content = this.newComment.trim();
+      if (!content) {
+        uni.showToast({
+          title: '请输入留言内容',
+          icon: 'none'
+        });
+        return;
+      }
+    
+      // 🔥 新增：文本内容安全检测
+      uni.showLoading({
+        title: '检测内容...',
+        mask: true
+      });
+    
+      const isTextSafe = await this.checkTextSafety(content);
+      uni.hideLoading();
+    
+      if (!isTextSafe) {
+        uni.showModal({
+          title: '内容违规',
+          content: '留言内容包含违规信息，请修改后重试',
+          showCancel: false,
+          confirmText: '我知道了'
+        });
+        return;
+      }
+    
+      // ✅ 检测通过，继续发送留言
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      const newCommentObj = {
+        comment_id: 'cmt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        user_openid: this.userBase.openid,
+        nickname: this.userBase.nickname,
+        avatarUrl: this.userBase.avatarUrl,
+        content: content,
+        created_at: currentTimestamp,
+        like_count: 0,
+        replies: [],
+        showAllReplies: false,
+        displayReplies: []
+      };
+      
+      this.comments.unshift(newCommentObj);
+      this.newComment = '';
+      this.scrollIntoView = 'msg-0';
+      
+      uni.showToast({
+        title: '留言成功',
+        icon: 'success'
+      });
+    
+      // 保存到后端
+      const queryObj = {goods_id: this.goods_id, comment: newCommentObj};
+      const { data: res } = await uni.$http.post('/goods/comment', queryObj);
+      
+      const queryObj1 = {code: this.openid, goods_id: this.goods_id, content: newCommentObj};
+      const { data: res1 } = await uni.$http.post('/users/comment', queryObj1);
     },
     showViewCount() {
       uni.showToast({
@@ -1496,6 +1767,43 @@ async sendReply() {
         }
       });
     },
+	
+	/**
+	 * 🔥 新增：文本内容安全检测
+	 */
+	async checkTextSafety(text) {
+	  try {
+	    console.log('🔍 开始检测文本:', text.substring(0, 30) + '...');
+	    
+	    const { data: res } = await uni.$http.post('/upload/textSecCheck', {
+	      content: text,
+	      openid: this.openid
+	    });
+	    
+	    console.log('📥 文本检测结果:', res);
+	    
+	    if (res.meta.status === 200) {
+	      console.log('✅ 文本内容安全');
+	      return true;
+	    } else {
+	      console.warn('🚫 文本内容违规:', res.meta.msg);
+	      return false;
+	    }
+	    
+	  } catch (err) {
+	    console.error('💥 文本检测出错:', err);
+	    
+	    // 🔥 网络错误时提示用户
+	    uni.showToast({
+	      title: '文本检测失败，请重试',
+	      icon: 'none',
+	      duration: 2000
+	    });
+	    
+	    return false;
+	  }
+	},
+
 	
 	
 	async reofflineGoods() {
@@ -1598,77 +1906,103 @@ async sendReply() {
       const years = Math.floor(diffInSeconds / YEAR);
       return `${years}年之前`;
     },
-	// 🔥 修改:发送快速留言方法
-	  async sendQuickComment() {
-	    if (!this.openid) {
-	      uni.switchTab({
-	        url: '/pages/my/my',
-	      });
-	      return;
-	    }
-	    
-	    const content = this.quickComment.trim();
-	    if (!content) {
-	      uni.showToast({
-	        title: '请输入留言内容',
-	        icon: 'none'
-	      });
-	      return;
-	    }
-	    
-	    const currentTimestamp = Math.floor(Date.now() / 1000);
-	    
-	    // 构造新留言对象
-	    const newCommentObj = {
-	      comment_id: 'cmt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-	      user_openid: this.userBase.openid,
-	      nickname: this.userBase.nickname,
-	      avatarUrl: this.userBase.avatarUrl || '/images/1.jpg',
-	      content: content,
-	      created_at: currentTimestamp,
-	      like_count: 0,
-	      replies: [],
-	      showAllReplies: false,
-	      displayReplies: [],
-	      isLiked: false
-	    };
-	    
-	    // 添加到留言列表开头
-	    this.comments.unshift(newCommentObj);
-	    
-	    // 关闭弹窗
-	    this.closeQuickReply();
-	    
-	    // 显示成功提示
+	async sendQuickComment() {
+	  if (!this.openid) {
+	  		  // 弹出登录提示框
+	  		  uni.showModal({
+	  		    title: '提示',
+	  		    content: '需要登录才能体验更多内容哦',
+	  		    cancelText: '取消',
+	  		    confirmText: '登录',
+	  		    success: (res) => {
+	  		      if (res.confirm) {
+	  		        // 用户点击了"登录"按钮
+	  		        uni.switchTab({
+	  		          url: '/pages/my/my'
+	  		        })
+	  		      }
+	  		      // 用户点击了"取消"按钮，不做任何操作
+	  		    }
+	  		  })
+	  		  return
+	  		}
+	  
+	  const content = this.quickComment.trim();
+	  if (!content) {
 	    uni.showToast({
-	      title: '留言成功',
-	      icon: 'success'
+	      title: '请输入留言内容',
+	      icon: 'none'
 	    });
+	    return;
+	  }
+	
+	  // 🔥 新增：文本内容安全检测
+	  uni.showLoading({
+	    title: '检测内容...',
+	    mask: true
+	  });
+	
+	  const isTextSafe = await this.checkTextSafety(content);
+	  uni.hideLoading();
+	
+	  if (!isTextSafe) {
+	    uni.showModal({
+	      title: '内容违规',
+	      content: '留言内容包含违规信息，请修改后重试',
+	      showCancel: false,
+	      confirmText: '我知道了'
+	    });
+	    return;
+	  }
+	
+	  // ✅ 检测通过，继续发送快速留言
+	  const currentTimestamp = Math.floor(Date.now() / 1000);
+	  
+	  const newCommentObj = {
+	    comment_id: 'cmt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+	    user_openid: this.userBase.openid,
+	    nickname: this.userBase.nickname,
+	    avatarUrl: this.userBase.avatarUrl || '/images/1.jpg',
+	    content: content,
+	    created_at: currentTimestamp,
+	    like_count: 0,
+	    replies: [],
+	    showAllReplies: false,
+	    displayReplies: [],
+	    isLiked: false
+	  };
+	  
+	  this.comments.unshift(newCommentObj);
+	  this.closeQuickReply();
+	  
+	  uni.showToast({
+	    title: '留言成功',
+	    icon: 'success'
+	  });
+	  
+	  // 保存到后端
+	  try {
+	    const queryObj = {
+	      goods_id: this.goods_id,
+	      comment: newCommentObj
+	    };
+	    const { data: res } = await uni.$http.post('/goods/comment', queryObj);
 	    
-	    // 🔥 调用后端API保存留言
-	    try {
-	      const queryObj = {
-	        goods_id: this.goods_id,
-	        comment: newCommentObj
-	      };
-	      const { data: res } = await uni.$http.post('/goods/comment', queryObj);
-	      
-	      if (res.meta.status !== 200) {
-	        console.error('留言保存失败:', res.meta.msg);
-	      }
-	      
-	      // 同步到用户留言记录
-	      const queryObj1 = {
-	        code: this.openid,
-	        goods_id: this.goods_id,
-	        content: newCommentObj
-	      };
-	      await uni.$http.post('/users/comment', queryObj1);
-	      
-	    } catch (error) {
-	      console.error('调用留言API失败:', error);
+	    if (res.meta.status !== 200) {
+	      console.error('留言保存失败:', res.meta.msg);
 	    }
-	  },
+	    
+	    const queryObj1 = {
+	      code: this.openid,
+	      goods_id: this.goods_id,
+	      content: newCommentObj
+	    };
+	    await uni.$http.post('/users/comment', queryObj1);
+	    
+	  } catch (error) {
+	    console.error('调用留言API失败:', error);
+	  }
+	},
   },
   computed: {
     ...mapState('m_user', ['token', 'code', 'userBase', 'openid']),
@@ -2047,7 +2381,7 @@ async sendReply() {
 
   .goods-swiper {
     width: 100%;
-    height: 500rpx;
+    height: 680rpx;
 
     .swiper-image {
       width: 100%;

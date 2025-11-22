@@ -16,15 +16,24 @@
         </view>
 
         <view class="actions">
+          <!-- 私聊按钮 -->
+          <view
+            class="btn msg-btn"
+            @click.stop="goToChat(u)"
+            v-if="openid !== u.openid"
+          >
+            <text>   私聊   </text>
+          </view>
           <!-- 关注按钮 -->
           <view
             class="btn follow-btn"
             :class="{ following: isFollowing[index] }"
             @click.stop="toggleFollow(u, index)"
-			v-if="u.openid !== openid"
+            v-if="u.openid !== openid"
           >
             <text>{{ isFollowing[index] ? '已关注' : '+ 关注' }}</text>
           </view>
+        </view>
 
         </view>
       </view>
@@ -49,6 +58,14 @@ export default {
   },
   methods: {
 	...mapMutations('m_user', ['updateUserInfo', 'updateToken', 'updateUserBase']),
+	
+	// 新增：跳转到私聊页面
+	  goToChat(user) {
+	    uni.navigateTo({
+	      url: `/subpkg/personal-chat/personal-chat?openid=${user.openid}`
+	    });
+	  },
+	  
     async toggleFollow(user, index) {
 		
 		this.isFollowing[index] = !this.isFollowing[index];
@@ -65,11 +82,6 @@ export default {
 		if (my.meta.status === 200) {
 			this.updateUserBase(my.message)
 		}
-    },
-    openChat(user) {
-      // TODO: 跳转到聊天页并携带对方信息
-      // uni.navigateTo({ url: '/pages/chat/chat?uid=' + user.id })
-      uni.showToast({ title: `与 ${user.nickname} 聊天`, icon: 'none' });
     },
 	gotoProfile(user) {
 		const payload = encodeURIComponent(JSON.stringify(user));

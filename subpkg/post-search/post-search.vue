@@ -107,7 +107,7 @@
 					<!-- 帖子底部信息 -->
 					<view class="post-footer">
 						<view class="footer-left">
-							<text class="tag">{{ post.properties }}</text>
+							<!-- <text class="tag">{{ post.properties }}</text> -->
 							<text class="view-count">{{ post.view_count }}人浏览</text>
 						</view>
 						<view class="footer-right">
@@ -368,13 +368,25 @@
 			},
 			
 			// 高亮关键词
+			// 高亮关键词 - 修改为逐字高亮
 			highlightKeyword(text) {
-				if (!this.searchKeyword || !text) return text
-				
-				const keyword = this.searchKeyword.trim()
-				const regex = new RegExp(`(${keyword})`, 'gi')
-				
-				return text.replace(regex, '<span style="color: #C00000; background-color: #fff2f0; padding: 2px 4px; border-radius: 4px;">$1</span>')
+			    if (!this.searchKeyword || !text) return text
+			    
+			    const keyword = this.searchKeyword.trim()
+			    
+			    // 🔥 关键修改：将关键词拆分成单个字符
+			    const chars = keyword.split('').filter(char => char.trim())
+			    
+			    // 构建正则表达式，匹配任意一个字符（使用 | 表示"或"）
+			    const pattern = chars.map(char => {
+			        // 转义特殊字符，避免正则表达式错误
+			        return char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+			    }).join('|')
+			    
+			    const regex = new RegExp(`(${pattern})`, 'g')
+			    
+			    // 替换匹配到的字符为高亮样式
+			    return text.replace(regex, '<span style="color: #C00000; background-color: #fff2f0; padding: 2px 4px; border-radius: 4px; font-weight: 500;">$1</span>')
 			},
 			
 			// 格式化时间

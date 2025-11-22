@@ -6,7 +6,7 @@
 					class="user-avatar" 
 					:src="post.avatar || '/static/default-avatar.png'" 
 					mode="aspectFill"
-					@click="gotoUserProfile"
+					@click="gotoUserProfile(post)"
 				></image>
 				<view class="user-info">
 					<text class="user-nickname">{{ post.nickname }}</text>
@@ -28,7 +28,7 @@
 			   </button>
 			    <text 
 			      class="more-btn" 
-			      @click="
+			      @click="showPostMenu
 				  " 
 			    >⋮</text>
 			  </view>
@@ -541,6 +541,43 @@ export default {
 				})
 			}
 		},
+		
+		/**
+		 * 🔥 新增：文本内容安全检测
+		 */
+		async checkTextSafety(text) {
+		  try {
+		    console.log('🔍 开始检测文本:', text.substring(0, 30) + '...');
+		    
+		    const { data: res } = await uni.$http.post('/upload/textSecCheck', {
+		      content: text,
+		      openid: this.openid
+		    });
+		    
+		    console.log('📥 文本检测结果:', res);
+		    
+		    if (res.meta.status === 200) {
+		      console.log('✅ 文本内容安全');
+		      return true;
+		    } else {
+		      console.warn('🚫 文本内容违规:', res.meta.msg);
+		      return false;
+		    }
+		    
+		  } catch (err) {
+		    console.error('💥 文本检测出错:', err);
+		    
+		    // 🔥 网络错误时提示用户
+		    uni.showToast({
+		      title: '文本检测失败，请重试',
+		      icon: 'none',
+		      duration: 2000
+		    });
+		    
+		    return false;
+		  }
+		},
+
 
 		// 加载评论列表
 		async loadComments() {
@@ -607,11 +644,24 @@ export default {
 		async togglePostLike() {
 			try {
 				if (!this.openid) {
-				  uni.switchTab({
-				    url: '/pages/my/my'
-				  })
-				  return
-				}
+						  // 弹出登录提示框
+						  uni.showModal({
+						    title: '提示',
+						    content: '需要登录才能体验更多内容哦',
+						    cancelText: '取消',
+						    confirmText: '登录',
+						    success: (res) => {
+						      if (res.confirm) {
+						        // 用户点击了"登录"按钮
+						        uni.switchTab({
+						          url: '/pages/my/my'
+						        })
+						      }
+						      // 用户点击了"取消"按钮，不做任何操作
+						    }
+						  })
+						  return
+						}
 
 				const { data: res } = await uni.$http.post('/posts/like', {
 					post_id: this.postId,
@@ -657,11 +707,24 @@ export default {
 		// 显示快速回复
 		showQuickReply() {
 			if (!this.openid) {
-			  uni.switchTab({
-			    url: '/pages/my/my'
-			  })
-			  return
-			}
+					  // 弹出登录提示框
+					  uni.showModal({
+					    title: '提示',
+					    content: '需要登录才能体验更多内容哦',
+					    cancelText: '取消',
+					    confirmText: '登录',
+					    success: (res) => {
+					      if (res.confirm) {
+					        // 用户点击了"登录"按钮
+					        uni.switchTab({
+					          url: '/pages/my/my'
+					        })
+					      }
+					      // 用户点击了"取消"按钮，不做任何操作
+					    }
+					  })
+					  return
+					}
 
 			this.replyTarget = null
 			this.commentContent = ''
@@ -672,11 +735,24 @@ export default {
 		// ✅ 修改：重命名为 handleReplyClick 并简化
 		handleReplyClick(targetComment, mainComment = null) {
 			if (!this.openid) {
-			  uni.switchTab({
-			    url: '/pages/my/my'
-			  })
-			  return
-			}
+					  // 弹出登录提示框
+					  uni.showModal({
+					    title: '提示',
+					    content: '需要登录才能体验更多内容哦',
+					    cancelText: '取消',
+					    confirmText: '登录',
+					    success: (res) => {
+					      if (res.confirm) {
+					        // 用户点击了"登录"按钮
+					        uni.switchTab({
+					          url: '/pages/my/my'
+					        })
+					      }
+					      // 用户点击了"取消"按钮，不做任何操作
+					    }
+					  })
+					  return
+					}
 
 			// 如果有 mainComment 参数，说明是在回复别人的回复
 			if (mainComment) {
@@ -712,89 +788,177 @@ export default {
 			this.commentContent = ''
 		},
 
-		// ✅ 修改：提交评论 (使用 userBase.openid)
+		/**
+		 * 🔥 修改：提交评论（增加文本内容安全检测）
+		 */
 		async submitComment() {
-			try {
-				if (!this.openid) {
-				  uni.switchTab({
-				    url: '/pages/my/my'
-				  })
-				  return
-				}
-
-				const content = this.commentContent.trim()
-				if (!content) {
-					uni.showToast({ title: '请输入内容', icon: 'none' })
-					return
-				}
-
-				if (this.isSubmittingComment) return
-
-				this.isSubmittingComment = true
-
-				const params = {
-					post_id: this.postId,
-					openid: this.userBase.openid, // ✅ 使用 userBase.openid
-					nickname: this.userBase.nickname || '用户',
-					avatar: this.userBase.avatarUrl || '',
-					content: content
-				}
-
-				// 如果是回复（无论是回复评论还是回复回复）
-				if (this.replyTarget) {
-					params.parent_id = this.replyTarget.parent_id           // 归属的主评论ID
-					params.reply_to_openid = this.replyTarget.user_openid   // 被回复者的openid
-					params.reply_to_nickname = this.replyTarget.nickname    // 被回复者的昵称
-				}
-
-				console.log('提交评论参数:', params)
-
-				const { data: res } = await uni.$http.post('/posts/comment', params)
-
-				if (res.meta.status === 201) {
-					// 刷新评论列表
-					this.commentList = []
-					this.commentPage = 1
-					this.commentHasMore = true
-					this.hideReplyInput()
-					this.loadComments()
-
-					// 更新评论数
-					if (this.post) {
-						this.post.commentCount += 1
-					}
-
-					uni.showToast({
-						title: this.replyTarget ? '回复成功' : '评论成功',
-						icon: 'success'
-					})
-				}
-			} catch (error) {
-				console.error('提交失败:', error)
-				uni.showToast({ title: '提交失败', icon: 'none' })
-			} finally {
-				this.isSubmittingComment = false
-			}
+		  try {
+		    // ========== 第 1 步：检查登录状态 ==========
+		    if (!this.openid) {
+		    		  // 弹出登录提示框
+		    		  uni.showModal({
+		    		    title: '提示',
+		    		    content: '需要登录才能体验更多内容哦',
+		    		    cancelText: '取消',
+		    		    confirmText: '登录',
+		    		    success: (res) => {
+		    		      if (res.confirm) {
+		    		        // 用户点击了"登录"按钮
+		    		        uni.switchTab({
+		    		          url: '/pages/my/my'
+		    		        })
+		    		      }
+		    		      // 用户点击了"取消"按钮，不做任何操作
+		    		    }
+		    		  })
+		    		  return
+		    		}
+		    
+		    // ========== 第 2 步：检查内容是否为空 ==========
+		    const content = this.commentContent.trim();
+		    if (!content) {
+		      uni.showToast({
+		        title: this.replyTarget ? '请输入回复内容' : '请输入评论内容',
+		        icon: 'none'
+		      });
+		      return;
+		    }
+		    
+		    // ========== 第 3 步：防止重复提交 ==========
+		    if (this.isSubmittingComment) {
+		      console.log('⚠️ 提交中，请勿重复点击');
+		      return;
+		    }
+		    
+		    // 设置提交状态
+		    this.isSubmittingComment = true;
+		    
+		    // ========== 第 4 步：文本内容安全检测 🔥 ==========
+		    console.log('[1] 开始检测文本内容安全性...');
+		    uni.showLoading({
+		      title: '检测内容...',
+		      mask: true
+		    });
+		    
+		    const isTextSafe = await this.checkTextSafety(content);
+		    
+		    if (!isTextSafe) {
+		      uni.hideLoading();
+		      this.isSubmittingComment = false;
+		      
+		      uni.showModal({
+		        title: '内容违规',
+		        content: this.replyTarget ? '回复内容包含违规信息，请修改后重试' : '评论内容包含违规信息，请修改后重试',
+		        showCancel: false,
+		        confirmText: '我知道了'
+		      });
+		      return;
+		    }
+		    
+		    console.log('✅ 文本内容检测通过');
+		    
+		    // ========== 第 5 步：检测通过，继续提交评论/回复 ==========
+		    uni.showLoading({
+		      title: this.replyTarget ? '发送回复...' : '发送评论...',
+		      mask: true
+		    });
+		    
+		    // 构造请求参数
+		    const params = {
+		      post_id: this.postId,
+		      openid: this.userBase.openid,
+		      nickname: this.userBase.nickname || '用户',
+		      avatar: this.userBase.avatarUrl || '',
+		      content: content
+		    };
+		    
+		    // 如果是回复
+		    if (this.replyTarget) {
+		      params.parent_id = this.replyTarget.parent_id;
+		      params.reply_to_openid = this.replyTarget.user_openid;
+		      params.reply_to_nickname = this.replyTarget.nickname;
+		    }
+		    
+		    console.log('[2] 提交参数:', params);
+		    
+		    // 调用后端接口
+		    const { data: res } = await uni.$http.post('/posts/comment', params);
+		    
+		    if (res.meta.status === 201) {
+		      // 清空输入框
+		      this.commentContent = '';
+		      this.hideReplyInput();
+		      
+		      // 重新加载评论列表
+		      this.commentList = [];
+		      this.commentPage = 1;
+		      this.commentHasMore = true;
+		      await this.loadComments();
+		      
+		      // 更新帖子评论数
+		      if (!this.replyTarget && this.post) {
+		        this.post.commentCount += 1;
+		      }
+		      
+		      uni.hideLoading();
+		      uni.showToast({
+		        title: this.replyTarget ? '回复成功' : '评论成功',
+		        icon: 'success'
+		      });
+		      
+		    } else {
+		      uni.hideLoading();
+		      uni.showToast({
+		        title: res.meta.msg || '提交失败',
+		        icon: 'none'
+		      });
+		    }
+		    
+		  } catch (error) {
+		    console.error('[💥] 提交失败:', error);
+		    console.error('错误详情:', error.response || error);
+		    
+		    uni.hideLoading();
+		    uni.showToast({
+		      title: error.response?.data?.meta?.msg || '提交失败，请重试',
+		      icon: 'none'
+		    });
+		    
+		  } finally {
+		    this.isSubmittingComment = false;
+		  }
 		},
 				
 		// 新增：通用的跳转用户主页方法
 		gotoUserProfile(userInfo) {
 			if (!this.openid) {
-			  uni.switchTab({
-			    url: '/pages/my/my'
-			  })
-			  return
-			}
+					  // 弹出登录提示框
+					  uni.showModal({
+					    title: '提示',
+					    content: '需要登录才能体验更多内容哦',
+					    cancelText: '取消',
+					    confirmText: '登录',
+					    success: (res) => {
+					      if (res.confirm) {
+					        // 用户点击了"登录"按钮
+					        uni.switchTab({
+					          url: '/pages/my/my'
+					        })
+					      }
+					      // 用户点击了"取消"按钮，不做任何操作
+					    }
+					  })
+					  return
+					}
 			if (!userInfo) return
-
-			// 如果是当前用户自己
-			if (userInfo.user_openid === this.openid) {
+		
+			
+			if (this.openid === userInfo.user_openid) {
 				uni.navigateTo({
 					url: '/subpkg/profile/profile'
 				})
 				return
-			}
-
+			}	
 			// 跳转到其他用户主页
 			const payload = {
 				openid: userInfo.user_openid,
@@ -803,6 +967,8 @@ export default {
 			}
 
 			const encodedPayload = encodeURIComponent(JSON.stringify(payload))
+			console.log("imsss")
+			console.log(encodedPayload)
 			uni.navigateTo({
 				url: `/subpkg/profile/profile?publisher=${encodedPayload}`
 			})
@@ -1066,14 +1232,27 @@ export default {
 			})
 		},
 
-		// 跳转用户主页
-		gotoUserProfile() {
+		//跳转用户主页
+		gotoUserProfile1() {
 			if (!this.openid) {
-			  uni.switchTab({
-			    url: '/pages/my/my'
-			  })
-			  return
-			}
+					  // 弹出登录提示框
+					  uni.showModal({
+					    title: '提示',
+					    content: '需要登录才能体验更多内容哦',
+					    cancelText: '取消',
+					    confirmText: '登录',
+					    success: (res) => {
+					      if (res.confirm) {
+					        // 用户点击了"登录"按钮
+					        uni.switchTab({
+					          url: '/pages/my/my'
+					        })
+					      }
+					      // 用户点击了"取消"按钮，不做任何操作
+					    }
+					  })
+					  return
+					}
 			
 			if (!this.post) return
 

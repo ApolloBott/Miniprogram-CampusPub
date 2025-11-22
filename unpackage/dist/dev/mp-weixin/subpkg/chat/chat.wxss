@@ -5,7 +5,8 @@
 .chat-container {
   position: relative;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #EDEDED;
+  /* 🔥 修改：背景色 */
 }
 .header {
   position: fixed;
@@ -183,7 +184,8 @@
 }
 .chat-content .message-item .message-wrapper {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
+  /* 🔥 修改：头像对齐 */
 }
 .chat-content .message-item .message-wrapper.left {
   justify-content: flex-start;
@@ -204,6 +206,8 @@
   width: 80rpx;
   height: 80rpx;
   border-radius: 8rpx;
+  flex-shrink: 0;
+  /* 防止头像被挤压 */
 }
 .chat-content .message-item .message-wrapper .message-bubble {
   max-width: 500rpx;
@@ -212,14 +216,18 @@
   font-size: 28rpx;
   line-height: 1.5;
   word-wrap: break-word;
+  /* 🔥 修改：左侧气泡样式 (对方) */
+  /* 🔥 修改：右侧气泡样式 (我方) */
 }
 .chat-content .message-item .message-wrapper .message-bubble.left-bubble {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
+  background: #FFFFFF;
+  color: #474747;
+  border: none;
 }
 .chat-content .message-item .message-wrapper .message-bubble.right-bubble {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
+  background: #95EC69;
+  color: #474747;
+  border: none;
 }
 .chat-content .message-item .message-wrapper .message-bubble.payment-message {
   border: 2rpx solid #ff6b6b;
@@ -505,7 +513,7 @@
   left: 0;
   right: 0;
   height: 500rpx;
-  background-color: #f7f7f7;
+  background-color: #ffffff;
   border-top: 1rpx solid #e5e5e5;
   -webkit-transform: translateY(100%);
           transform: translateY(100%);
@@ -524,26 +532,28 @@
 }
 .emoji-panel .emoji-scroll .emoji-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20rpx;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15rpx;
 }
 .emoji-panel .emoji-scroll .emoji-grid .emoji-item {
   aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
+  background-color: transparent;
+  /* 🔥 修改：透明背景 */
   border-radius: 12rpx;
   transition: all 0.2s;
 }
 .emoji-panel .emoji-scroll .emoji-grid .emoji-item:active {
   -webkit-transform: scale(0.95);
           transform: scale(0.95);
-  background-color: #f0f0f0;
+  background-color: #e0e0e0;
 }
 .emoji-panel .emoji-scroll .emoji-grid .emoji-item .emoji-image {
-  width: 80%;
-  height: 80%;
+  /* 🔥 修改：小表情尺寸 */
+  width: 100rpx;
+  height: 100rpx;
 }
 /* 🔥 关键修改：消息内容容器 - 移除所有内部 margin */
 .message-content {
@@ -565,8 +575,9 @@
   /* 🔥 移除 margin-right 和 margin-left */
 }
 .message-content .message-emoji {
-  width: 120rpx;
-  height: 120rpx;
+  /* 🔥 修改：小表情在气泡外显示时的尺寸 */
+  width: 64rpx;
+  height: 64rpx;
   display: block;
   /* 🔥 移除 margin-right 和 margin-left */
 }

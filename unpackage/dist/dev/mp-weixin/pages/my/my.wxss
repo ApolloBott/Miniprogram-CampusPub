@@ -388,10 +388,14 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: #f5f5f5;
-  border-radius: 18px;
+  /* 🔥 修改：背景色改为白色，移除边框，修复 badge 遮挡问题 */
+  background-color: #fff;
+  /* 原为 #f5f5f5 */
   border: none;
+  border-radius: 18px;
   transition: all 0.3s ease;
+  /* 🔥 关键修复：允许子元素（红点）溢出显示 */
+  overflow: visible !important;
   /* 未读消息badge */
 }
 .message-btn-inline.data-v-0be17cc6::after {
@@ -427,6 +431,8 @@
   border: 1px solid #ffffff;
   -webkit-animation: badgePulse-data-v-0be17cc6 2s ease-in-out infinite;
           animation: badgePulse-data-v-0be17cc6 2s ease-in-out infinite;
+  /* 确保层级较高 */
+  z-index: 10;
 }
 .message-btn-inline .message-badge .badge-text.data-v-0be17cc6 {
   font-size: 10px;
@@ -582,7 +588,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f5f5f5;
+  background-color: transparent;
   border-radius: 18px;
   transition: all 0.3s ease;
 }
@@ -955,4 +961,49 @@
 .search-btn .search-icon-img.data-v-0be17cc6 {
   width: 20px;
   height: 20px;
+}
+/* 🔥 新增：头像弹窗样式 (移植自 edit.vue) */
+.popup-content.data-v-0be17cc6 {
+  padding: 20px;
+  padding-top: 40px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  background-color: #fff;
+}
+.popup-content .popup-header.data-v-0be17cc6 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.popup-content .popup-header .popup-title.data-v-0be17cc6 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+.popup-content .popup-header .popup-close.data-v-0be17cc6 {
+  padding: 5px;
+}
+.avatar-grid-container.data-v-0be17cc6 {
+  max-height: 40vh;
+}
+.avatar-grid-container .avatar-grid.data-v-0be17cc6 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 15px;
+}
+.avatar-grid-container .avatar-grid .grid-avatar.data-v-0be17cc6 {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #f0f0f0;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.avatar-grid-container .avatar-grid .grid-avatar.selected.data-v-0be17cc6 {
+  border-color: #007aff;
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
 }

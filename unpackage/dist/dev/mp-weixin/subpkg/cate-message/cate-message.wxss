@@ -21,19 +21,16 @@
   color: #333333;
 }
 /* 消息列表 */
+/* 消息列表 - 保持不变 */
 .message-list {
-  height: calc(100vh - 80rpx);
+  padding-bottom: 40rpx;
 }
-/* 单个消息项 */
 .message-item {
   display: flex;
   align-items: center;
   padding: 24rpx 32rpx;
   background-color: #ffffff;
   border-bottom: 1rpx solid #f0f0f0;
-  /* 用户头像 */
-  /* 中间内容区域 */
-  /* 商品图片 */
 }
 .message-item:active {
   background-color: #f5f5f5;

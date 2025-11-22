@@ -38,7 +38,11 @@
     "subpkg/cate-message/cate-message",
     "subpkg/follow-message/follow-message",
     "subpkg/like-message/like-message",
-    "subpkg/comment-message/comment-message"
+    "subpkg/comment-message/comment-message",
+    "subpkg/sold/sold",
+    "subpkg/bought/bought",
+    "subpkg/feedback/feedback",
+    "subpkg/personal-chat/personal-chat"
   ],
   "subPackages": [],
   "window": {

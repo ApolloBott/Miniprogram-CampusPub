@@ -1,6 +1,23 @@
 @charset "UTF-8";
 /* 水平间距 */
 /* 水平间距 */
+/* 🔥 新增：商品滚动容器 */
+.goods-scroll {
+  height: calc(100vh - 350rpx);
+  background-color: #f7f7f7;
+}
+/* 商品列表瀑布流 */
+.waterfall {
+  display: flex;
+  padding: 20rpx 10rpx;
+  gap: 20rpx;
+}
+.waterfall .col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
 .publisher-container {
   min-height: 100vh;
   background-color: #f7f7f7;
@@ -52,6 +69,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* 🔥 新增：按钮组容器 */
+  /* 🔥 新增：私聊按钮样式 */
 }
 .user-header .user-right .stats-follow-row .stats {
   display: flex;
@@ -64,6 +83,19 @@
 .user-header .user-right .stats-follow-row .stats .stat-divider {
   margin: 0 16rpx;
   color: #ddd;
+}
+.user-header .user-right .stats-follow-row .action-buttons {
+  display: flex;
+  gap: 12rpx;
+  align-items: center;
+}
+.user-header .user-right .stats-follow-row .msg-btn {
+  padding: 10rpx 24rpx;
+  background-color: #fff;
+  color: #333;
+  font-size: 26rpx;
+  border-radius: 40rpx;
+  border: 1rpx solid #e6e6e6;
 }
 .user-header .user-right .stats-follow-row .follow-btn {
   padding: 10rpx 32rpx;

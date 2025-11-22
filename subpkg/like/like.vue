@@ -109,9 +109,24 @@
 			async toggleLike(post) {
 				try {
 					if (!this.openid) {
-						uni.switchTab({ url: '/pages/my/my' })
-						return
-					}
+							  // 弹出登录提示框
+							  uni.showModal({
+							    title: '提示',
+							    content: '需要登录才能体验更多内容哦',
+							    cancelText: '取消',
+							    confirmText: '登录',
+							    success: (res) => {
+							      if (res.confirm) {
+							        // 用户点击了"登录"按钮
+							        uni.switchTab({
+							          url: '/pages/my/my'
+							        })
+							      }
+							      // 用户点击了"取消"按钮，不做任何操作
+							    }
+							  })
+							  return
+							}
 					
 					const { data: res } = await uni.$http.post('/posts/like', {
 						post_id: post.id,

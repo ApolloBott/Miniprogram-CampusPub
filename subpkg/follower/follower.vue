@@ -4,31 +4,34 @@
     <view class="header">
       <text class="title">粉丝列表</text>
     </view>
-
     <!-- 关注列表 -->
     <view class="list">
       <view class="card" v-for="(u, index) in users" :key="index">
-        <image class="avatar" :src=u.avatarUrl mode="aspectFill" />
-
+        <image class="avatar" :src=u.avatarUrl mode="aspectFill" @click="gotoProfile(u)"/>
         <view class="info">
-          <text class="name">{{ u.nickname }}</text>
+          <text class="name" @click="gotoProfile(u)">{{ u.nickname }}</text>
           <text class="desc" v-if="u.user_introduce">{{ u.user_introduce }}</text>
         </view>
-
         <view class="actions">
+          <!-- 私聊按钮 -->
+          <view
+            class="btn msg-btn"
+            @click.stop="goToChat(u)"
+            v-if="openid !== u.openid"
+          >
+            <text>   私聊   </text>
+          </view>
           <!-- 关注按钮 -->
           <view
             class="btn follow-btn"
             :class="{ following: isFollowing[index] }"
             @click.stop="toggleFollow(u, index)"
-			v-if="openid !== u.openid"
+            v-if="openid !== u.openid"
           >
             <text>{{ isFollowing[index] ? '已互相关注' : '+ 关注' }}</text>
           </view>
-
         </view>
       </view>
-
       <view v-if="!users.length" class="empty">
         暂无粉丝
       </view>
@@ -37,80 +40,103 @@
 </template>
 
 <script>
-	import { mapState, mapMutations } from 'vuex'
-	export default {
-		data() {
-			return {
-				users: [],
-				isFollowing: [],
-				pageUser: null,
-			};
-		},
-		methods: {
-			...mapMutations('m_user', ['updateUserInfo', 'updateToken', 'updateUserBase']),
-			async toggleFollow(user, index) {
-				
-				this.isFollowing[index] = !this.isFollowing[index];
-				const url1 = this.isFollowing[index] ? '/users/follow' : '/users/unfollow';
-				const query = {code: this.openid, publisher_id: user.openid};
-				const {data: res} = await uni.$http.post(url1, query);
-				uni.showToast({
-					title: this.isFollowing[index] ? '关注成功' : '取消关注',
-					icon: 'none'
-				});
-				const code = this.openid;
-				const queryObj = {code: code};
-				const { data: my } = await uni.$http.get('/users/userinfo', queryObj);
-				if (my.meta.status === 200) {
-					this.updateUserBase(my.message)
-				}
-			},
-		},
-		onLoad(options) {
-		  try {
-		    if (options && options.publisher) {
-		      this.pageUser = JSON.parse(decodeURIComponent(options.publisher)) || null;
-		    }
-		  } catch (e) {
-		    console.warn('publisher 解析失败：', e);
-		    this.pageUser = null;
-		  }
-		},
-		async onShow() {
-		  // 优先使用路由传入的用户；没有则回退到 vuex 的 userBase
-		  const sourceUser = (this.pageUser && Object.keys(this.pageUser).length)
-		    ? this.pageUser
-		    : this.userBase;
-		
-		  const ids = Array.isArray(sourceUser?.followers_ids) ? sourceUser.followers_ids : [];
-		  if (!ids.length) {
-		    this.users = [];
-		    this.isFollowing = [];
-		    return;
-		  }
-		
-		  const { data: res } = await uni.$http.get('/users/userinfo', { code: ids });
-		  if (res?.meta?.status === 200) {
-		    const list = Array.isArray(res.message) ? res.message : [res.message];
-		    this.users = list.filter(u => u && u.openid);
-		  } else {
-		    this.users = [];
-		  }
-		
-		  this.isFollowing = this.users.map(user => {
-		      return this.userBase.following_ids?.includes(user.openid) || false
-			})
-		},
-		computed: {
-			...mapState('m_user', ['token', 'code', 'userBase', 'openid'])
-		},
-	}
+import { mapState, mapMutations } from 'vuex'
+export default {
+  data() {
+    return {
+      users: [],
+      isFollowing: [],
+      pageUser: null,
+    };
+  },
+  methods: {
+    ...mapMutations('m_user', ['updateUserInfo', 'updateToken', 'updateUserBase']),
+    
+	gotoProfile(user) {
+		const payload = encodeURIComponent(JSON.stringify(user));
+		uni.navigateTo({
+		  url: `/subpkg/profile/profile?publisher=${payload}`
+		});
+	},
+	
+    // 新增：跳转到私聊页面
+    goToChat(user) {
+      uni.navigateTo({
+        url: `/subpkg/personal-chat/personal-chat?openid=${user.openid}`
+      });
+    },
+    
+    async toggleFollow(user, index) {
+      // ... existing code ...
+      this.isFollowing[index] = !this.isFollowing[index];
+      const url1 = this.isFollowing[index] ? '/users/follow' : '/users/unfollow';
+      const query = {code: this.openid, publisher_id: user.openid};
+      const {data: res} = await uni.$http.post(url1, query);
+      uni.showToast({
+        title: this.isFollowing[index] ? '关注成功' : '取消关注',
+        icon: 'none'
+      });
+      const code = this.openid;
+      const queryObj = {code: code};
+      const { data: my } = await uni.$http.get('/users/userinfo', queryObj);
+      if (my.meta.status === 200) {
+        this.updateUserBase(my.message)
+      }
+    },
+  },
+  // ... existing onLoad, onShow, computed ...
+  onLoad(options) {
+    try {
+      if (options && options.publisher) {
+        this.pageUser = JSON.parse(decodeURIComponent(options.publisher)) || null;
+      }
+    } catch (e) {
+      console.warn('publisher 解析失败：', e);
+      this.pageUser = null;
+    }
+  },
+  async onShow() {
+    const sourceUser = (this.pageUser && Object.keys(this.pageUser).length)
+      ? this.pageUser
+      : this.userBase;
+  
+    const ids = Array.isArray(sourceUser?.followers_ids) ? sourceUser.followers_ids : [];
+    if (!ids.length) {
+      this.users = [];
+      this.isFollowing = [];
+      return;
+    }
+  
+    const { data: res } = await uni.$http.get('/users/userinfo', { code: ids });
+    if (res?.meta?.status === 200) {
+      const list = Array.isArray(res.message) ? res.message : [res.message];
+      this.users = list.filter(u => u && u.openid);
+    } else {
+      this.users = [];
+    }
+  
+    this.isFollowing = this.users.map(user => {
+        return this.userBase.following_ids?.includes(user.openid) || false
+    })
+  },
+  computed: {
+    ...mapState('m_user', ['token', 'code', 'userBase', 'openid']),
+	
+  },
+}
 </script>
 
 <style lang="scss">
 /* 简易图标字体（仅用作“消息”小图标），可换成你自己的 iconfont */
 .iconfont {
   font-family: 'iconfont';
+}
+
+.msg-btn {
+  background: #fff;
+  color: #333;
+  border-color: #e6e6e6;
+  font-weight: 500;
 }
 
 /* 页面背景 */

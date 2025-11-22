@@ -1,6 +1,3 @@
-
-
-```vue
 <template>
   <view>
     <my-login v-if="!token"></my-login>
@@ -192,10 +189,6 @@
                 <text class="badge-text">{{ unreadCount > 99 ? '99+' : unreadCount }}</text>
               </view>
             </button>
-            
-            <button class="edit-profile-btn-inline" @click="gotoEditProfile">
-              <text class="btn-text">编辑资料</text>
-            </button>
           </view>
         </view>
         
@@ -244,7 +237,7 @@
               </view>
               
               <view class="search-btn" @click="gotoSearch">
-                <image src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/search.png" class="search-icon-img" mode="aspectFit"></image>
+                <image src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/searchupdate.png" class="search-icon-img" mode="aspectFit"></image>
               </view>
             </view>
         </view>
@@ -458,6 +451,31 @@
             <text class="no-more-text">没有更多了</text>
           </view>
         </view>
+
+        <uni-popup ref="avatarPopup" type="bottom" background-color="#fff">
+          <view class="popup-content">
+            <view class="popup-header">
+              <text class="popup-title">选择一个头像</text>
+              <view class="popup-close" @click="closeAvatarPopup">
+                <uni-icons type="close" size="22" color="#999"></uni-icons>
+              </view>
+            </view>
+            <scroll-view class="avatar-grid-container" scroll-y>
+              <view class="avatar-grid">
+                <image
+                  v-for="(url, index) in presetAvatars"
+                  :key="index"
+                  :src="url"
+                  class="grid-avatar"
+                  mode="aspectFill"
+                  @click="selectAvatar(url)"
+                  :class="{ 'selected': userBase.avatarUrl === url }"
+                ></image>
+              </view>
+            </scroll-view>
+          </view>
+        </uni-popup>
+
       </view>
   </view>
 </template>
@@ -468,6 +486,11 @@ import { mapState, mapMutations } from 'vuex'
 export default {
 	name: "my-userinfo",
 	data() {
+        // 🔥 新增：预设头像列表生成
+        const presetAvatarList = Array.from({ length: 25 }, (_, i) => {
+          return `https://wait00.oss-cn-shanghai.aliyuncs.com/profile/${i + 1}.png`
+        })
+
 		return {
 			myPostsCount: 0,
 			myCommentsCount: 0,
@@ -476,6 +499,9 @@ export default {
 			showDrawer: false,
 			drawerTab: 0,
 			
+            // 🔥 新增：头像数据
+            presetAvatars: presetAvatarList,
+
 			 // 🔥 修改：主选项卡改为 3 个
 			        // 主选项卡: 0-动态, 1-评论, 2-私密
 			        activeMainTab: 0,
@@ -804,21 +830,83 @@ export default {
 		    })
 		},
 		
-		// ✅ 新增：预览头像并显示更换选项
-			previewAvatar() {
-				const avatarUrl = this.userBase.avatarUrl || '/static/default-avatar.png'
-				
-				uni.previewImage({
-					urls: [avatarUrl],
-					current: avatarUrl,
-					success: () => {
-						// 预览成功后，延迟显示更换选项
-						setTimeout(() => {
-							this.showChangeAvatarOption()
-						}, 500)
-					}
-				})
-			},
+        // 🔥 修改：点击头像触发操作菜单
+        previewAvatar() {
+            uni.showActionSheet({
+                itemList: ['查看大图', '更换头像'],
+                success: (res) => {
+                    if (res.tapIndex === 0) {
+                        // 查看大图
+                        const avatarUrl = this.userBase.avatarUrl || '/static/default-avatar.png';
+                        uni.previewImage({
+                            urls: [avatarUrl],
+                            current: avatarUrl
+                        });
+                    } else if (res.tapIndex === 1) {
+                        // 2. 更换头像 -> 直接跳转到编辑资料页面
+                        this.gotoEditProfile();
+                    }
+                },
+                fail: (res) => {
+                    console.log(res.errMsg);
+                }
+            });
+        },
+
+        // 🔥 新增：打开头像弹窗
+        openAvatarPopup() {
+            this.$refs.avatarPopup.open();
+        },
+
+        // 🔥 新增：关闭头像弹窗
+        closeAvatarPopup() {
+            this.$refs.avatarPopup.close();
+        },
+
+        // 🔥 新增：选中并保存头像
+        async selectAvatar(url) {
+            try {
+                uni.showLoading({ title: '更新中...', mask: true });
+
+                // 构造更新参数 (保持其他字段不变，只更新 avatarUrl)
+                const payload = {
+                    openid: this.userBase.openid,
+                    nickname: this.userBase.nickname,
+                    avatarUrl: url, // 新头像
+                    user_sex: this.userBase.user_sex,
+                    major: this.userBase.major,
+                    user_introduce: this.userBase.user_introduce
+                };
+
+                const { data: res } = await uni.$http.post('/users/updateProfile', payload);
+
+                if (res.meta.status === 200) {
+                    // 更新 Vuex 中的 userBase
+                    this.updateUserBase({
+                        ...this.userBase,
+                        avatarUrl: url
+                    });
+
+                    uni.showToast({
+                        title: '头像已更新',
+                        icon: 'success',
+                        duration: 1500
+                    });
+                    
+                    this.closeAvatarPopup();
+                } else {
+                    throw new Error(res.meta.msg || '更新失败');
+                }
+            } catch (error) {
+                console.error('更新头像失败:', error);
+                uni.showToast({
+                    title: '更新失败',
+                    icon: 'none'
+                });
+            } finally {
+                uni.hideLoading();
+            }
+        },
 				
 		async loadCount() {
 		    const { data: res } = await uni.$http.get('/posts/my-count', {
@@ -865,47 +953,6 @@ export default {
 		        url: '/subpkg/edit/edit'
 		      })
 		    },
-			
-		// 【新增方法】自动添加当前用户为微信分账接收方
-		// async autoAddProfitSharingReceiver(userInfo) {
-		// 	try {
-		// 		// 1. 检查是否已经添加为分账接收方
-		// 		const checkData = {
-		// 			openid: this.openid
-		// 		};
-		// 		const { data: checkRes } = await uni.$http.post('/profitsharing/check-receiver', checkData);
-				
-		// 		// 2. 如果未添加,则调用添加接收方接口
-		// 		if (checkRes.meta.status === 200 && !checkRes.message.exists) {
-		// 			const receiverData = {
-		// 				openid: this.openid,
-		// 				account: this.openid, // 微信分账接收方账号(一般是openid)
-		// 				type: 'PERSONAL_OPENID', // 分账接收方类型
-		// 				name: userInfo.nickname || '默认昵称',
-		// 				relation_type: 'USER' // 与分账方的关系类型
-		// 			};
-					
-		// 			const { data: addRes } = await uni.$http.post('/profitsharing/add-receiver', receiverData);
-					
-		// 			if (addRes.meta.status === 200) {
-		// 				console.log('✅ 自动添加微信分账接收方成功');
-		// 				// 可选: 显示成功提示
-		// 				// uni.showToast({
-		// 				// 	title: '已开通分账功能',
-		// 				// 	icon: 'success',
-		// 				// 	duration: 2000
-		// 				// });
-		// 			} else {
-		// 				console.warn('⚠️ 自动添加微信分账接收方失败:', addRes.meta.msg);
-		// 			}
-		// 		} else if (checkRes.message.exists) {
-		// 			console.log('ℹ️ 用户已是微信分账接收方,跳过添加');
-		// 		}
-		// 	} catch (error) {
-		// 		console.error('❌ 自动添加微信分账接收方异常:', error);
-		// 		// 不影响主流程,仅记录错误
-		// 	}
-		// },
 		
 		openDrawer() {
 			this.showDrawer = true
@@ -2083,10 +2130,15 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: #f5f5f5;
-  border-radius: 18px;
+  
+  /* 🔥 修改：背景色改为白色，移除边框，修复 badge 遮挡问题 */
+  background-color: #fff; /* 原为 #f5f5f5 */
   border: none;
+  border-radius: 18px;
   transition: all 0.3s ease;
+  
+  /* 🔥 关键修复：允许子元素（红点）溢出显示 */
+  overflow: visible !important;
   
   &::after {
     border: none;
@@ -2124,6 +2176,9 @@ export default {
     box-shadow: 0 1px 4px rgba(255, 77, 79, 0.4);
     border: 1px solid #ffffff;
     animation: badgePulse 2s ease-in-out infinite;
+    
+    /* 确保层级较高 */
+    z-index: 10; 
 
     .badge-text {
       font-size: 10px;
@@ -2300,7 +2355,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f5f5f5;
+  background-color: transparent;
   border-radius: 18px;
   transition: all 0.3s ease;
   
@@ -2746,6 +2801,58 @@ export default {
   .search-icon-img {
     width: 20px;
     height: 20px;
+  }
+}
+
+/* 🔥 新增：头像弹窗样式 (移植自 edit.vue) */
+.popup-content {
+  padding: 20px;
+  padding-top: 40px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  background-color: #fff;
+  
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .popup-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .popup-close {
+      padding: 5px; 
+    }
+  }
+}
+
+.avatar-grid-container {
+  max-height: 40vh;
+  
+  .avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 15px;
+    
+    .grid-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      background-color: #f0f0f0;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      
+      &.selected {
+        border-color: #007aff;
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
+      }
+    }
   }
 }
 </style>

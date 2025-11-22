@@ -7,35 +7,31 @@
 		
 		<!-- 消息列表 -->
 		<scroll-view class="message-list" scroll-y>
-			<view 
-				v-for="(chat, index) in chatList" 
-				:key="index" 
-				class="message-item"
-				@click="openChat(chat)"
+			<view
+			  v-for="(chat, index) in chatList"
+			  :key="index"
+			  class="message-item"
+			  @click="openChat(chat)"
 			>
-				<!-- 用户头像 -->
-				<image class="avatar" :src=chat.avatarUrl mode="aspectFill"></image>
-				
-				<!-- 中间内容区域 -->
-				<view class="content">
-					<!-- 用户昵称和时间 -->
-					<view class="top-row">
-						<text class="nickname">{{ chat.nickname }}</text>
-						<text class="time">{{ chat.time }}</text>
-					</view>
-					
-					<!-- 最后一条消息 -->
-					<view class="bottom-row">
-						<text class="last-message">{{ chat.lastMessage }}</text>
-						<!-- ✅ 动态显示该会话的未读消息数 -->
-						<view v-if="getUnreadCount(chat.chat_id) > 0" class="unread-badge">
-							<text class="unread-text">{{ getUnreadCount(chat.chat_id) }}</text>
-						</view>
-					</view>
-				</view>
-				
-				<!-- 商品图片 -->
-				<image class="goods-image" :src="chat.goodsImage" mode="aspectFill"></image>
+			  <image class="avatar" :src="chat.avatarUrl" mode="aspectFill"></image>
+			  <view class="content">
+			    <view class="top-row">
+			      <text class="nickname">{{ chat.nickname }}</text>
+			      <text class="time">{{ chat.time }}</text>
+			    </view>
+			    <view class="bottom-row">
+			      <text class="last-message" v-if="chat.type === 'text' || chat.type === 'system'">{{ chat.lastMessage }}</text>
+			      <text class="last-message" v-if="chat.type === 'image'">[图片]</text>
+			      <text class="last-message" v-if="chat.type === 'emoji'">[表情]</text>
+			      <text class="last-message" v-if="chat.type === 'transaction'">[买家发起线下交易]</text>
+			      <text class="last-message" v-if="chat.type === 'agree'">[卖家已同意线下交易]</text>
+			      <text class="last-message" v-if="chat.type === 'finish'">[交易已完成]</text>
+			      <view v-if="getUnreadCount(chat.chat_id) > 0" class="unread-badge">
+			        <text class="unread-text">{{ getUnreadCount(chat.chat_id) }}</text>
+			      </view>
+			    </view>
+			  </view>
+			  <image class="goods-image" :src="chat.goodsImage" mode="aspectFill"></image>
 			</view>
 		</scroll-view>
 	</view>
@@ -122,19 +118,25 @@
 		
 		async onShow() {
 			
-			if (!this.token) {
-				uni.switchTab({
-					url: '/pages/my/my',
-					success: () => {
-						uni.showToast({
-							title: '请先登录',
-							icon: 'none',
-							duration: 2000
-						});
+			if (!this.openid) {
+					  // 弹出登录提示框
+					  uni.showModal({
+					    title: '提示',
+					    content: '需要登录才能体验更多内容哦',
+					    cancelText: '取消',
+					    confirmText: '登录',
+					    success: (res) => {
+					      if (res.confirm) {
+					        // 用户点击了"登录"按钮
+					        uni.switchTab({
+					          url: '/pages/my/my'
+					        })
+					      }
+					      // 用户点击了"取消"按钮，不做任何操作
+					    }
+					  })
+					  return
 					}
-				});
-				return;
-			}
 			
 			// ✅ 获取用户信息
 			const queryObj = {code: this.openid};
@@ -208,104 +210,101 @@
 }
 
 /* 消息列表 */
+/* 消息列表 - 保持不变 */
 .message-list {
-	height: calc(100vh - 80rpx);
+  padding-bottom: 40rpx;
 }
 
-/* 单个消息项 */
 .message-item {
-	display: flex;
-	align-items: center;
-	padding: 24rpx 32rpx;
-	background-color: #ffffff;
-	border-bottom: 1rpx solid #f0f0f0;
-	
-	&:active {
-		background-color: #f5f5f5;
-	}
-	
-	/* 用户头像 */
-	.avatar {
-		width: 100rpx;
-		height: 100rpx;
-		border-radius: 50%;
-		margin-right: 24rpx;
-		flex-shrink: 0;
-	}
-	
-	/* 中间内容区域 */
-	.content {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		margin-right: 24rpx;
-		
-		.top-row {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 12rpx;
-			
-			.nickname {
-				font-size: 32rpx;
-				font-weight: 500;
-				color: #333333;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				flex: 1;
-			}
-			
-			.time {
-				font-size: 24rpx;
-				color: #999999;
-				margin-left: 16rpx;
-				flex-shrink: 0;
-			}
-		}
-		
-		.bottom-row {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			
-			.last-message {
-				font-size: 28rpx;
-				color: #999999;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				flex: 1;
-			}
-			
-			.unread-badge {
-				min-width: 32rpx;
-				height: 32rpx;
-				padding: 0 8rpx;
-				background-color: #ff3b30;
-				border-radius: 16rpx;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-left: 16rpx;
-				flex-shrink: 0;
-				
-				.unread-text {
-					font-size: 20rpx;
-					color: #ffffff;
-					line-height: 1;
-				}
-			}
-		}
-	}
-	
-	/* 商品图片 */
-	.goods-image {
-		width: 100rpx;
-		height: 100rpx;
-		border-radius: 8rpx;
-		flex-shrink: 0;
-	}
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #f0f0f0;
+
+  &:active {
+    background-color: #f5f5f5;
+  }
+
+  .avatar {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    margin-right: 24rpx;
+    flex-shrink: 0;
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin-right: 24rpx;
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12rpx;
+
+      .nickname {
+        font-size: 32rpx;
+        font-weight: 500;
+        color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+      }
+
+      .time {
+        font-size: 24rpx;
+        color: #999999;
+        margin-left: 16rpx;
+        flex-shrink: 0;
+      }
+    }
+
+    .bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .last-message {
+        font-size: 28rpx;
+        color: #999999;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+      }
+
+      .unread-badge {
+        min-width: 32rpx;
+        height: 32rpx;
+        padding: 0 8rpx;
+        background-color: #ff3b30;
+        border-radius: 16rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 16rpx;
+        flex-shrink: 0;
+
+        .unread-text {
+          font-size: 20rpx;
+          color: #ffffff;
+          line-height: 1;
+        }
+      }
+    }
+  }
+
+  .goods-image {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 8rpx;
+    flex-shrink: 0;
+  }
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
 	<view class="chat-container">
-		<!-- 顶部导航栏 - 固定位置 -->
 		<view class="header">
 			<view class="seller-info">
 				<text class="seller-name" v-if="goods_info.publisher_id !== userBase.openid">{{ goods_info.publisher_nickname }}</text>
@@ -11,7 +10,6 @@
 			</view>
 		</view>
 
-		<!-- 商品简介栏 - 固定位置 -->
 		<view class="goods-bar">
 			<image class="goods-image" :src="goods_info.goods_big_logo" mode="aspectFill" @click="gotoDetail(goods_info)"></image>
 			<view class="goods-info">
@@ -19,54 +17,43 @@
 				<text class="goods-price">¥{{ goods_info.goods_price }}</text>
 			</view>
 			
-			<!-- 买家视角 -->
-			    <view v-if="goods_info.publisher_id !== userBase.openid">
-			        <!-- 无交易状态 - 显示线下交易按钮 -->
+			<view v-if="goods_info.publisher_id !== userBase.openid">
 			        <view class="buy-btn" @click="buyNow" v-if="transactionStatus === 0">
 			            线下交易
 			        </view>
 			        
-			        <!-- 买家发起交易待确认 - 显示等待状态 -->
 			        <view class="waiting-btn" v-else-if="transactionStatus === 1">
 			            等待卖家确认
 			        </view>
 			        
-			        <!-- 卖家同意，交易进行中 -->
 			        <view class="in-progress-btn" @click="finish" v-else-if="transactionStatus === 2">
 			            确认交易完成
 			        </view>
 			        
-			        <!-- 交易完成 -->
 			        <view class="completed-btn" v-else-if="transactionStatus === 3">
 			            交易已完成
 			        </view>
 			    </view>
 				
-				<!-- 卖家视角 -->
-				    <view v-else>
-				        <!-- 买家发起交易 - 显示同意按钮 -->
+				<view v-else>
 				        <view class="agree-btn" @click="agreeTransaction" v-if="transactionStatus === 1">
 				            同意线下交易
 				        </view>
 				        
-				        <!-- 交易进行中 -->
 				        <view class="in-progress-btn" v-else-if="transactionStatus === 2">
 				            线下交易进行中
 				        </view>
 				        
-				        <!-- 交易完成 -->
 				        <view class="completed-btn" v-else-if="transactionStatus === 3">
 				            交易已完成
 				        </view>
 				        
-				        <!-- 无交易状态 -->
 				        <view class="no-transaction-btn" v-else>
 				            等待买家发起
 				        </view>
 				    </view>
 		</view>
 
-		<!-- 聊天内容区域 -->
 		<scroll-view 
 		  class="chat-content" 
 		  scroll-y 
@@ -77,43 +64,35 @@
 		  @scrolltolower="handleScrollToLower"
 		>
 		    <view v-for="(msg, index) in messages" :key="index" :id="'msg-' + index" class="message-item">
-		        <!-- 时间戳 -->
 		        <view v-if="msg.showTime" class="message-time">
 		            {{ msg.time }}
 		        </view>
 		        
-				<!-- 🔥 新增：系统消息 -->
 				<view v-if="msg.type === 'system'" class="system-message">
 					<text class="system-text">{{ msg.content }}</text>
 				</view>
 						
-		        <!-- 对方消息(左侧) -->
 		        <view v-if="msg.type === 'received'" class="message-wrapper left">
 		            <image class="avatar" :src="goods_info.publisher_avatarUrl" mode="aspectFill" v-if="goods_info.publisher_id !== openid"></image>
 					<image class="avatar" :src="other_avatarUrl" mode="aspectFill" v-else></image>
 		            <view class="message-content">
-		                <!-- 文本消息 -->
 		                <view v-if="msg.message_type === 'text' || !msg.message_type" 
 		                      class="message-bubble left-bubble" 
 		                      :class="{ 'payment-message': msg.is_payment }">
-		                    <text>{{ msg.content }}</text>
+		                    <rich-text :nodes="parseContent(msg.content)"></rich-text>
 		                </view>
-		                
-		                <!-- 图片消息 -->
 		                <image v-else-if="msg.message_type === 'image'" 
 		                       class="message-image"
 		                       :src="msg.content" 
 		                       mode="aspectFill"
 		                       @click="previewImage(msg.content)"></image>
 		                
-		                <!-- 表情包消息 -->
 		                <image v-else-if="msg.message_type === 'emoji'" 
 		                       class="message-emoji"
 		                       :src="msg.content" 
 		                       mode="aspectFit"
 		                       @click="previewEmoji(msg.content)"></image>
 		                
-		                <!-- 交易消息 - 新增 -->
 		                <view v-else-if="msg.message_type === 'transaction'" 
 		                      class="transaction-message left-transaction">
 		                    <view class="transaction-header">
@@ -136,7 +115,6 @@
 		                    </view>
 		                </view>
 						
-						<!-- 同意交易消息 - 🔥 新增 -->
 						<view v-else-if="msg.message_type === 'agree'" 
 						      :class="['agree-message', msg.type === 'sent' ? 'right-agree' : 'left-agree']">
 						    <view class="agree-header">
@@ -153,7 +131,6 @@
 						    </view>
 						</view>
 						
-						<!-- 完成交易消息 - 🔥 新增 -->
 						<view v-else-if="msg.message_type === 'finish'" 
 						      class="finish-message left-finish">
 						    <view class="finish-header">
@@ -172,31 +149,26 @@
 		            </view>
 		        </view>
 		
-		       <!-- 自己消息(右侧) -->
 		       <view v-if="msg.type === 'sent'" class="message-wrapper right">
 		           <view class="message-content">
-		               <!-- 文本消息 -->
 		               <view v-if="msg.message_type === 'text' || !msg.message_type" 
 		                     class="message-bubble right-bubble" 
 		                     :class="{ 'payment-message': msg.is_payment }">
-		                   <text>{{ msg.content }}</text>
+		                   <rich-text :nodes="parseContent(msg.content)"></rich-text>
 		               </view>
 		               
-		               <!-- 图片消息 -->
 		               <image v-else-if="msg.message_type === 'image'" 
 		                      class="message-image"
 		                      :src="msg.content" 
 		                      mode="aspectFill"
 		                      @click="previewImage(msg.content)"></image>
 		               
-		               <!-- 表情包消息 -->
 		               <image v-else-if="msg.message_type === 'emoji'" 
 		                      class="message-emoji"
 		                      :src="msg.content" 
 		                      mode="aspectFit"
 							   @click="previewEmoji(msg.content)"></image>
 		               
-		               <!-- 交易消息 -->
 		               <view v-else-if="msg.message_type === 'transaction'" 
 		                     class="transaction-message right-transaction">
 		                   <view class="transaction-header">
@@ -218,7 +190,6 @@
 		                   </view>
 		               </view>
 		               
-		               <!-- 同意交易消息 -->
 		               <view v-else-if="msg.message_type === 'agree'" 
 		                     class="agree-message right-agree">
 		                   <view class="agree-header">
@@ -237,7 +208,6 @@
 		                   </view>
 		               </view>
 		               
-		               <!-- 完成交易消息 - 🔥 修复class和删除内部头像 -->
 		               <view v-else-if="msg.message_type === 'finish'" 
 		                     class="finish-message right-finish">
 		                   <view class="finish-header">
@@ -256,14 +226,12 @@
 		               </view>
 		           </view>
 		           
-		           <!-- 🔥 只保留这一个头像 -->
 		           <image class="avatar" :src="userBase.avatarUrl" mode="aspectFill"></image>
 		       </view>
 		    </view>
 		</scroll-view>
 
 
-		<!-- 表情面板 -->
 		<view class="emoji-panel" :class="{ 'show': showEmojiPanel }">
 			<scroll-view class="emoji-scroll" scroll-y>
 				<view class="emoji-grid">
@@ -279,7 +247,6 @@
 			</scroll-view>
 		</view>
 
-		<!-- 底部输入栏 - 修改 -->
 		<view class="input-bar" :style="{ bottom: showEmojiPanel ? '250px' : '0' }">
 		    <input 
 		        class="input-field" 
@@ -290,14 +257,13 @@
 		        @focus="showEmojiPanel = false"
 		    />
 		    <view class="emoji-btn" @click="showEmojiPicker">
-		        <text class="iconfont">😊</text>
+		        <image src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/biaoqing.png" mode="aspectFit" style="width: 56rpx; height: 56rpx;"></image>
 		    </view>
 		    <view class="add-btn" @click="showAddMenu">
-		        <text class="iconfont">📎</text>
+		       <image src="https://wait00.oss-cn-shanghai.aliyuncs.com/label/jiahao.png" mode="aspectFit" style="width: 56rpx; height: 56rpx;"></image>
 		    </view>
 		</view>
 		
-		<!-- 🔥 新增：新消息提示按钮 -->
 		<view 
 		  class="new-message-tip" 
 		  :class="{ 'show': showNewMessageTip }"
@@ -310,21 +276,6 @@
 		  </view>
 		</view>
 		
-		<!-- 表情面板 -->
-		<view class="emoji-panel" :class="{ 'show': showEmojiPanel }">
-		    <scroll-view scroll-y class="emoji-scroll">
-		        <view class="emoji-grid">
-		            <view class="emoji-item" 
-		                  v-for="(emoji, index) in emojiList" 
-		                  :key="index"
-		                  @click="selectEmoji(emoji)">
-		                <image class="emoji-image" :src="emoji.url" mode="aspectFit"></image>
-		            </view>
-		        </view>
-		    </scroll-view>
-		</view>
-		
-		<!-- 购买弹窗 -->
 		<view class="purchase-popup" :class="{ 'show': showPurchasePopup }" @click="closePurchasePopup">
 			<view class="popup-content" @click.stop>
 				<view class="close-btn" @click="closePurchasePopup">
@@ -346,7 +297,6 @@
 				        <text class="address-tip">(选填)</text>
 				    </view>
 				    
-				    <!-- 修改这部分 -->
 				    <view class="address-input-container">
 				        <textarea 
 				            class="address-input"
@@ -359,7 +309,6 @@
 				        />
 				    </view>
 				    
-				    <!-- 将保存按钮移到外面 -->
 				    <view class="save-address-btn" 
 				          v-if="addressInput.trim()"
 				          @click.stop="saveAddress">
@@ -385,6 +334,10 @@
 
 <script>
 	import { mapState, mapMutations } from 'vuex'
+	
+	// 定义表情包基础URL
+	const BASE_URL_SMALL = 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-small/';
+	
 	export default {
 		data() {
 			return {
@@ -415,32 +368,62 @@
 				// 当前订单信息
 				currentOrder: null,
 				 // 新增：表情包相关
-				        showEmojiPanel: false,  // 控制表情面板显示
-						emojiList: [
-							{ id: 1, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-1.png', name: '[微笑]' },
-							{ id: 2, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-2.png', name: '[大笑]' },
-							{ id: 3, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-3.png', name: '[笑哭]' },
-							{ id: 4, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-4.png', name: '[难过]' },
-							{ id: 5, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-5.png', name: '[大哭]' },
-							{ id: 6, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-6.png', name: '[疑问]' },
-							{ id: 7, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-7.png', name: '[爱心]' },
-							{ id: 8, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-8.png', name: '[得意]' },
-							{ id: 9, url: 'https://wait00.oss-cn-shanghai.aliyuncs.com/emoji/emoji-9.png', name: '[惊恐]' },
-						],
-						// 新增：图片上传相关
-						uploading: false,
-						transactionStatus: 0, // 0=无交易, 1=买家发起待确认, 2=卖家同意交易中, 3=交易完成
-						isTransactionInitiator: false, // 是否是交易发起方(买家)
-								// 🔥 新增：交易过期时间(7天，单位毫秒)
-						TRANSACTION_EXPIRE_TIME: 7 * 24 * 60 * 60 * 1000,
-						 // 🔥 新增：新消息提示相关
-						      showNewMessageTip: false,      // 是否显示新消息提示
-						      newMessageCount: 0,             // 新消息数量
-						      scrollTop: 0,                   // 当前滚动位置
-						      scrollThreshold: 100,           // 阈值(rpx)，距离底部多少时显示提示
-						      isNearBottom: true,             // 是否接近底部
-						      lastMessagesLength: 0,          // 上一次的消息数量
-							  scrollViewHeight: 0,
+				showEmojiPanel: false,  // 控制表情面板显示
+				// 🔥 修改：新的表情包列表
+				emojiList: [
+					{ id: 10, name: 'mini-1', url: `${BASE_URL_SMALL}1weixiao.png`, code: '(微笑)' },
+					{ id: 11, name: 'mini-2', url: `${BASE_URL_SMALL}2piezui.png`, code: '(撇嘴)' },
+					{ id: 12, name: 'mini-3', url: `${BASE_URL_SMALL}3yanchan.png`, code: '(馋)' },
+					{ id: 13, name: 'mini-4', url: `${BASE_URL_SMALL}4jingya.png`, code: '(惊讶)' },
+					{ id: 14, name: 'mini-5', url: `${BASE_URL_SMALL}5mojing.png`, code: '(秀)' },
+					{ id: 15, name: 'mini-6', url: `${BASE_URL_SMALL}6daku.png`, code: '(哭)' },
+					{ id: 16, name: 'mini-7', url: `${BASE_URL_SMALL}7wuzui.png`, code: '(闭麦)' },
+					{ id: 17, name: 'mini-8', url: `${BASE_URL_SMALL}8ganga.png`, code: '(尴尬)' },
+					{ id: 18, name: 'mini-9', url: `${BASE_URL_SMALL}9shengqi.png`, code: '(发怒)' },
+					{ id: 19, name: 'mini-10', url: `${BASE_URL_SMALL}10daxiao.png`, code: '(大笑)' },
+					{ id: 20, name: 'mini-11', url: `${BASE_URL_SMALL}10yumen.png`, code: '(郁闷)' },
+					{ id: 21, name: 'mini-12', url: `${BASE_URL_SMALL}11nanguo.png`, code: '(难过)' },
+					{ id: 22, name: 'mini-13', url: `${BASE_URL_SMALL}11tushe.png`, code: '(调皮)' },
+					{ id: 23, name: 'mini-14', url: `${BASE_URL_SMALL}12exin.png`, code: '(吐)' },
+					{ id: 24, name: 'mini-15', url: `${BASE_URL_SMALL}13touxiao.png`, code: '(偷笑)' },
+					{ id: 25, name: 'mini-16', url: `${BASE_URL_SMALL}14yukuai.png`, code: '(愉快)' },
+					{ id: 26, name: 'mini-17', url: `${BASE_URL_SMALL}16heng.png`, code: '(哼)' },
+					{ id: 27, name: 'mini-18', url: `${BASE_URL_SMALL}17kouzhao.png`, code: '(生病)' },
+					{ id: 28, name: 'mini-19', url: `${BASE_URL_SMALL}18haqian.png`, code: '(困)' },
+					{ id: 29, name: 'mini-20', url: `${BASE_URL_SMALL}19yihuo.png`, code: '(疑惑)' },
+					{ id: 30, name: 'mini-21', url: `${BASE_URL_SMALL}20shiwang.png`, code: '(失望)' },
+					{ id: 31, name: 'mini-22', url: `${BASE_URL_SMALL}21zhuakuang.png`, code: '(抓狂)' },
+					{ id: 32, name: 'mini-23', url: `${BASE_URL_SMALL}22yun.png`, code: '(晕)' },
+					{ id: 33, name: 'mini-24', url: `${BASE_URL_SMALL}23duzui.png`, code: '(嘟嘴)' },
+					{ id: 34, name: 'mini-25', url: `${BASE_URL_SMALL}24deyi.png`, code: '(得意)' },
+					{ id: 35, name: 'mini-26', url: `${BASE_URL_SMALL}25wasai.png`, code: '(哇塞)' },
+					{ id: 36, name: 'mini-27', url: `${BASE_URL_SMALL}26hanxiao.png`, code: '(憨笑)' },
+					{ id: 37, name: 'mini-28', url: `${BASE_URL_SMALL}27jinghuang.png`, code: '(惊慌)' },
+					{ id: 38, name: 'mini-29', url: `${BASE_URL_SMALL}28yinxian.png`, code: '(阴险)' },
+					{ id: 39, name: 'mini-30', url: `${BASE_URL_SMALL}29meigui.png`, code: '(玫瑰)' },
+					{ id: 40, name: 'mini-31', url: `${BASE_URL_SMALL}30chigua.png`, code: '(吃瓜)' },
+					{ id: 41, name: 'mini-32', url: `${BASE_URL_SMALL}31xiaoku.png`, code: '(笑哭)' },
+					{ id: 42, name: 'mini-33', url: `${BASE_URL_SMALL}32feiwen.png`, code: '(飞吻)' },
+					{ id: 43, name: 'mini-34', url: `${BASE_URL_SMALL}33haode.png`, code: '(好的)' },
+					{ id: 44, name: 'mini-35', url: `${BASE_URL_SMALL}34liekai.png`, code: '(裂开)' },
+					{ id: 45, name: 'mini-36', url: `${BASE_URL_SMALL}35wuyu.png`, code: '(无语)' },
+					{ id: 46, name: 'mini-37', url: `${BASE_URL_SMALL}36huanhu.png`, code: '(欢呼)' },
+					{ id: 47, name: 'mini-38', url: `${BASE_URL_SMALL}37emo.png`, code: '(emo)' },
+				],
+				// 新增：图片上传相关
+				uploading: false,
+				transactionStatus: 0, // 0=无交易, 1=买家发起待确认, 2=卖家同意交易中, 3=交易完成
+				isTransactionInitiator: false, // 是否是交易发起方(买家)
+						// 🔥 新增：交易过期时间(7天，单位毫秒)
+				TRANSACTION_EXPIRE_TIME: 7 * 24 * 60 * 60 * 1000,
+				 // 🔥 新增：新消息提示相关
+					  showNewMessageTip: false,      // 是否显示新消息提示
+					  newMessageCount: 0,             // 新消息数量
+					  scrollTop: 0,                   // 当前滚动位置
+					  scrollThreshold: 100,           // 阈值(rpx)，距离底部多少时显示提示
+					  isNearBottom: true,             // 是否接近底部
+					  lastMessagesLength: 0,          // 上一次的消息数量
+					  scrollViewHeight: 0,
 							
 			};
 		},
@@ -781,49 +764,27 @@
 			     * 选择表情包发送
 			     */
 			    async selectEmoji(emoji) {
-			        try {
-			            const reqObj = {
-			                openid1: this.openid,
-			                openid2: this.userBase.openid !== this.goods_info.publisher_id 
-			                        ? this.goods_info.publisher_id 
-			                        : this.goods_info.other_openid,
-			                goods_id: this.goods_info.goods_id,
-			                senderid: this.openid,
-			                content: emoji.url,
-			                message_type: 'emoji',  // 标记为图片消息
-			                // sub_type: 'emoji'       // 标记为表情包
-			            };
-			            
-			            const { data: res } = await uni.$http.post('/chats/message', reqObj);
-			            
-			            if (res.meta.status === 200) {
-			                const newMessages = this.processMessages(res.message.messages);
-			                this.messages = newMessages;
-			                
-			                if (newMessages.length > 0) {
-			                    this.lastMessageId = newMessages[newMessages.length - 1].id || 
-			                                        newMessages[newMessages.length - 1].created_at;
-			                }
-			                
-			                this.$nextTick(() => {
-			                    this.scrollToBottom();
-			                });
-			                
-			                // 发送成功后关闭表情面板
-			                this.showEmojiPanel = false;
-			            }
-			        } catch (error) {
-			            console.error('❌ 发送表情失败:', error);
-			            uni.showToast({
-			                title: '发送失败',
-			                icon: 'none'
-			            });
-			        }
-			    },
-				
+    // 将表情的代码（如 '(微笑)'）追加到输入框文本后
+    this.inputText = (this.inputText || '') + emoji.code;
+    // 注意：不需要在这里调用发送接口，用户会点击发送按钮统一发送
+},
 			/**
 			 * 加载当前商品的订单状态
 			 */
+			parseContent(content) {
+			    if (!content) return '';
+			    
+			    let temp = content;
+			    // 遍历表情列表，把文本中的 (微笑) 替换成 <img /> 标签
+			    this.emojiList.forEach(item => {
+			        // 转义正则中的特殊字符括号
+			        const code = item.code.replace('(', '\\(').replace(')', '\\)');
+			        const reg = new RegExp(code, 'g');
+			        // 替换为 img 标签，注意这里设置了 vertical-align: middle 让表情和文字对齐
+			        temp = temp.replace(reg, `<img style="width: 26px; height: 26px; vertical-align: middle; margin: 0 4rpx;" src="${item.url}" />`);
+			    });
+			    return temp;
+			},
 			async loadCurrentOrder() {
 				try {
 					// 假设后端有一个接口可以查询当前用户对该商品的最新订单
@@ -1024,11 +985,24 @@
 					reportUser() {
 						// 安全检查
 						if (!this.openid) {
-							uni.switchTab({
-							  url: '/pages/my/my',
-							});
-							return;
-						}
+								  // 弹出登录提示框
+								  uni.showModal({
+								    title: '提示',
+								    content: '需要登录才能体验更多内容哦',
+								    cancelText: '取消',
+								    confirmText: '登录',
+								    success: (res) => {
+								      if (res.confirm) {
+								        // 用户点击了"登录"按钮
+								        uni.switchTab({
+								          url: '/pages/my/my'
+								        })
+								      }
+								      // 用户点击了"取消"按钮，不做任何操作
+								    }
+								  })
+								  return
+								}
 			
 						// 弹出一个可编辑的输入框
 						uni.showModal({
@@ -1272,129 +1246,6 @@
 			    }
 			},
 
-			// // 处理微信支付
-			// async handleWechatPay() {
-			// 	// 地址变为选填,所以去掉强制验证
-			// 	const finalAddress = this.addressInput.trim();
-				
-			// 	try {
-			// 		uni.showLoading({
-			// 			title: '创建订单中...',
-			// 			mask: true
-			// 		});
-					
-			// 		// 1. 创建订单
-			// 		const orderInfo = {
-			// 			//order_price: this.goods_info.goods_price,  // 使用实际价格
-			// 			order_price: 0.1,
-			// 			consignee_addr: finalAddress || null,  // 允许为空
-			// 			goods: this.goods_info,
-			// 			openid: this.openid
-			// 		};
-					
-			// 		const { data: res } = await uni.$http.post('/orders/create', orderInfo);
-					
-			// 		if (res.meta.status !== 200) {
-			// 			uni.hideLoading();
-			// 			return uni.$showMsg('创建订单失败！');
-			// 		}
-					
-			// 		const orderNumber = res.message.order_number;
-			// 		console.log('📝 订单创建成功:', orderNumber);
-					
-			// 		uni.showLoading({
-			// 			title: '准备支付...',
-			// 			mask: true
-			// 		});
-					
-			// 		// 2. 订单预支付
-			// 		const { data: res2 } = await uni.$http.post('/orders/req_unifiedorder', { 
-			// 			order_number: orderNumber 
-			// 		});
-					
-			// 		if (res2.meta.status !== 200) {
-			// 			uni.hideLoading();
-			// 			return uni.$showMsg('预付订单生成失败！');
-			// 		}
-					
-			// 		const payInfo = res2.message.pay;
-			// 		console.log('💳 预支付信息获取成功');
-					
-			// 		uni.hideLoading();
-					
-			// 		// 3. 发起微信支付
-			// 		const [err, succ] = await uni.requestPayment(payInfo);
-					
-			// 		if (err) {
-			// 			console.log('❌ 用户取消支付');
-			// 			return uni.$showMsg('订单未支付！');
-			// 		}
-					
-			// 		console.log('✅ 支付成功,验证订单状态...');
-					
-			// 		uni.showLoading({
-			// 			title: '验证支付状态...',
-			// 			mask: true
-			// 		});
-					
-			// 		// 4. 验证订单支付状态
-			// 		const { data: res3 } = await uni.$http.post('/orders/chkOrder', { 
-			// 			order_number: orderNumber 
-			// 		});
-					
-			// 		uni.hideLoading();
-					
-			// 		if (res3.meta.status !== 200) {
-			// 			return uni.$showMsg('订单未支付！');
-			// 		}
-					
-			// 		// 5. 支付成功后发送专属消息
-			// 		let paymentMessage = '';
-			// 		if (finalAddress) {
-			// 			paymentMessage = `我已付款,选择的交易地点为: ${finalAddress}`;
-			// 		} else {
-			// 			paymentMessage = '我已付款,请我们协商交易地点';
-			// 		}
-					
-			// 		// 发送支付消息
-			// 		await this.sendPaymentMessage(paymentMessage);
-					
-			// 		// 6. 更新当前订单状态
-			// 		this.currentOrder = {
-			// 			order_number: orderNumber,
-			// 			pay_status: 1,
-			// 			order_status: 1,  // 待发货
-			// 			consignee_addr: finalAddress
-			// 		};
-					
-			// 		// 7. 刷新消息列表
-			// 		await this.loadMessages();
-					
-			// 		// 8. 关闭弹窗
-			// 		this.closePurchasePopup();
-					
-			// 		// 9. 显示成功提示
-			// 		uni.showToast({
-			// 			title: '支付成功!',
-			// 			icon: 'success',
-			// 			duration: 2000
-			// 		});
-					
-			// 		// 10. 滚动到最新消息
-			// 		this.$nextTick(() => {
-			// 			this.scrollToBottom();
-			// 		});
-					
-			// 	} catch (error) {
-			// 		uni.hideLoading();
-			// 		console.error('❌ 订单支付失败:', error);
-			// 		uni.showToast({
-			// 			title: '订单支付失败',
-			// 			icon: 'none',
-			// 			duration: 2000
-			// 		});
-			// 	}
-			// },
 			
 			// 发送消息
 			async sendMessage() {
@@ -1844,7 +1695,7 @@
 .chat-container {
 	position: relative;
 	height: 100vh;
-	background-color: #f5f5f5;
+	background-color: #EDEDED; /* 🔥 修改：背景色 */
 }
 
 .header {
@@ -2030,7 +1881,7 @@
 		
 		.message-wrapper {
 			display: flex;
-			align-items: flex-end;
+			align-items: flex-start; /* 🔥 修改：头像对齐 */
 			
 			&.left {
 				justify-content: flex-start;
@@ -2055,6 +1906,7 @@
 				width: 80rpx;
 				height: 80rpx;
 				border-radius: 8rpx;
+				flex-shrink: 0; /* 防止头像被挤压 */
 			}
 			
 			.message-bubble {
@@ -2065,14 +1917,18 @@
 				line-height: 1.5;
 				word-wrap: break-word;
 				
+				/* 🔥 修改：左侧气泡样式 (对方) */
 				&.left-bubble {
-					background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-					color: #ffffff;
+					background: #FFFFFF;
+					color: #474747;
+					border: none;
 				}
 				
+				/* 🔥 修改：右侧气泡样式 (我方) */
 				&.right-bubble {
-					background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-					color: #ffffff;
+					background: #95EC69;
+					color: #474747;
+					border: none;
 				}
 				
 				&.payment-message {
@@ -2376,7 +2232,7 @@
 	left: 0;
 	right: 0;
 	height: 500rpx;
-	background-color: #f7f7f7;
+	background-color: #ffffff;
 	border-top: 1rpx solid #e5e5e5;
 	transform: translateY(100%);
 	transition: transform 0.3s ease;
@@ -2392,26 +2248,27 @@
 		
 		.emoji-grid {
 			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			gap: 20rpx;
+			grid-template-columns: repeat(5, 1fr);
+			gap: 15rpx;
 			
 			.emoji-item {
 				aspect-ratio: 1;
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background-color: #ffffff;
+				background-color: transparent; /* 🔥 修改：透明背景 */
 				border-radius: 12rpx;
 				transition: all 0.2s;
 				
 				&:active {
 					transform: scale(0.95);
-					background-color: #f0f0f0;
+					background-color: #e0e0e0;
 				}
 				
 				.emoji-image {
-					width: 80%;
-					height: 80%;
+					/* 🔥 修改：小表情尺寸 */
+					width: 100rpx;
+					height: 100rpx;
 				}
 			}
 		}
@@ -2436,8 +2293,9 @@
 	
 	/* 表情包消息 */
 	.message-emoji {
-		width: 120rpx;
-		height: 120rpx;
+		/* 🔥 修改：小表情在气泡外显示时的尺寸 */
+		width: 64rpx;
+		height: 64rpx;
 		display: block;
 		/* 🔥 移除 margin-right 和 margin-left */
 	}
